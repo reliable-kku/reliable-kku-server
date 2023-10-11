@@ -1,0 +1,15 @@
+spring:
+  config:
+    activate:
+      on-profile: dev
+    import:
+      - submodule/application-db-dev.yaml
+
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: create
+  properties:
+    hibernate:
+      format_sql: true
+  defer-datasource-initialization: true
