@@ -1,0 +1,3 @@
+[submodule "src/main/resources/submodule/reliable-kku-server-submodule"]
+	path = src/main/resources/submodule/reliable-kku-server-submodule
+	url = https://github.com/reliable-kku/reliable-kku-server-submodule.git
