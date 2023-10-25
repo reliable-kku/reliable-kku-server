@@ -1,0 +1,16 @@
+# API 문서
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 3
+
+== GitHub 주소
+
+* link:https://github.com/reliable-kku/reliable-kku-server[GitHub 주소]
+
+== Member 문서
+
+=== 로그인, 회원가입 문서
+
+* link:member-login-register.html[로그인,회원가입 문서]
