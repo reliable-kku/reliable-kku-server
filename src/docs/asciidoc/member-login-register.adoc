@@ -130,10 +130,75 @@ include::{snippets}/member/register/fail/http-request.adoc[]
 include::{snippets}/member/register/fail/http-response.adoc[]
 include::{snippets}/member/register/fail/response-fields.adoc[]
 
+== 비밀번호 찾기
+
+=== 전화번호 인증번호 전송 성공
+
+==== Request
+
+include::{snippets}/member/find-password/phone-number/certification-number/success/http-request.adoc[]
+include::{snippets}/member/find-password/phone-number/certification-number/success/request-fields.adoc[]
+
+==== Response
+
+include::{snippets}/member/find-password/phone-number/certification-number/success/http-response.adoc[]
 
 
+=== 전화번호 인증번호 전송 실패 (휴대폰당 하루 열번만 가능)
+
+==== Request
+
+include::{snippets}/member/find-password/phone-number/certification-number/fail/http-request.adoc[]
+
+==== Response
+
+include::{snippets}/member/find-password/phone-number/certification-number/fail/http-response.adoc[]
+include::{snippets}/member/find-password/phone-number/certification-number/fail/response-fields.adoc[]
 
 
+=== 전화번호 인증번호 확인 성공
+
+==== Request
+
+include::{snippets}/member/find-password/phone-number/certification-number/check/success/http-request.adoc[]
+
+Request Parameter::
+include::{snippets}/member/find-password/phone-number/certification-number/check/success/query-parameters.adoc[]
+
+==== Response
+include::{snippets}/member/find-password/phone-number/certification-number/check/success/http-response.adoc[]
+include::{snippets}/member/find-password/phone-number/certification-number/check/success/response-fields.adoc[]
+
+=== 전화번호 인증번호 인증 실패
+
+==== Request
+
+include::{snippets}/member/find-password/phone-number/certification-number/check/fail/http-request.adoc[]
+
+==== Response
+include::{snippets}/member/find-password/phone-number/certification-number/check/fail/http-response.adoc[]
+include::{snippets}/member/find-password/phone-number/certification-number/check/fail/response-fields.adoc[]
 
 
+=== 비밀번호 변경 성공
+
+==== Request
+
+include::{snippets}/member/find-password/success/http-request.adoc[]
+include::{snippets}/member/find-password/success/request-fields.adoc[]
+
+==== Response
+
+include::{snippets}/member/find-password/success/http-response.adoc[]
+
+=== 비밀번호 변경 실패 (휴대전화 인증 안됨)
+
+==== Request
+
+include::{snippets}/member/find-password/fail/http-request.adoc[]
+
+==== Response
+
+include::{snippets}/member/find-password/fail/http-response.adoc[]
+include::{snippets}/member/find-password/fail/response-fields.adoc[]
 
