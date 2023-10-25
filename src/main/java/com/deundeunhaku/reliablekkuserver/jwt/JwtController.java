@@ -1,0 +1,70 @@
+package com.deundeunhaku.reliablekkuserver.jwt;
+
+import static com.deundeunhaku.reliablekkuserver.jwt.constants.TokenDuration.ACCESS_TOKEN_DURATION;
+import static org.springframework.http.HttpHeaders.AUTHORIZATION;
+
+import com.deundeunhaku.reliablekkuserver.jwt.util.JwtTokenUtils;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CookieValue;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@Slf4j
+@RequiredArgsConstructor
+@RestController
+@RequestMapping("/api/v1/token")
+public class JwtController {
+
+  private final JwtTokenUtils jwtTokenUtils;
+
+  @GetMapping("/valid")
+  public ResponseEntity<Void> isAccessTokenValid(HttpServletRequest request,
+      HttpServletResponse response) {
+
+    log.info(">>>>>>>>>>> 진ㅇ비");
+    String accessTokenWithPrefix = request.getHeader(AUTHORIZATION);
+
+    if (accessTokenWithPrefix == null || !accessTokenWithPrefix.startsWith("Bearer ")) {
+      response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+      return ResponseEntity.status(HttpServletResponse.SC_UNAUTHORIZED).build();
+    }
+
+    String accessToken = accessTokenWithPrefix.split("Bearer ")[1];
+
+    Long id = jwtTokenUtils.getId(accessToken);
+    Boolean validate = jwtTokenUtils.validate(accessToken, id);
+
+    if (validate) {
+      return ResponseEntity.ok().build();
+    } else {
+      return ResponseEntity.status(HttpServletResponse.SC_UNAUTHORIZED).build();
+    }
+  }
+
+  @GetMapping("/update")
+  public ResponseEntity<Void> updateAccessToken(
+      @CookieValue(name = "refreshToken") Cookie refreshTokenCookie
+  ) {
+
+    String refreshToken = refreshTokenCookie.getValue();
+
+    Long id = jwtTokenUtils.getId(refreshToken);
+    Boolean validate = jwtTokenUtils.validate(refreshToken, id);
+
+    if (validate) {
+      String newAccessToken = jwtTokenUtils.generateJwtToken(id,
+          ACCESS_TOKEN_DURATION.getDuration());
+      return ResponseEntity.ok().header(AUTHORIZATION, newAccessToken).build();
+    } else {
+      return ResponseEntity.status(HttpServletResponse.SC_UNAUTHORIZED).build();
+    }
+  }
+
+
+}
