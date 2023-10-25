@@ -32,3 +32,108 @@ include::{snippets}/member/login/failed/http-request.adoc[]
 
 include::{snippets}/member/login/failed/http-response.adoc[]
 include::{snippets}/member/login/failed/response-fields.adoc[]
+
+== 회원가입
+
+=== 전화번호 중복이 아닐때 (성공)
+
+==== Request
+
+include::{snippets}/member/register/phone-number/duplicate/success/http-request.adoc[]
+
+Request Parameter::
+include::{snippets}/member/register/phone-number/duplicate/success/query-parameters.adoc[]
+
+==== Response
+
+include::{snippets}/member/register/phone-number/duplicate/success/http-response.adoc[]
+include::{snippets}/member/register/phone-number/duplicate/success/response-fields.adoc[]
+
+=== 전화번호 중복 일때 (실패)
+
+==== Request
+
+include::{snippets}/member/register/phone-number/duplicate/fail/http-request.adoc[]
+
+==== Response
+
+include::{snippets}/member/register/phone-number/duplicate/fail/http-response.adoc[]
+include::{snippets}/member/register/phone-number/duplicate/fail/response-fields.adoc[]
+
+=== 전화번호 인증번호 전송 성공
+
+==== Request
+
+include::{snippets}/member/register/phone-number/certification-number/success/http-request.adoc[]
+include::{snippets}/member/register/phone-number/certification-number/success/request-fields.adoc[]
+
+==== Response
+
+include::{snippets}/member/register/phone-number/certification-number/success/http-response.adoc[]
+
+
+=== 전화번호 인증번호 전송 실패 (휴대폰당 하루 열번만 가능)
+
+==== Request
+
+include::{snippets}/member/register/phone-number/certification-number/fail/http-request.adoc[]
+
+==== Response
+
+include::{snippets}/member/register/phone-number/certification-number/fail/http-response.adoc[]
+include::{snippets}/member/register/phone-number/certification-number/fail/response-fields.adoc[]
+
+
+=== 전화번호 인증번호 확인 성공
+
+==== Request
+
+include::{snippets}/member/register/phone-number/certification-number/check/success/http-request.adoc[]
+
+Request Parameter::
+include::{snippets}/member/register/phone-number/certification-number/check/success/query-parameters.adoc[]
+
+==== Response
+include::{snippets}/member/register/phone-number/certification-number/check/success/http-response.adoc[]
+include::{snippets}/member/register/phone-number/certification-number/check/success/response-fields.adoc[]
+
+=== 전화번호 인증번호 인증 실패
+
+==== Request
+
+include::{snippets}/member/register/phone-number/certification-number/check/fail/http-request.adoc[]
+
+==== Response
+include::{snippets}/member/register/phone-number/certification-number/check/fail/http-response.adoc[]
+include::{snippets}/member/register/phone-number/certification-number/check/fail/response-fields.adoc[]
+
+
+=== 회원가입 성공
+
+==== Request
+
+include::{snippets}/member/register/success/http-request.adoc[]
+include::{snippets}/member/register/success/request-fields.adoc[]
+
+==== Response
+
+include::{snippets}/member/register/success/http-response.adoc[]
+
+=== 회원가입 실패 (휴대전화 인증 안됨)
+
+==== Request
+
+include::{snippets}/member/register/fail/http-request.adoc[]
+
+==== Response
+
+include::{snippets}/member/register/fail/http-response.adoc[]
+include::{snippets}/member/register/fail/response-fields.adoc[]
+
+
+
+
+
+
+
+

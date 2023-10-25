@@ -42,6 +42,8 @@ public class MemberAuthenticationController {
     return ResponseEntity.ok().build();
   }
 
+
+
   private void setRefreshTokenInCookie(String refreshToken, HttpServletResponse response) {
     Cookie refreshTokenCookie = new Cookie("refreshToken", "Bearer " + refreshToken);
     refreshTokenCookie.setMaxAge(TokenDuration.REFRESH_TOKEN_DURATION.getDurationInSecond());
