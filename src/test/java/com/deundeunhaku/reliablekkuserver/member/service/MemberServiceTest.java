@@ -1,7 +1,6 @@
 package com.deundeunhaku.reliablekkuserver.member.service;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.anyString;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
 import com.deundeunhaku.reliablekkuserver.BaseServiceTest;
@@ -14,7 +13,6 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 class MemberServiceTest extends BaseServiceTest {
