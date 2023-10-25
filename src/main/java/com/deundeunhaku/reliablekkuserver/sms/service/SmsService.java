@@ -44,6 +44,14 @@ public class SmsService {
         return SmsCertificationNumber.of(randomNumber);
         }
 
+    public void sendNewPasswordToPhoneNumber(String phoneNumber, String newPassword) {
+        String content = "안녕하세요! 든붕이 입니다. \n새로운 비밀번호는 " + newPassword + " 입니다.";
+
+        sendSms(phoneNumber, content);
+
+
+    }
+
     private void sendSms(String phoneNumber, String content) {
         try {
             String apiServerUrl = "https://api-sms.cloud.toast.com/sms/v3.0/appKeys/" + smsConstant.getAppKey() + "/sender/sms";

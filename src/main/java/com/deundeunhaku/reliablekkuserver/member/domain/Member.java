@@ -34,7 +34,9 @@ public class Member {
 
     private String firebaseToken;
 
-
+    public void changePassword(String password) {
+        this.password = password;
+    }
     @Builder
     public Member(Long id, String phoneNumber, String password, String realName, Integer level,
         String firebaseToken) {

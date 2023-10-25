@@ -11,6 +11,7 @@ import com.deundeunhaku.reliablekkuserver.sms.service.SmsService;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -99,6 +100,27 @@ public class MemberService {
             .password(passwordEncoder.encode(request.password()))
             .build()
     );
+
+  }
+
+  @Transactional
+  public void changePasswordWithRandomNumber(String phoneNumber, int certificationNumber) {
+
+    CertificationNumber findCertificationNumber = certificationNumberRepository.findTop1ByPhoneNumberOrderByCreatedAtDesc(
+            phoneNumber)
+        .orElseThrow(() -> new IllegalArgumentException("잘못된 요청입니다."));
+
+    if (findCertificationNumber.getIsCertified().equals(false) || findCertificationNumber.getCertificationNumber().equals(certificationNumber)) {
+      throw new IllegalArgumentException("잘못된 요청입니다.");
+    }
+
+    Member findMember = memberRepository.findByPhoneNumber(phoneNumber)
+        .orElseThrow(() -> new IllegalArgumentException("잘못된 요청입니다."));
+
+    String newPassword = UUID.randomUUID().toString().substring(7);
+    findMember.changePassword(passwordEncoder.encode(newPassword));
+
+    smsService.sendNewPasswordToPhoneNumber(phoneNumber, newPassword);
 
   }
 }
