@@ -55,16 +55,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
       throw new NotAuthorizedException("만료된 토큰입니다.");
     }
 
-    memberRepository.save(
-        Member
-            .builder()
-            .level(1)
-            .realName("test")
-            .phoneNumber("01012341234")
-            .password("12314")
-            .build()
-    );
-
     Member member = memberRepository.findById(id)
         .orElseThrow(() -> new NotAuthorizedException("존재하지 않는 회원입니다."));
 
