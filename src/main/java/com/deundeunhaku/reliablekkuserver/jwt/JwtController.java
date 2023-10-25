@@ -9,6 +9,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -27,7 +28,6 @@ public class JwtController {
   public ResponseEntity<Void> isAccessTokenValid(HttpServletRequest request,
       HttpServletResponse response) {
 
-    log.info(">>>>>>>>>>> 진ㅇ비");
     String accessTokenWithPrefix = request.getHeader(AUTHORIZATION);
 
     if (accessTokenWithPrefix == null || !accessTokenWithPrefix.startsWith("Bearer ")) {
@@ -43,7 +43,7 @@ public class JwtController {
     if (validate) {
       return ResponseEntity.ok().build();
     } else {
-      return ResponseEntity.status(HttpServletResponse.SC_UNAUTHORIZED).build();
+      return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
   }
 
@@ -62,7 +62,7 @@ public class JwtController {
           ACCESS_TOKEN_DURATION.getDuration());
       return ResponseEntity.ok().header(AUTHORIZATION, newAccessToken).build();
     } else {
-      return ResponseEntity.status(HttpServletResponse.SC_UNAUTHORIZED).build();
+      return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
   }
 
