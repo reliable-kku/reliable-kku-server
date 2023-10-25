@@ -9,10 +9,12 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.DynamicInsert;
 import org.springframework.data.annotation.CreatedDate;
 
 import java.time.LocalDate;
 
+@DynamicInsert
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @Entity
