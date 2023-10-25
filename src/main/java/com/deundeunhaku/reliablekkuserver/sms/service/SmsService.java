@@ -26,7 +26,6 @@ public class SmsService {
 
     private final RestTemplate restTemplate;
     private final ObjectMapper objectMapper;
-
     private final SmsConstant smsConstant;
 
     public SmsService(RestTemplateBuilder restTemplateBuilder, ObjectMapper objectMapper, SmsConstant smsConstant) {
@@ -67,7 +66,6 @@ public class SmsService {
                             SmsResponse.class
                     )
                     .getBody();
-            log.info("response: {}", response);
 
         } catch (Exception e) {
             log.error(e.getMessage());
