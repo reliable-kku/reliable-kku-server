@@ -5,3 +5,5 @@ spring:
     import:
       - submodule/reliable-kku-server-submodule/application-s3.yaml
       - submodule/reliable-kku-server-submodule/application-jwt.yaml
+      - submodule/reliable-kku-server-submodule/application-payment.yaml
+      - submodule/reliable-kku-server-submodule/application-sms.yaml
