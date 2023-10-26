@@ -67,6 +67,10 @@ public class Order implements Serializable {
   @JoinColumn(name = "offlineMember_id")
   private OfflineMember offlineMember;
 
+  public void addMinutesToExpectedWaitDateTime(Integer addMinutes) {
+    this.expectedWaitDatetime = this.orderDatetime.plusMinutes(addMinutes);
+  }
+
   public void updateOrderStatus(OrderStatus orderStatus) {
     this.orderStatus = orderStatus;
   }
