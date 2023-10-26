@@ -6,7 +6,7 @@ import com.deundeunhaku.reliablekkuserver.order.domain.Order;
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface MenuOrderRepository extends JpaRepository<MenuOrder, MenuOrderId> {
+public interface MenuOrderRepository extends JpaRepository<MenuOrder, MenuOrderId>, MenuOrderRepositoryCustom {
 
   List<MenuOrder> findByOrder(Order order);
 

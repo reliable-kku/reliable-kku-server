@@ -8,7 +8,7 @@ import com.deundeunhaku.reliablekkuserver.menu.repository.MenuRepository;
 import com.deundeunhaku.reliablekkuserver.order.constant.OrderStatus;
 import com.deundeunhaku.reliablekkuserver.order.domain.MenuOrder;
 import com.deundeunhaku.reliablekkuserver.order.domain.Order;
-import com.deundeunhaku.reliablekkuserver.order.dto.MenuResponse;
+import com.deundeunhaku.reliablekkuserver.order.dto.OrderEachMenuResponse;
 import com.deundeunhaku.reliablekkuserver.order.dto.OfflineOrderRequest;
 import com.deundeunhaku.reliablekkuserver.order.dto.OrderIdResponse;
 import com.deundeunhaku.reliablekkuserver.order.dto.OrderRegisterRequest;
@@ -131,10 +131,10 @@ public class OrderService {
 
     List<MenuOrder> menuOrderList = menuOrderRepository.findByOrder(order);
 
-    List<MenuResponse> menuResponseList = menuOrderList.stream()
+    List<OrderEachMenuResponse> menuResponseList = menuOrderList.stream()
         .map(menuOrder -> {
           Menu menu = menuOrder.getMenu();
-          return MenuResponse.of(menu.getName(), menuOrder.getCount());
+          return OrderEachMenuResponse.of(menu.getName(), menuOrder.getCount());
         })
         .collect(Collectors.toList());
 
