@@ -4,9 +4,9 @@ import java.util.List;
 
 public record OrderResponse(
     Integer totalPrice,
-    List<MenuResponse> orderMenuList
+    List<OrderEachMenuResponse> orderMenuList
 ) {
-  public static OrderResponse of(Integer totalPrice, List<MenuResponse> orderMenuList){
+  public static OrderResponse of(Integer totalPrice, List<OrderEachMenuResponse> orderMenuList){
     return new OrderResponse(totalPrice, orderMenuList);
   }
 

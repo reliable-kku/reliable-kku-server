@@ -14,7 +14,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.deundeunhaku.reliablekkuserver.BaseControllerTest;
-import com.deundeunhaku.reliablekkuserver.order.dto.MenuResponse;
+import com.deundeunhaku.reliablekkuserver.order.dto.OrderEachMenuResponse;
 import com.deundeunhaku.reliablekkuserver.order.dto.OrderIdResponse;
 import com.deundeunhaku.reliablekkuserver.order.dto.OrderRegisterRequest;
 import com.deundeunhaku.reliablekkuserver.order.dto.OrderResponse;
@@ -81,8 +81,8 @@ class OrderControllerTest extends BaseControllerTest {
     //given
     Long orderId = 1L;
 
-    MenuResponse 팥_붕어빵 = MenuResponse.of("팥 붕어빵", 2);
-    MenuResponse 슈크림_붕어빵 = MenuResponse.of("슈크림 붕어빵", 4);
+    OrderEachMenuResponse 팥_붕어빵 = OrderEachMenuResponse.of("팥 붕어빵", 2);
+    OrderEachMenuResponse 슈크림_붕어빵 = OrderEachMenuResponse.of("슈크림 붕어빵", 4);
 
     when(orderService.getOrderMenuList(orderId))
         .thenReturn(OrderResponse.of(15000, List.of(팥_붕어빵, 슈크림_붕어빵)));
