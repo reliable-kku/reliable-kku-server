@@ -3,9 +3,11 @@ package com.deundeunhaku.reliablekkuserver.order.controller;
 import static org.mockito.Mockito.when;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
+import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
 import static org.springframework.restdocs.request.RequestDocumentation.queryParameters;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -83,6 +85,27 @@ class AdminOrderControllerTest extends BaseControllerTest {
                 fieldWithPath("[].isOfflineOrder").description("오프라인 주문 여부"),
                 fieldWithPath("[].menuResponse[].name").description("메뉴 이름"),
                 fieldWithPath("[].menuResponse[].count").description("메뉴 개수")
+            )
+        ));
+  }
+
+  @Test
+  void 대기중인_주문을_조리중으로_변경하고_시간을_보낸다() throws Exception {
+      //given
+      Long orderId = 1L;
+      Integer orderMinutes = 10;
+
+      //when
+    ResultActions resultActions = mockMvc.perform(
+            post(API + "/admin/orders/{orderId}/minutes/{orderMinutes}", orderId, orderMinutes))
+        .andDo(print());
+
+    //then
+    resultActions.andExpect(status().isCreated())
+        .andDo(document("admin/order-status/success",
+            pathParameters(
+                parameterWithName("orderId").description("주문 상태"),
+                parameterWithName("orderMinutes").description("주문 예상 걸리는 시간")
             )
         ));
 

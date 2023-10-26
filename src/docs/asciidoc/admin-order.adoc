@@ -32,3 +32,17 @@ include::{snippets}/admin/order-list/success/query-parameters.adoc[]
 include::{snippets}/admin/order-list/success/http-response.adoc[]
 include::{snippets}/admin/order-list/success/response-fields.adoc[]
 
+=== 관리자 주문 접수 (조리시간 선택후 주문 접수)
+
+==== Request
+
+include::{snippets}/admin/order-status/success/http-request.adoc[]
+
+Path Parameters::
+include::{snippets}/admin/order-status/success/path-parameters.adoc[]
+
+==== Response
+
+include::{snippets}/admin/order-status/success/http-response.adoc[]
+
+

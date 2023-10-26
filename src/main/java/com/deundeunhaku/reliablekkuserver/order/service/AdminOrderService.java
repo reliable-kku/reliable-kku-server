@@ -8,6 +8,7 @@ import com.deundeunhaku.reliablekkuserver.order.repository.OrderRepository;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @RequiredArgsConstructor
 @Service
@@ -30,4 +31,15 @@ public class AdminOrderService {
                 menuOrderRepository.findByOrderToOrderEachMenuResponse(order)
             )).toList();
   }
+
+  @Transactional
+  public void setOrderToCooking(Long orderId, Integer orderMinutes) {
+//FIXME : fcm 로직 추가 필요
+    Order order = orderRepository.findById(orderId)
+        .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 주문입니다."));
+
+    order.updateOrderStatus(OrderStatus.COOKING);
+    order.addMinutesToExpectedWaitDateTime(orderMinutes);
+  }
+
 }
