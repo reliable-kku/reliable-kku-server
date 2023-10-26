@@ -167,4 +167,18 @@ public class OrderService {
         .orElse(0L);
   }
 
+  public void isMemberNowOrdered(Member member) {
+    List<Order> orderByMember = orderRepository.findOrderByMember(member);
+    List<OrderStatus> orderProceedingStatus = List.of(OrderStatus.WAIT, OrderStatus.COOKING,
+        OrderStatus.COOKED);
+
+    List<OrderStatus> isOrderProceeding = orderByMember.stream()
+        .map(Order::getOrderStatus)
+        .filter(orderProceedingStatus::contains)
+        .toList();
+
+    if (isOrderProceeding.size() > 0) {
+      throw new IllegalArgumentException("이미 주문이 진행중입니다.");
+    }
+  }
 }

@@ -8,6 +8,15 @@
 
 link:index.html[메인 문서]
 
+=== 주문이 현재 진행중인지 확인해준다
+
+==== Request
+include::{snippets}/order/duplicate/success/http-request.adoc[]
+
+==== Response
+include::{snippets}/order/duplicate/success/http-response.adoc[]
+
+
 === 주문을 저장한다 (토스 PG 결제 이후)
 
 ==== Request
