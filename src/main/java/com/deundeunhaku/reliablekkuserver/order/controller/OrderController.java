@@ -43,4 +43,11 @@ public class OrderController {
     return ResponseEntity.noContent().build();
   }
 
+  @GetMapping("/duplicate")
+  public ResponseEntity<Void> isMemberNowOrdered(@AuthenticationPrincipal Member member) {
+    orderService.isMemberNowOrdered(member);
+    return ResponseEntity.noContent().build();
+  }
+
+
 }
