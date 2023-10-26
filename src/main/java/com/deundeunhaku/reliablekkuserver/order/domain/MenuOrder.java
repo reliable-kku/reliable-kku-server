@@ -13,6 +13,7 @@ import org.hibernate.annotations.DynamicInsert;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @Entity
+@IdClass(MenuOrderId.class)
 public class MenuOrder {
 
   @Id
@@ -25,18 +26,23 @@ public class MenuOrder {
   @NotNull
   @ManyToOne
   @JoinColumn(name = "order_id")
-  @JoinColumn(name = "order_orderDateTime")
   private Order order;
-
-  /*  @Id
-    @NotNull
-    private String menuId;
-
-    @Id
-    @NotNull
-    private String orderId;*/
 
   @ColumnDefault("0")
   private Integer count;
 
+
+  public MenuOrder(Menu menu, Order order, Integer count) {
+    this.menu = menu;
+    this.order = order;
+    this.count = count;
+  }
+
+  public void updateCount(Integer count) {
+    this.count = count;
+  }
+
+  public static MenuOrder createMenuOrder(Menu menu, Order order, Integer count) {
+    return new MenuOrder(menu, order, count);
+  }
 }

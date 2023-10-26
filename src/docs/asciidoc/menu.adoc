@@ -1,0 +1,21 @@
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 2
+
+== 메인 문서
+
+link:index.html[메인 문서]
+
+=== 메뉴의 리스트를 반환한다
+
+==== Request
+
+include::{snippets}/menu/list/success/http-request.adoc[]
+
+==== Response
+
+include::{snippets}/menu/list/success/http-response.adoc[]
+include::{snippets}/menu/list/success/response-fields.adoc[]
+

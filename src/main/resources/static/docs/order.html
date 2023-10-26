@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.10">
-<title>API 문서</title>
+<title>메인 문서</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
 /* Asciidoctor default stylesheet | MIT License | https://asciidoctor.org */
@@ -439,19 +439,14 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </head>
 <body class="book toc2 toc-left">
 <div id="header">
-<h1>API 문서</h1>
-<div class="details">
-<span id="revnumber">version 0.0.1-SNAPSHOT</span>
-</div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
 <ul class="sectlevel1">
-<li><a href="#_github_주소">GitHub 주소</a></li>
-<li><a href="#_member_문서">Member 문서</a>
+<li><a href="#_메인_문서">메인 문서</a>
 <ul class="sectlevel2">
-<li><a href="#_로그인_회원가입_비밀번호_찾기_관련_문서">로그인, 회원가입, 비밀번호 찾기 관련 문서</a></li>
-<li><a href="#_menu_문서_메뉴_리스트">Menu 문서 ( 메뉴 리스트 &#8230;&#8203;)</a></li>
-<li><a href="#_order_문서_주문_관련_문서">Order 문서 ( 주문 관련 문서 )</a></li>
+<li><a href="#_주문을_저장한다_토스_pg_결제_이후">주문을 저장한다 (토스 PG 결제 이후)</a></li>
+<li><a href="#_주문_저장후_주문의_상세정보_주문_메뉴_리스트_를_반환한다">주문 저장후 주문의 상세정보 (주문 메뉴 리스트) 를 반환한다</a></li>
+<li><a href="#_주문을_취소한다">주문을 취소한다</a></li>
 </ul>
 </li>
 </ul>
@@ -459,48 +454,67 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </div>
 <div id="content">
 <div class="sect1">
-<h2 id="_github_주소">GitHub 주소</h2>
+<h2 id="_메인_문서">메인 문서</h2>
 <div class="sectionbody">
-<div class="ulist">
-<ul>
-<li>
-<p><a href="https://github.com/reliable-kku/reliable-kku-server">GitHub 주소</a></p>
-</li>
-</ul>
+<div class="paragraph">
+<p><a href="index.html">메인 문서</a></p>
 </div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_member_문서">Member 문서</h2>
-<div class="sectionbody">
 <div class="sect2">
-<h3 id="_로그인_회원가입_비밀번호_찾기_관련_문서">로그인, 회원가입, 비밀번호 찾기 관련 문서</h3>
-<div class="ulist">
-<ul>
-<li>
-<p><a href="member-login-register.html">로그인,회원가입,비밀번호 찾기 문서</a></p>
-</li>
-</ul>
+<h3 id="_주문을_저장한다_토스_pg_결제_이후">주문을 저장한다 (토스 PG 결제 이후)</h3>
+<div class="sect3">
+<h4 id="_request">Request</h4>
+<div class="paragraph">
+<p>Unresolved directive in order.adoc - include::{snippets}/order/register/success/http-request.adoc[]
+Unresolved directive in order.adoc - include::{snippets}/order/register/success/request-fields.adoc[]</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_response">Response</h4>
+<div class="paragraph">
+<p>Unresolved directive in order.adoc - include::{snippets}/order/register/success/http-response.adoc[]
+Unresolved directive in order.adoc - include::{snippets}/order/register/success/response-fields.adoc[]</p>
+</div>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_menu_문서_메뉴_리스트">Menu 문서 ( 메뉴 리스트 &#8230;&#8203;)</h3>
-<div class="ulist">
-<ul>
-<li>
-<p><a href="menu.html">메뉴 문서</a></p>
-</li>
-</ul>
+<h3 id="_주문_저장후_주문의_상세정보_주문_메뉴_리스트_를_반환한다">주문 저장후 주문의 상세정보 (주문 메뉴 리스트) 를 반환한다</h3>
+<div class="sect3">
+<h4 id="_request_2">Request</h4>
+<div class="paragraph">
+<p>Unresolved directive in order.adoc - include::{snippets}/order/get/success/http-request.adoc[]</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Path Variable</dt>
+<dd>
+<p>Unresolved directive in order.adoc - include::{snippets}/order/get/success/path-parameters.adoc[]</p>
+</dd>
+</dl>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_response_2">Response</h4>
+<div class="paragraph">
+<p>Unresolved directive in order.adoc - include::{snippets}/order/get/success/http-response.adoc[]
+Unresolved directive in order.adoc - include::{snippets}/order/get/success/response-fields.adoc[]</p>
+</div>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_order_문서_주문_관련_문서">Order 문서 ( 주문 관련 문서 )</h3>
-<div class="ulist">
-<ul>
-<li>
-<p><a href="order.html">주문 관련 문서</a></p>
-</li>
-</ul>
+<h3 id="_주문을_취소한다">주문을 취소한다</h3>
+<div class="sect3">
+<h4 id="_request_3">Request</h4>
+<div class="paragraph">
+<p>Unresolved directive in order.adoc - include::{snippets}/order/delete/success/http-request.adoc[]</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Path Variable</dt>
+<dd>
+<p>Unresolved directive in order.adoc - include::{snippets}/order/delete/success/path-parameters.adoc[]</p>
+</dd>
+</dl>
+</div>
 </div>
 </div>
 </div>
@@ -509,7 +523,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="footer">
 <div id="footer-text">
 Version 0.0.1-SNAPSHOT<br>
-Last updated 2023-10-26 17:31:38 +0900
+Last updated 2023-10-26 17:37:58 +0900
 </div>
 </div>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/styles/github.min.css">
