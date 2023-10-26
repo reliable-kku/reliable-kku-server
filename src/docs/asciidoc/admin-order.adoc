@@ -1,0 +1,21 @@
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 2
+
+== 메인 문서
+
+link:index.html[메인 문서]
+
+=== 오프라인 주문하기 성공
+
+=== Request
+
+include::{snippets}/offline-order/register/success/http-request.adoc[]
+include::{snippets}/offline-order/register/success/request-fields.adoc[]
+
+=== Response
+
+include::{snippets}/offline-order/register/success/http-response.adoc[]
+
