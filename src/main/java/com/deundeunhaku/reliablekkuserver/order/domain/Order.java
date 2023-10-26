@@ -4,6 +4,7 @@ package com.deundeunhaku.reliablekkuserver.order.domain;
 import com.deundeunhaku.reliablekkuserver.member.domain.Member;
 import com.deundeunhaku.reliablekkuserver.member.domain.OfflineMember;
 import com.deundeunhaku.reliablekkuserver.order.constant.OrderStatus;
+import com.deundeunhaku.reliablekkuserver.order.dto.OfflineOrderRequest;
 import com.deundeunhaku.reliablekkuserver.order.dto.OrderRegisterRequest;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -19,6 +20,7 @@ import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
@@ -69,31 +71,50 @@ public class Order implements Serializable {
     this.orderStatus = orderStatus;
   }
 
-
-  public Order(Long todayOrderCount, LocalDateTime orderDatetime, Integer orderPrice,
-      LocalDateTime expectedWaitDatetime, Boolean isOfflineOrder, LocalDate createdAt,
-      Member member, OrderStatus orderStatus
-  ) {
+  @Builder
+  public Order(Long id, Long todayOrderCount, LocalDateTime orderDatetime, Integer orderPrice,
+      LocalDateTime expectedWaitDatetime, Boolean isOfflineOrder, OrderStatus orderStatus,
+      LocalDate createdAt, Member member, OfflineMember offlineMember) {
+    this.id = id;
     this.todayOrderCount = todayOrderCount;
     this.orderDatetime = orderDatetime;
     this.orderPrice = orderPrice;
     this.expectedWaitDatetime = expectedWaitDatetime;
     this.isOfflineOrder = isOfflineOrder;
+    this.orderStatus = orderStatus;
     this.createdAt = createdAt;
     this.member = member;
-    this.orderStatus = orderStatus;
+    this.offlineMember = offlineMember;
   }
 
-  public static Order createOfflineOrder(Long todayOrderCount, OrderRegisterRequest request,
+  public static Order createOnlineOrder(Long todayOrderCount, OrderRegisterRequest request,
       Member member) {
-    return new Order(
-        todayOrderCount,
-        LocalDateTime.now(),
-        request.orderPrice(),
-        LocalDateTime.now(),
-        true,
-        LocalDate.now(),
-        member,
-        OrderStatus.WAIT);
+
+    return Order
+        .builder()
+        .todayOrderCount(todayOrderCount)
+        .orderDatetime(LocalDateTime.now())
+        .orderPrice(request.orderPrice())
+        .expectedWaitDatetime(LocalDateTime.now())
+        .isOfflineOrder(false)
+        .orderStatus(OrderStatus.WAIT)
+        .createdAt(LocalDate.now())
+        .member(member)
+        .build();
+  }
+
+
+  public static Order createOfflineOrder(Long todayOrderCount, OfflineOrderRequest request,
+      OfflineMember member) {
+
+    return Order.builder()
+        .todayOrderCount(todayOrderCount)
+        .orderDatetime(LocalDateTime.now())
+        .orderPrice(request.totalPrice())
+        .isOfflineOrder(true)
+        .createdAt(LocalDate.now())
+        .offlineMember(member)
+        .orderStatus(OrderStatus.WAIT)
+        .build();
   }
 }
