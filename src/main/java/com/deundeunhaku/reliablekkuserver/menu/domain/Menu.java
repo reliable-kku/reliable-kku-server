@@ -2,15 +2,18 @@ package com.deundeunhaku.reliablekkuserver.menu.domain;
 
 import com.deundeunhaku.reliablekkuserver.member.domain.Member;
 import com.google.firebase.database.annotations.NotNull;
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
-
-import java.util.ArrayList;
-import java.util.List;
 import org.hibernate.annotations.DynamicInsert;
 
 @DynamicInsert
@@ -44,12 +47,15 @@ public class Menu {
     private boolean isSale;
 //단방향 맞는지?
     @ManyToOne(fetch = FetchType.LAZY)
-    private Member OnlineMember;
+    private Member onlineMember;
 
+
+    private String menuImageUrl;
 
 
     @Builder
-    public Menu(Long id, String phoneNumber, String name, String description, Integer pricePerOne, Integer pricePerThree, boolean isSale) {
+    public Menu(Long id, String phoneNumber, String name, String description, Integer pricePerOne,
+        Integer pricePerThree, boolean isSale, Member onlineMember, String menuImageUrl) {
         this.id = id;
         this.phoneNumber = phoneNumber;
         this.name = name;
@@ -57,9 +63,7 @@ public class Menu {
         this.pricePerOne = pricePerOne;
         this.pricePerThree = pricePerThree;
         this.isSale = isSale;
+        this.onlineMember = onlineMember;
+        this.menuImageUrl = menuImageUrl;
     }
-
-    @OneToMany(mappedBy = "menu", cascade = CascadeType.ALL)
-    private List<MenuImage> menuImageList = new ArrayList<>();
-
 }
