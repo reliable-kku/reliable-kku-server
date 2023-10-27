@@ -4,6 +4,7 @@ import com.deundeunhaku.reliablekkuserver.common.exception.NotAuthorizedExceptio
 import com.deundeunhaku.reliablekkuserver.jwt.util.JwtTokenUtils;
 import com.deundeunhaku.reliablekkuserver.member.domain.Member;
 import com.deundeunhaku.reliablekkuserver.member.repository.MemberRepository;
+import com.deundeunhaku.reliablekkuserver.member.service.MemberDetailsService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -18,6 +19,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
@@ -28,24 +30,24 @@ import org.springframework.web.filter.OncePerRequestFilter;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
   private final JwtTokenUtils jwtTokenUtils;
-  private final MemberRepository memberRepository;
+  private final MemberDetailsService memberDetailsService;
 
   @Override
   protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
       FilterChain filterChain) throws ServletException, IOException {
 
-    List<String> whiteListPath = List.of("/api/v1", "/api/v1/token/valid", "/api/v1/token/update", "/api/v1/auth/login", "/api/v1/find-password","/api/v1/find-password/phone-number/certification-number", "/api/v1/register", "/api/v1/register/phone-number/duplicate", "/api/v1/register/phone-number/certification-number" );
+    final String authHeader = request.getHeader("Authorization");
 
-    if (whiteListPath.contains(request.getServletPath())) {
+    if (authHeader == null || !authHeader.startsWith("Bearer ")) {
       filterChain.doFilter(request, response);
       return;
     }
 
     String accessToken = parseBearerToken(request);
 
-    Long id = jwtTokenUtils.getId(accessToken);
+    String phoneNumber = jwtTokenUtils.getPhoneNumber(accessToken);
 
-    Boolean isTokenValid = jwtTokenUtils.validate(accessToken, id);
+    Boolean isTokenValid = jwtTokenUtils.validate(accessToken, phoneNumber);
     if (!isTokenValid) {
       throw new NotAuthorizedException("유효하지 않은 토큰입니다.");
     }
@@ -55,16 +57,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
       throw new NotAuthorizedException("만료된 토큰입니다.");
     }
 
-    Member member = memberRepository.findById(id)
-        .orElseThrow(() -> new NotAuthorizedException("존재하지 않는 회원입니다."));
+    UserDetails member = memberDetailsService.loadUserByUsername(phoneNumber);
 
     AbstractAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
         member,
         null,
-        AuthorityUtils.NO_AUTHORITIES
+        member.getAuthorities()
     );
-
-
 
     authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
     SecurityContext securityContext = SecurityContextHolder.createEmptyContext();
@@ -82,7 +81,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     if (StringUtils.hasText(accessToken) && accessToken.startsWith("Bearer ")) {
       return accessToken.substring(7);
     } else {
-//      response.setStatus(HttpServletResponse.SC_UNAUTHORIZED)
       throw new NotAuthorizedException("잘못된 토큰입니다.");
     }
   }

@@ -16,9 +16,9 @@ public class JwtTokenUtils {
     @Value("${jwt.secret-key}")
     private String secretKey;
 
-    public Boolean validate(String token, Long id) {
-        Long getIdWithToken = getId(token);
-        return getIdWithToken.equals(id) && !isTokenExpired(token);
+    public Boolean validate(String token, String phoneNumber) {
+        String getPhoneNumberWithToken = getPhoneNumber(token);
+        return getPhoneNumberWithToken.equals(phoneNumber) && !isTokenExpired(token);
     }
 
     public Claims extractAllClaims(String token) {
@@ -29,8 +29,8 @@ public class JwtTokenUtils {
                 .getBody();
     }
 
-    public Long getId(String token) {
-        return extractAllClaims(token).get("id", Long.class);
+    public String getPhoneNumber(String token) {
+        return extractAllClaims(token).get("phoneNumber", String.class);
     }
 
     private Key getSigningKey() {
@@ -43,13 +43,13 @@ public class JwtTokenUtils {
         return expiration.before(new Date());
     }
 
-    public String generateJwtToken(Long id, long expiredTimeMs) {
-        return doGenerateToken(id, expiredTimeMs);
+    public String generateJwtToken(String phoneNumber, long expiredTimeMs) {
+        return doGenerateToken(phoneNumber, expiredTimeMs);
     }
 
-    private String doGenerateToken(Long id, long expireTime) {
+    private String doGenerateToken(String phoneNumber, long expireTime) {
         Claims claims = Jwts.claims();
-        claims.put("id", id);
+        claims.put("phoneNumber", phoneNumber);
 
         return Jwts.builder()
                 .setClaims(claims)

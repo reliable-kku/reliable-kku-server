@@ -1,5 +1,6 @@
 package com.deundeunhaku.reliablekkuserver.member.controller;
 
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 import static org.springframework.restdocs.cookies.CookieDocumentation.cookieWithName;
 import static org.springframework.restdocs.cookies.CookieDocumentation.responseCookies;
@@ -45,14 +46,11 @@ class MemberAuthenticationControllerTest extends BaseControllerTest {
         .password(password)
         .build();
 
-    when(memberService.login(request.phoneNumber(), request.password()))
-        .thenReturn(member);
-
-    when(jwtTokenUtils.generateJwtToken(memberId,
+    when(jwtTokenUtils.generateJwtToken(phoneNumber,
         TokenDuration.ACCESS_TOKEN_DURATION.getDuration()))
         .thenReturn("accessToken");
 
-    when(jwtTokenUtils.generateJwtToken(memberId,
+    when(jwtTokenUtils.generateJwtToken(phoneNumber,
         TokenDuration.REFRESH_TOKEN_DURATION.getDuration()))
         .thenReturn("refreshToken");
 
@@ -87,8 +85,8 @@ class MemberAuthenticationControllerTest extends BaseControllerTest {
         phoneNumber,
         password
     );
-    when(memberService.login(request.phoneNumber(), request.password()))
-        .thenThrow(new LoginFailedException());
+    doThrow(new LoginFailedException())
+        .when(memberService).login(phoneNumber, password);
 
     //when
     ResultActions resultActions = mockMvc.perform(post(API + "/auth/login")
