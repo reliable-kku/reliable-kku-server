@@ -16,9 +16,10 @@ import com.deundeunhaku.reliablekkuserver.order.dto.OrderResponse;
 import com.deundeunhaku.reliablekkuserver.order.dto.RegisteredMenuRequest;
 import com.deundeunhaku.reliablekkuserver.order.repository.MenuOrderRepository;
 import com.deundeunhaku.reliablekkuserver.order.repository.OrderRepository;
+import com.deundeunhaku.reliablekkuserver.payment.domain.Payment;
+import com.deundeunhaku.reliablekkuserver.payment.repository.PaymentRepository;
 import com.deundeunhaku.reliablekkuserver.sse.repository.SseInMemoryRepository;
-import com.deundeunhaku.reliablekkuserver.toss.Payment;
-import com.deundeunhaku.reliablekkuserver.toss.PaymentRepository;
+
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
@@ -42,10 +43,10 @@ public class OrderService {
 
   @Transactional
   public OrderIdResponse registerOrder(OrderRegisterRequest request, Member member) {
-    Payment payment = paymentRepository.findById(request.tossOrderId())
-        .orElseThrow(() -> new IllegalArgumentException("잘못된 요청입니다."));
+    Payment payment = paymentRepository.findByOrderId(request.tossOrderId())
+            .orElseThrow(() -> new IllegalArgumentException("잘못된 요청입니다."));
 
-    if (!payment.getIsPaid()) {
+    if (!payment.isPaySuccessYn()) {
       throw new IllegalArgumentException("잘못된 요청입니다.");
     }
 

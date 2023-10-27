@@ -1,30 +1,14 @@
 package com.deundeunhaku.reliablekkuserver.payment.controller;
 
-import com.amazonaws.Response;
 import com.deundeunhaku.reliablekkuserver.common.config.TossPaymentConfig;
 import com.deundeunhaku.reliablekkuserver.member.domain.Member;
-import com.deundeunhaku.reliablekkuserver.payment.domain.Payment;
 import com.deundeunhaku.reliablekkuserver.payment.dto.*;
 import com.deundeunhaku.reliablekkuserver.payment.service.PaymentService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import lombok.Value;
-
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.Reader;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.nio.charset.StandardCharsets;
-import java.util.Base64;
 
 
 @RequiredArgsConstructor
