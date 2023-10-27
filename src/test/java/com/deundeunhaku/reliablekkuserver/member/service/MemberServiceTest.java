@@ -1,5 +1,4 @@
 package com.deundeunhaku.reliablekkuserver.member.service;
-
 import com.deundeunhaku.reliablekkuserver.BaseServiceTest;
 import com.deundeunhaku.reliablekkuserver.common.exception.LoginFailedException;
 import com.deundeunhaku.reliablekkuserver.member.domain.Member;
