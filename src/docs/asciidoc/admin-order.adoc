@@ -1,0 +1,48 @@
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 2
+
+== 메인 문서
+
+link:index.html[메인 문서]
+
+=== 오프라인 주문하기 성공
+
+==== Request
+
+include::{snippets}/offline-order/register/success/http-request.adoc[]
+include::{snippets}/offline-order/register/success/request-fields.adoc[]
+
+==== Response
+
+include::{snippets}/offline-order/register/success/http-response.adoc[]
+
+=== 관리자 주문 리스트 조회
+
+==== Request
+
+include::{snippets}/admin/order-list/success/http-request.adoc[]
+Query Parameters::
+include::{snippets}/admin/order-list/success/query-parameters.adoc[]
+
+==== Response
+
+include::{snippets}/admin/order-list/success/http-response.adoc[]
+include::{snippets}/admin/order-list/success/response-fields.adoc[]
+
+=== 관리자 주문 접수 (조리시간 선택후 주문 접수)
+
+==== Request
+
+include::{snippets}/admin/order-status/success/http-request.adoc[]
+
+Path Parameters::
+include::{snippets}/admin/order-status/success/path-parameters.adoc[]
+
+==== Response
+
+include::{snippets}/admin/order-status/success/http-response.adoc[]
+
+

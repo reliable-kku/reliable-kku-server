@@ -34,7 +34,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
   protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
       FilterChain filterChain) throws ServletException, IOException {
 
-    List<String> whiteListPath = List.of("/api/v1", "/api/v1/token/valid", "/api/v1/token/update");
+    List<String> whiteListPath = List.of("/api/v1", "/api/v1/token/valid", "/api/v1/token/update", "/api/v1/auth/login", "/api/v1/find-password","/api/v1/find-password/phone-number/certification-number", "/api/v1/register", "/api/v1/register/phone-number/duplicate", "/api/v1/register/phone-number/certification-number" );
 
     if (whiteListPath.contains(request.getServletPath())) {
       filterChain.doFilter(request, response);
