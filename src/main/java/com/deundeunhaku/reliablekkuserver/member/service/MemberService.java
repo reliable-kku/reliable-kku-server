@@ -6,6 +6,7 @@ import com.deundeunhaku.reliablekkuserver.member.domain.Member;
 import com.deundeunhaku.reliablekkuserver.member.dto.MemberRegisterRequest;
 import com.deundeunhaku.reliablekkuserver.member.repository.CertificationNumberRepository;
 import com.deundeunhaku.reliablekkuserver.member.repository.MemberRepository;
+import com.deundeunhaku.reliablekkuserver.order.dto.MemberPasswordChangeRequest;
 import com.deundeunhaku.reliablekkuserver.sms.dto.SmsCertificationNumber;
 import com.deundeunhaku.reliablekkuserver.sms.service.SmsService;
 import java.time.LocalDate;
@@ -123,4 +124,34 @@ public class MemberService {
     smsService.sendNewPasswordToPhoneNumber(phoneNumber, newPassword);
 
   }
+
+  public boolean isMemberPasswordMatch(Member member, String password) {
+
+    if (passwordEncoder.matches(member.getPassword(), password)) {
+      return true;
+    }else {
+      return false;
+    }
+  }
+
+  @Transactional
+  public boolean changeMemberPassword(Member member, MemberPasswordChangeRequest request) {
+    member.changePassword(passwordEncoder.encode(request.password()));
+    return true;
+  }
+
+  /*@jakarta.transaction.Transactional
+  public boolean changeMemberPassword(MemberPasswordChangeRequest request) {
+    Member member = memberRepository.findByStudentId(request.studentId())
+            .orElseThrow(
+                    () -> new IllegalArgumentException("존재하지 않는 학번입니다.")
+            );
+
+    if (!member.getPhoneNumber().equals(request.phoneNumber())) {
+      throw new IllegalArgumentException("학번과 맞지 않는 휴대폰번호입니다.");
+    }
+
+    member.changePassword(passwordEncoder.encode(request.password()));
+    return true;
+  }*/
 }
