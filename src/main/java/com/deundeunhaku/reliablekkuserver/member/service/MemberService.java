@@ -26,6 +26,10 @@ public class MemberService {
   private final CertificationNumberRepository certificationNumberRepository;
   private final SmsService smsService;
 
+      public Member findMemberById(Long id) {
+        return memberRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저입니다."));
+    }
 
   public Member login(String phoneNumber, String password) {
 
