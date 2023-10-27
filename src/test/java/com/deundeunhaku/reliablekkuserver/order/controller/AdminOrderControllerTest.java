@@ -41,24 +41,30 @@ class AdminOrderControllerTest extends BaseControllerTest {
         1L,
         "01012341234",
         LocalTime.of(12, 30, 30),
-        true
-        , List.of(eachOrderResponse1, eachOrderResponse2, eachOrderResponse3)
+        true,
+        10L,
+        100,
+        List.of(eachOrderResponse1, eachOrderResponse2, eachOrderResponse3)
     );
 
     AdminOrderResponse adminOrderResponse2 = AdminOrderResponse.of(
         2L,
         "01011111111",
         LocalTime.of(12, 11, 30),
-        false
-        , List.of(eachOrderResponse1, eachOrderResponse2, eachOrderResponse3)
+        false,
+        10L,
+        100,
+        List.of(eachOrderResponse1, eachOrderResponse2, eachOrderResponse3)
     );
 
     AdminOrderResponse adminOrderResponse3 = AdminOrderResponse.of(
         3L,
         "01022222222",
         LocalTime.of(9, 12, 30),
-        true
-        , List.of(eachOrderResponse1, eachOrderResponse2, eachOrderResponse3)
+        true,
+        10L,
+        10,
+        List.of(eachOrderResponse1, eachOrderResponse2, eachOrderResponse3)
     );
 
     List<AdminOrderResponse> response = List.of(adminOrderResponse1,
@@ -83,6 +89,8 @@ class AdminOrderControllerTest extends BaseControllerTest {
                 fieldWithPath("[].orderTime").description("주문 시간"),
                 fieldWithPath("[].menuResponse").description("주문 메뉴"),
                 fieldWithPath("[].isOfflineOrder").description("오프라인 주문 여부"),
+                fieldWithPath("[].timeTakenMinutes").description("주문 예상 걸리는 시간"),
+                fieldWithPath("[].allCount").description("주문당 마리수"),
                 fieldWithPath("[].menuResponse[].name").description("메뉴 이름"),
                 fieldWithPath("[].menuResponse[].count").description("메뉴 개수")
             )
@@ -91,11 +99,11 @@ class AdminOrderControllerTest extends BaseControllerTest {
 
   @Test
   void 대기중인_주문을_조리중으로_변경하고_시간을_보낸다() throws Exception {
-      //given
-      Long orderId = 1L;
-      Integer orderMinutes = 10;
+    //given
+    Long orderId = 1L;
+    Integer orderMinutes = 10;
 
-      //when
+    //when
     ResultActions resultActions = mockMvc.perform(
             post(API + "/admin/orders/{orderId}/minutes/{orderMinutes}", orderId, orderMinutes))
         .andDo(print());
