@@ -1,0 +1,32 @@
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 2
+
+== 메인 문서
+
+link:index.html[메인 문서]
+
+=== 가게가 현재 영업중인지 아닌지 유무
+
+==== Request
+
+include::{snippets}/admin/store/get/open-closed/http-request.adoc[]
+
+==== Response
+
+include::{snippets}/admin/store/get/open-closed/http-response.adoc[]
+include::{snippets}/admin/store/get/open-closed/response-fields.adoc[]
+
+=== 가게의 상태를 바꾼다
+
+==== Request
+
+include::{snippets}/admin/store/put/open-closed/http-request.adoc[]
+
+==== Response
+
+include::{snippets}/admin/store/put/open-closed/http-response.adoc[]
+include::{snippets}/admin/store/put/open-closed/response-fields.adoc[]
+
