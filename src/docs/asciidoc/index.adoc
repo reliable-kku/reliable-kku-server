@@ -23,8 +23,16 @@
 
 * link:order.html[주문 관련 문서]
 
+=== 가게 문서
+* link:store.html[가게 문서]
+
+
 == 관리자
 
 === 주문 문서
 
 * link:admin-order.html[관리자 주문 문서]
+
+=== 가게 문서
+
+* link:admin-store.html[가게 문서]
