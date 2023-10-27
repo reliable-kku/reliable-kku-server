@@ -1,0 +1,28 @@
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 2
+
+== 메인 문서
+
+link:index.html[메인 문서]
+
+=== 비밀번호 변경(현재 비밀번호 일치하면 true 반환)
+
+==== Request
+
+include::{snippets}/my-pages/change-password/verify-current-password/success/http-request.adoc[]
+include::{snippets}/my-pages/change-password/verify-current-password/success/request-fields.adoc[]
+
+==== Response
+
+include::{snippets}/my-pages/change-password/verify-current-password/success/http-response.adoc[]
+include::{snippets}/my-pages/change-password/verify-current-password/success/response-fields.adoc[]
+
+=== 비밀번호 변경(성공)
+
+==== Request
+
+include::{snippets}/my-pages/change-password/success/http-request.adoc[]
+include::{snippets}/my-pages/change-password/success/request-fields.adoc[]

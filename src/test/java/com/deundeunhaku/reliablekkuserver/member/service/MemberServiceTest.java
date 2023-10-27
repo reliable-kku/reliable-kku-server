@@ -1,6 +1,8 @@
 package com.deundeunhaku.reliablekkuserver.member.service;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.deundeunhaku.reliablekkuserver.BaseServiceTest;
@@ -9,6 +11,8 @@ import com.deundeunhaku.reliablekkuserver.member.domain.Member;
 import com.deundeunhaku.reliablekkuserver.member.dto.LoginRequest;
 import com.deundeunhaku.reliablekkuserver.member.repository.MemberRepository;
 import java.util.Optional;
+
+import com.deundeunhaku.reliablekkuserver.order.dto.MemberPasswordChangeRequest;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -117,5 +121,41 @@ class MemberServiceTest extends BaseServiceTest {
         () -> memberService.login(request.phoneNumber(), request.password()));
   }
 
+  @Test
+  void 현재_비밀번호와_입력한_현재_비밀번호가_동일하면_true를_리턴한다(){
+    //given
+    Member member = Member.builder().password("mockedPassword").build();
+    String password = "mockedPassword";
 
+    when(passwordEncoder.matches(member.getPassword(), password)).thenReturn(true);
+    //when
+    boolean result = memberService.isMemberPasswordMatch(member, password);
+    //then
+    assertThat(result).isTrue();
+  }
+
+  @Test
+  void 현재_비밀번호와_입력한_현재_비밀번호가_다르면_false를_리턴한다(){
+    //given
+    Member member = Member.builder().password("mockedPassword").build();
+    String password = "mockedPassword1234";
+
+    when(passwordEncoder.matches(member.getPassword(), password)).thenReturn(false);
+    //when
+    boolean result = memberService.isMemberPasswordMatch(member, password);
+    //then
+    assertThat(result).isFalse();
+  }
+
+  @Test
+  void 변경할_비밀번호를_받으면_비밀번호를_변경한다() {
+    //given
+    MemberPasswordChangeRequest request = MemberPasswordChangeRequest.of( "changePassword");
+
+    Member member = Member.builder().password("password").build();
+    //when
+    boolean isChanged = memberService.changeMemberPassword(member, request);
+    //then
+    assertThat(isChanged).isTrue();
+  }
 }
