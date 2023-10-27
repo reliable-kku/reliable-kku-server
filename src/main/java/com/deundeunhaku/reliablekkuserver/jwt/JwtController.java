@@ -37,8 +37,8 @@ public class JwtController {
 
     String accessToken = accessTokenWithPrefix.split("Bearer ")[1];
 
-    Long id = jwtTokenUtils.getId(accessToken);
-    Boolean validate = jwtTokenUtils.validate(accessToken, id);
+    String phoneNumber = jwtTokenUtils.getPhoneNumber(accessToken);
+    Boolean validate = jwtTokenUtils.validate(accessToken, phoneNumber);
 
     if (validate) {
       return ResponseEntity.ok().build();
@@ -54,11 +54,11 @@ public class JwtController {
 
     String refreshToken = refreshTokenCookie.getValue();
 
-    Long id = jwtTokenUtils.getId(refreshToken);
-    Boolean validate = jwtTokenUtils.validate(refreshToken, id);
+    String phoneNumber = jwtTokenUtils.getPhoneNumber(refreshToken);
+    Boolean validate = jwtTokenUtils.validate(refreshToken, phoneNumber);
 
     if (validate) {
-      String newAccessToken = jwtTokenUtils.generateJwtToken(id,
+      String newAccessToken = jwtTokenUtils.generateJwtToken(phoneNumber,
           ACCESS_TOKEN_DURATION.getDuration());
       return ResponseEntity.ok().header(AUTHORIZATION, newAccessToken).build();
     } else {

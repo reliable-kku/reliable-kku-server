@@ -114,6 +114,7 @@ public class Order implements Serializable {
     return Order.builder()
         .todayOrderCount(todayOrderCount)
         .orderDatetime(LocalDateTime.now())
+        .expectedWaitDatetime(LocalDateTime.now())
         .orderPrice(request.totalPrice())
         .isOfflineOrder(true)
         .createdAt(LocalDate.now())

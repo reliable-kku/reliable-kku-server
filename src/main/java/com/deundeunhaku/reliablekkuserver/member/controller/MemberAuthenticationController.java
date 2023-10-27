@@ -11,6 +11,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,12 +29,12 @@ public class MemberAuthenticationController {
   public ResponseEntity<Void> login(@Valid @RequestBody LoginRequest loginRequest,
       HttpServletResponse response) {
 
-    Member member = memberService.login(loginRequest.phoneNumber(), loginRequest.password());
+    memberService.login(loginRequest.phoneNumber(), loginRequest.password());
 
-    String accessToken = jwtTokenUtils.generateJwtToken(member.getId(),
+    String accessToken = jwtTokenUtils.generateJwtToken(loginRequest.phoneNumber(),
         TokenDuration.ACCESS_TOKEN_DURATION.getDuration());
 
-    String refreshToken = jwtTokenUtils.generateJwtToken(member.getId(),
+    String refreshToken = jwtTokenUtils.generateJwtToken(loginRequest.phoneNumber(),
         TokenDuration.REFRESH_TOKEN_DURATION.getDuration());
 
     setAccessTokenInCookie(accessToken, response);

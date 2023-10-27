@@ -1,6 +1,7 @@
 package com.deundeunhaku.reliablekkuserver.member.service;
 
 import com.deundeunhaku.reliablekkuserver.common.exception.LoginFailedException;
+import com.deundeunhaku.reliablekkuserver.member.constant.Role;
 import com.deundeunhaku.reliablekkuserver.member.domain.CertificationNumber;
 import com.deundeunhaku.reliablekkuserver.member.domain.Member;
 import com.deundeunhaku.reliablekkuserver.member.dto.MemberRegisterRequest;
@@ -14,6 +15,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,19 +29,26 @@ public class MemberService {
   private final PasswordEncoder passwordEncoder;
   private final CertificationNumberRepository certificationNumberRepository;
   private final SmsService smsService;
+  private final AuthenticationManager authenticationManager;
 
+      public Member findMemberById(Long id) {
+        return memberRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저입니다."));
+    }
 
-  public Member login(String phoneNumber, String password) {
+  public void login(String phoneNumber, String password) {
 
     Member findMember = memberRepository.findByPhoneNumber(phoneNumber)
         .orElseThrow(LoginFailedException::new);
 
     boolean isPasswordMatch = passwordEncoder.matches(password, findMember.getPassword());
 
-    if (isPasswordMatch) {
-      return findMember;
-    } else {
+    if (!isPasswordMatch) {
       throw new LoginFailedException();
+    }else {
+      authenticationManager.authenticate(
+          new UsernamePasswordAuthenticationToken(phoneNumber, password));
+
     }
   }
 
@@ -99,6 +109,7 @@ public class MemberService {
             .realName(request.realName())
             .phoneNumber(request.phoneNumber())
             .password(passwordEncoder.encode(request.password()))
+            .role(Role.USER)
             .build()
     );
 
