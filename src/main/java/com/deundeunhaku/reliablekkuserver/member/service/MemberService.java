@@ -4,22 +4,23 @@ import com.deundeunhaku.reliablekkuserver.common.exception.LoginFailedException;
 import com.deundeunhaku.reliablekkuserver.member.constant.Role;
 import com.deundeunhaku.reliablekkuserver.member.domain.CertificationNumber;
 import com.deundeunhaku.reliablekkuserver.member.domain.Member;
+import com.deundeunhaku.reliablekkuserver.member.dto.MemberPasswordChangeRequest;
 import com.deundeunhaku.reliablekkuserver.member.dto.MemberRegisterRequest;
 import com.deundeunhaku.reliablekkuserver.member.repository.CertificationNumberRepository;
 import com.deundeunhaku.reliablekkuserver.member.repository.MemberRepository;
-import com.deundeunhaku.reliablekkuserver.order.dto.MemberPasswordChangeRequest;
 import com.deundeunhaku.reliablekkuserver.sms.dto.SmsCertificationNumber;
 import com.deundeunhaku.reliablekkuserver.sms.service.SmsService;
-import java.time.LocalDate;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 @RequiredArgsConstructor
 @Service
@@ -151,18 +152,5 @@ public class MemberService {
     return true;
   }
 
-  /*@jakarta.transaction.Transactional
-  public boolean changeMemberPassword(MemberPasswordChangeRequest request) {
-    Member member = memberRepository.findByStudentId(request.studentId())
-            .orElseThrow(
-                    () -> new IllegalArgumentException("존재하지 않는 학번입니다.")
-            );
 
-    if (!member.getPhoneNumber().equals(request.phoneNumber())) {
-      throw new IllegalArgumentException("학번과 맞지 않는 휴대폰번호입니다.");
-    }
-
-    member.changePassword(passwordEncoder.encode(request.password()));
-    return true;
-  }*/
 }

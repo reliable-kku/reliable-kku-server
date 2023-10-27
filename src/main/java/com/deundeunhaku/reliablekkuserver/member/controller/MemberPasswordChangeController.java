@@ -1,9 +1,9 @@
 package com.deundeunhaku.reliablekkuserver.member.controller;
 
 import com.deundeunhaku.reliablekkuserver.member.domain.Member;
+import com.deundeunhaku.reliablekkuserver.member.dto.MemberPasswordChangeRequest;
+import com.deundeunhaku.reliablekkuserver.member.dto.MemberPasswordMatchResponse;
 import com.deundeunhaku.reliablekkuserver.member.service.MemberService;
-import com.deundeunhaku.reliablekkuserver.order.dto.MemberPasswordChangeRequest;
-import com.deundeunhaku.reliablekkuserver.order.dto.MemberPasswordMatchResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;

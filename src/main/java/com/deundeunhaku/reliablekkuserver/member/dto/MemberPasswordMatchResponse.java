@@ -1,4 +1,4 @@
-package com.deundeunhaku.reliablekkuserver.order.dto;
+package com.deundeunhaku.reliablekkuserver.member.dto;
 
 public record MemberPasswordMatchResponse(
         boolean isPasswordMatch
