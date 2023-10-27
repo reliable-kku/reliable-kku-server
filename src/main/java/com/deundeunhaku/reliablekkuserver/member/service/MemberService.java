@@ -8,7 +8,6 @@ import com.deundeunhaku.reliablekkuserver.member.dto.MemberPasswordChangeRequest
 import com.deundeunhaku.reliablekkuserver.member.dto.MemberRegisterRequest;
 import com.deundeunhaku.reliablekkuserver.member.repository.CertificationNumberRepository;
 import com.deundeunhaku.reliablekkuserver.member.repository.MemberRepository;
-import com.deundeunhaku.reliablekkuserver.order.dto.MemberPasswordChangeRequest;
 import com.deundeunhaku.reliablekkuserver.sms.dto.SmsCertificationNumber;
 import com.deundeunhaku.reliablekkuserver.sms.service.SmsService;
 import lombok.RequiredArgsConstructor;
