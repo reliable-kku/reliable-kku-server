@@ -13,6 +13,7 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 class MemberServiceTest extends BaseServiceTest {
@@ -25,6 +26,9 @@ class MemberServiceTest extends BaseServiceTest {
 
   @Mock
   private PasswordEncoder passwordEncoder;
+
+  @Mock
+  private AuthenticationManager authenticationManager;
 
   @Test
   void 회원이_존재하는지_검증한다() throws Exception {
@@ -51,11 +55,9 @@ class MemberServiceTest extends BaseServiceTest {
         .thenReturn(true);
 
     //when
-    Member findMember = memberService.login(request.phoneNumber(), request.password());
+    memberService.login(request.phoneNumber(), request.password());
 
     //then
-    Assertions.assertThat(findMember).isEqualTo(member);
-
   }
 
   @Test
