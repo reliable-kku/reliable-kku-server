@@ -1,7 +1,7 @@
-package com.deundeunhaku.reliablekkuserver.order.dto;
+package com.deundeunhaku.reliablekkuserver.member.dto;
 
 public record MemberPasswordChangeRequest(
-             String password
+        String password
 ){
 
     public static MemberPasswordChangeRequest of(String password) {
