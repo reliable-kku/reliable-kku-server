@@ -22,7 +22,7 @@ public class MemberLogoutController {
             response.addCookie(accessTokenCookie);
             return ResponseEntity.ok().build();
         } else {
-            return ResponseEntity.ok().build();
+            return ResponseEntity.badRequest().build();
         }
     }
 }
