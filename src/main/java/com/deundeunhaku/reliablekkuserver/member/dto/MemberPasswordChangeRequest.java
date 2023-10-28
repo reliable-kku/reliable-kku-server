@@ -1,6 +1,7 @@
 package com.deundeunhaku.reliablekkuserver.member.dto;
 
 public record MemberPasswordChangeRequest(
+
         String password
 ){
 

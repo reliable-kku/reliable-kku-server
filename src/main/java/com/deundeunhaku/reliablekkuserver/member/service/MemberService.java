@@ -151,6 +151,4 @@ public class MemberService {
     member.changePassword(passwordEncoder.encode(request.password()));
     return true;
   }
-
-
 }
