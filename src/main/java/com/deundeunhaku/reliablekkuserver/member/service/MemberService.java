@@ -4,6 +4,7 @@ import com.deundeunhaku.reliablekkuserver.common.exception.LoginFailedException;
 import com.deundeunhaku.reliablekkuserver.member.constant.Role;
 import com.deundeunhaku.reliablekkuserver.member.domain.CertificationNumber;
 import com.deundeunhaku.reliablekkuserver.member.domain.Member;
+import com.deundeunhaku.reliablekkuserver.member.dto.MemberMyPageResponse;
 import com.deundeunhaku.reliablekkuserver.member.dto.MemberPasswordChangeRequest;
 import com.deundeunhaku.reliablekkuserver.member.dto.MemberRegisterRequest;
 import com.deundeunhaku.reliablekkuserver.member.repository.CertificationNumberRepository;
@@ -158,5 +159,9 @@ public class MemberService {
 
   public void setMemberWithdraw(Member member) {
     member.withdraw();
+  }
+
+  public MemberMyPageResponse getMyPageInfo(Member member) {
+        return MemberMyPageResponse.of(member.getRealName(), member.getLevel());
   }
 }
