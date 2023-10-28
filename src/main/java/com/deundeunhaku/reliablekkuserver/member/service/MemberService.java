@@ -162,6 +162,6 @@ public class MemberService {
   }
 
   public MemberMyPageResponse getMyPageInfo(Member member) {
-        return MemberMyPageResponse.of(member.getRealName(), member.getLevel());
+        return member.toMemberMyPageResponse();
   }
 }
