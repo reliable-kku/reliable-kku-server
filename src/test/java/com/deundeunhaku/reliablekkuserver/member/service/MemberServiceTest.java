@@ -155,4 +155,16 @@ class MemberServiceTest extends BaseServiceTest {
     //then
     assertThat(isChanged).isTrue();
   }
+
+  @Test
+  void 멤버의_탈퇴여부를_확인하고_false면_isWithdraw를_true로_반환한다(){
+    //given
+    Member member = Member.builder().isWithdraw(false).build();
+    //when
+    boolean isWithdraw = memberService.checkMemberIsWithdraw(member);
+    memberService.setMemberWithdraw(member);
+    //then
+    assertThat(isWithdraw).isFalse();
+    assertThat(member.isWithdraw()).isTrue();
+  }
 }

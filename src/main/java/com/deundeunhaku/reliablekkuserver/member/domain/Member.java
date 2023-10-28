@@ -43,13 +43,15 @@ public class Member implements UserDetails {
     @Enumerated(EnumType.STRING)
     private Role role;
 
+    @ColumnDefault("false")
+    private boolean isWithdraw;
+
     public void changePassword(String password) {
         this.password = password;
     }
 
     @Builder
-    public Member(Long id, String phoneNumber, String password, String realName, Integer level,
-        String firebaseToken, Role role) {
+    public Member(Long id, String phoneNumber, String password, String realName, Integer level, String firebaseToken, Role role, boolean isWithdraw) {
         this.id = id;
         this.phoneNumber = phoneNumber;
         this.password = password;
@@ -57,8 +59,14 @@ public class Member implements UserDetails {
         this.level = level;
         this.firebaseToken = firebaseToken;
         this.role = role;
+        this.isWithdraw = isWithdraw;
     }
 
+    public void withdraw() {
+        if (!this.isWithdraw) {
+            this.isWithdraw = true;
+        }
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
