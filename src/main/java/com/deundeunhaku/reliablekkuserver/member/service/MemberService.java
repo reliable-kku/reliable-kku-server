@@ -151,4 +151,12 @@ public class MemberService {
     member.changePassword(passwordEncoder.encode(request.password()));
     return true;
   }
+
+  public boolean checkMemberIsWithdraw(Member member) {
+      return member.isWithdraw();
+  }
+
+  public void setMemberWithdraw(Member member) {
+    member.withdraw();
+  }
 }
