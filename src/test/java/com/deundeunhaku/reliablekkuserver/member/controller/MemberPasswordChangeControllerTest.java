@@ -1,8 +1,8 @@
 package com.deundeunhaku.reliablekkuserver.member.controller;
 
 import com.deundeunhaku.reliablekkuserver.BaseControllerTest;
+import com.deundeunhaku.reliablekkuserver.member.dto.MemberPasswordChangeRequest;
 import com.deundeunhaku.reliablekkuserver.member.service.MemberService;
-import com.deundeunhaku.reliablekkuserver.order.dto.MemberPasswordChangeRequest;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
