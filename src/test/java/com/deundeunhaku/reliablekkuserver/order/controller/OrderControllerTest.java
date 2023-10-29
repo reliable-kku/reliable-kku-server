@@ -1,36 +1,38 @@
 package com.deundeunhaku.reliablekkuserver.order.controller;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
-import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
-import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
+import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.deundeunhaku.reliablekkuserver.BaseControllerTest;
-import com.deundeunhaku.reliablekkuserver.order.dto.OrderEachMenuResponse;
-import com.deundeunhaku.reliablekkuserver.order.dto.OrderIdResponse;
-import com.deundeunhaku.reliablekkuserver.order.dto.OrderRegisterRequest;
-import com.deundeunhaku.reliablekkuserver.order.dto.OrderResponse;
-import com.deundeunhaku.reliablekkuserver.order.dto.RegisteredMenuRequest;
+import com.deundeunhaku.reliablekkuserver.member.domain.Member;
+import com.deundeunhaku.reliablekkuserver.order.dto.*;
 import com.deundeunhaku.reliablekkuserver.order.service.OrderService;
+
+import java.util.Collections;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.test.web.servlet.ResultMatcher;
 
 class OrderControllerTest extends BaseControllerTest {
 
   @MockBean
   private OrderService orderService;
+
 
   @Test
   void 유저의_주문을_등록한다() throws Exception {
@@ -137,5 +139,37 @@ class OrderControllerTest extends BaseControllerTest {
         .andDo(document("order/duplicate/success"));
 
   }
+
+    @Test
+    void 년도와_월을_받아_메뉴룰_주문한날에_도장이_달력에_찍혀있는지_확인한다() throws Exception{
+
+      //given
+        OrderCalendarResponse response1 = OrderCalendarResponse.of(21, true);
+        OrderCalendarResponse response2 = OrderCalendarResponse.of(23, true);
+        OrderCalendarResponse response3 = OrderCalendarResponse.of(25, false);
+    Integer year = 2023;
+    Integer month = 10;
+
+        when(orderService.getOrderListByMemberAndYearAndMonth(any(), any(Integer.class), any(Integer.class))).thenReturn(List.of(response1, response2, response3));
+
+      //when
+        ResultActions resultActions = mockMvc.perform(RestDocumentationRequestBuilders.get(API + "/order/calendar")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .param("year", String.valueOf(year))
+                        .param("month", String.valueOf(month)))
+                .andDo(print());
+      //then
+        resultActions.andExpect(status().isOk())
+                .andDo(document("order/calendar/success",
+                        queryParameters(
+                                parameterWithName("year").description("주문 년도"),
+                                parameterWithName("month").description("주문 월")
+                        ),
+                        responseFields(
+                                fieldWithPath("[].orderedDay").description("주문한 날짜"),
+                                fieldWithPath("[].isOrdered").description("주문여부")
+                        )
+                ));
+    }
 
 }
