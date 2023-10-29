@@ -1,0 +1,27 @@
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 2
+
+== 메인 문서
+
+link:index.html[메인 문서]
+
+
+=== 멤버의 리스트를 반환한다
+
+==== Request
+
+include::{snippets}/admin/member/list/success/http-request.adoc[]
+QueryParameters::
+
+include::{snippets}/admin/member/list/success/query-parameters.adoc[]
+
+==== Response
+
+include::{snippets}/admin/member/list/success/http-response.adoc[]
+
+include::{snippets}/admin/member/list/success/response-fields.adoc[]
+
+

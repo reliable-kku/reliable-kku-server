@@ -40,3 +40,7 @@
 === 가게 문서
 
 * link:admin-store.html[가게 문서]
+
+=== 멤버 문서
+
+* link:admin-member.html[멤버 문서]

@@ -1,7 +1,9 @@
 package com.deundeunhaku.reliablekkuserver.member.service;
 
 import com.deundeunhaku.reliablekkuserver.member.domain.Member;
+import com.deundeunhaku.reliablekkuserver.member.dto.AdminMemberManagementResponse;
 import com.deundeunhaku.reliablekkuserver.member.repository.MemberRepository;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -18,5 +20,11 @@ public class AdminMemberService {
         .filter(member -> passwordEncoder.matches(password, member.getPassword()))
         .filter(Member::isAdmin)
         .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
+  }
+
+  public List<AdminMemberManagementResponse> getMemberList(String searchKeyword) {
+    return memberRepository.findMemberBySearchKeyword(searchKeyword);
+
+
   }
 }
