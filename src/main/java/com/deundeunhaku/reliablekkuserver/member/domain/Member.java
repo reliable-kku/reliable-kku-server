@@ -102,4 +102,9 @@ public class Member implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
+
+    public boolean isAdmin() {
+        return role.name().equals(Role.ADMIN.name());
+    }
+
 }
