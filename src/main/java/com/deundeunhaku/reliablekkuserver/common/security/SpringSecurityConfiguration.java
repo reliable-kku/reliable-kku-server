@@ -4,6 +4,7 @@ import static org.springframework.security.web.util.matcher.AntPathRequestMatche
 
 import com.deundeunhaku.reliablekkuserver.common.security.filter.JwtAuthenticationFilter;
 import com.deundeunhaku.reliablekkuserver.jwt.util.JwtTokenUtils;
+import com.deundeunhaku.reliablekkuserver.member.constant.Role;
 import com.deundeunhaku.reliablekkuserver.member.repository.MemberRepository;
 import com.deundeunhaku.reliablekkuserver.member.service.MemberDetailsService;
 import lombok.RequiredArgsConstructor;
@@ -54,6 +55,9 @@ public class SpringSecurityConfiguration {
             .requestMatchers(antMatcher("/api/v1/find-password/**")).permitAll()
             .requestMatchers(antMatcher("/api/v1/register")).permitAll()
             .requestMatchers(antMatcher("/api/v1/register/**")).permitAll()
+            .requestMatchers(antMatcher("/api/v1/auth/admin")).permitAll()
+            .requestMatchers(antMatcher("/api/v1/admin/**")).hasRole(Role.ADMIN.name())
+            .requestMatchers(antMatcher("/api/v1/**")).hasRole(Role.USER.name())
             .anyRequest().authenticated()
         )
         .sessionManagement((session) -> session
