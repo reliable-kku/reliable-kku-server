@@ -70,3 +70,13 @@ include::{snippets}/my-pages/member/information/http-request.adoc[]
 ==== Response
 include::{snippets}/my-pages/member/information/response-body.adoc[]
 include::{snippets}/my-pages/member/information/response-fields.adoc[]
+
+==== Request
+include::{snippets}/order/calendar/success/http-request.adoc[]
+
+==== QueryParameter
+include::{snippets}/order/calendar/success/query-parameters.adoc[]
+
+==== Response
+include::{snippets}/order/calendar/success/http-response.adoc[]
+include::{snippets}/order/calendar/success/response-fields.adoc[]
