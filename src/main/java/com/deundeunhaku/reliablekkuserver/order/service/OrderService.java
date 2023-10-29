@@ -8,18 +8,18 @@ import com.deundeunhaku.reliablekkuserver.menu.repository.MenuRepository;
 import com.deundeunhaku.reliablekkuserver.order.constant.OrderStatus;
 import com.deundeunhaku.reliablekkuserver.order.domain.MenuOrder;
 import com.deundeunhaku.reliablekkuserver.order.domain.Order;
-import com.deundeunhaku.reliablekkuserver.order.dto.OrderEachMenuResponse;
 import com.deundeunhaku.reliablekkuserver.order.dto.OfflineOrderRequest;
+import com.deundeunhaku.reliablekkuserver.order.dto.OrderEachMenuResponse;
 import com.deundeunhaku.reliablekkuserver.order.dto.OrderIdResponse;
 import com.deundeunhaku.reliablekkuserver.order.dto.OrderRegisterRequest;
 import com.deundeunhaku.reliablekkuserver.order.dto.OrderResponse;
+import com.deundeunhaku.reliablekkuserver.order.dto.PastOrderResponse;
 import com.deundeunhaku.reliablekkuserver.order.dto.RegisteredMenuRequest;
 import com.deundeunhaku.reliablekkuserver.order.repository.MenuOrderRepository;
 import com.deundeunhaku.reliablekkuserver.order.repository.OrderRepository;
 import com.deundeunhaku.reliablekkuserver.payment.domain.Payment;
 import com.deundeunhaku.reliablekkuserver.payment.repository.PaymentRepository;
 import com.deundeunhaku.reliablekkuserver.sse.repository.SseInMemoryRepository;
-
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
@@ -181,5 +181,18 @@ public class OrderService {
     if (isOrderProceeding.size() > 0) {
       throw new IllegalArgumentException("이미 주문이 진행중입니다.");
     }
+  }
+
+  public List<PastOrderResponse> getPastOrderList(Member member) {
+    List<Order> orderList = orderRepository.findOrderListOrderByCreatedAtDescByMember(member);
+
+    return orderList.stream()
+        .map(order -> {
+          List<OrderEachMenuResponse> eachMenuList = menuOrderRepository.findByOrderToOrderEachMenuResponse(
+              order);
+          return PastOrderResponse.of(order.getCreatedAt(), order.getOrderDatetime().toLocalTime(),
+              eachMenuList);
+        })
+        .toList();
   }
 }
