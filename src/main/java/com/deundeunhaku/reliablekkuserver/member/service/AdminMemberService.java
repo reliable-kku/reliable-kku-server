@@ -5,6 +5,8 @@ import com.deundeunhaku.reliablekkuserver.member.dto.AdminMemberManagementRespon
 import com.deundeunhaku.reliablekkuserver.member.repository.MemberRepository;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -22,8 +24,8 @@ public class AdminMemberService {
         .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
   }
 
-  public List<AdminMemberManagementResponse> getMemberList(String searchKeyword) {
-    return memberRepository.findMemberBySearchKeyword(searchKeyword);
+  public Page<AdminMemberManagementResponse> getMemberList(String searchKeyword, Pageable pageable) {
+    return memberRepository.findMemberBySearchKeyword(searchKeyword, pageable);
 
 
   }
