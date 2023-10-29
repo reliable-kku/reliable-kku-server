@@ -13,6 +13,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
 
@@ -42,7 +43,7 @@ public class Menu {
     @ColumnDefault("0")
     private Integer pricePerThree;
 
-
+    @Setter
     @ColumnDefault("false")
     private boolean isSale;
 //단방향 맞는지?
@@ -66,4 +67,5 @@ public class Menu {
         this.onlineMember = onlineMember;
         this.menuImageUrl = menuImageUrl;
     }
+
 }

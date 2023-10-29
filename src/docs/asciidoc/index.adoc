@@ -44,3 +44,7 @@
 === 멤버 문서
 
 * link:admin-member.html[멤버 문서]
+
+=== 메뉴 문서
+
+* link:admin-menu.html[메뉴 문서]
