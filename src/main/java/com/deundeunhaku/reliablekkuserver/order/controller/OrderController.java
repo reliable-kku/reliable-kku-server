@@ -6,7 +6,9 @@ import com.deundeunhaku.reliablekkuserver.order.dto.OrderCalendarResponse;
 import com.deundeunhaku.reliablekkuserver.order.dto.OrderIdResponse;
 import com.deundeunhaku.reliablekkuserver.order.dto.OrderRegisterRequest;
 import com.deundeunhaku.reliablekkuserver.order.dto.OrderResponse;
+import com.deundeunhaku.reliablekkuserver.order.dto.PastOrderResponse;
 import com.deundeunhaku.reliablekkuserver.order.service.OrderService;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -56,7 +58,11 @@ public class OrderController {
     }
 
     List<OrderCalendarResponse> calenderList = orderService.getOrderListByMemberAndYearAndMonth(member, year, month);
-
     return ResponseEntity.ok(calenderList);
+  }
+
+  @GetMapping("/past")
+  public ResponseEntity<List<PastOrderResponse>> getPastOrderList(@AuthenticationPrincipal Member member) {
+    return ResponseEntity.ok(orderService.getPastOrderList(member));
   }
 }

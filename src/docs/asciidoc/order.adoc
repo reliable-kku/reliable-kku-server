@@ -53,6 +53,15 @@ Path Variable::
 include::{snippets}/order/delete/success/path-parameters.adoc[]
 
 
+=== 과거 주문내역을 반환한다
 
+==== Request
+
+include::{snippets}/order/past/success/http-request.adoc[]
+
+==== Response
+
+include::{snippets}/order/past/success/http-response.adoc[]
+include::{snippets}/order/past/success/response-fields.adoc[]
 
 

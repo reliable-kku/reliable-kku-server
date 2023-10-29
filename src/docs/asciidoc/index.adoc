@@ -29,6 +29,10 @@
 
 == 관리자
 
+=== 로그인 문서 ( 관리자 로그인 )
+
+* link:admin-login.html[관리자 로그인 문서]
+
 === 주문 문서
 
 * link:admin-order.html[관리자 주문 문서]
@@ -36,3 +40,7 @@
 === 가게 문서
 
 * link:admin-store.html[가게 문서]
+
+=== 멤버 문서
+
+* link:admin-member.html[멤버 문서]

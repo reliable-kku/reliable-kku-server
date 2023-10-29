@@ -18,8 +18,17 @@ import com.deundeunhaku.reliablekkuserver.BaseControllerTest;
 import com.deundeunhaku.reliablekkuserver.member.domain.Member;
 import com.deundeunhaku.reliablekkuserver.order.dto.*;
 import com.deundeunhaku.reliablekkuserver.order.service.OrderService;
-
 import java.util.Collections;
+import com.deundeunhaku.reliablekkuserver.order.dto.OrderEachMenuResponse;
+import com.deundeunhaku.reliablekkuserver.order.dto.OrderIdResponse;
+import com.deundeunhaku.reliablekkuserver.order.dto.OrderRegisterRequest;
+import com.deundeunhaku.reliablekkuserver.order.dto.OrderResponse;
+import com.deundeunhaku.reliablekkuserver.order.dto.PastOrderResponse;
+import com.deundeunhaku.reliablekkuserver.order.dto.RegisteredMenuRequest;
+import com.deundeunhaku.reliablekkuserver.order.service.OrderService;
+import java.time.Duration;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -36,7 +45,7 @@ class OrderControllerTest extends BaseControllerTest {
 
   @Test
   void 유저의_주문을_등록한다() throws Exception {
-      //given
+    //given
     RegisteredMenuRequest menu1 = RegisteredMenuRequest.of(
         1L,
         3
@@ -91,7 +100,8 @@ class OrderControllerTest extends BaseControllerTest {
         .thenReturn(OrderResponse.of(15000, List.of(팥_붕어빵, 슈크림_붕어빵)));
 
     //when
-    ResultActions resultActions = mockMvc.perform(RestDocumentationRequestBuilders.get(API + "/order/{orderId}", orderId))
+    ResultActions resultActions = mockMvc.perform(
+            RestDocumentationRequestBuilders.get(API + "/order/{orderId}", orderId))
         .andDo(print());
 
     //then
@@ -111,14 +121,15 @@ class OrderControllerTest extends BaseControllerTest {
 
   @Test
   void 주문을_취소한다() throws Exception {
-      //given
+    //given
     Long orderId = 1L;
 
     //when
-    ResultActions resultActions = mockMvc.perform(RestDocumentationRequestBuilders.delete(API + "/order/{orderId}", orderId))
+    ResultActions resultActions = mockMvc.perform(
+            RestDocumentationRequestBuilders.delete(API + "/order/{orderId}", orderId))
         .andDo(print());
 
-      //then
+    //then
     resultActions.andExpect(status().isNoContent())
         .andDo(document("order/delete/success",
             pathParameters(
@@ -129,8 +140,8 @@ class OrderControllerTest extends BaseControllerTest {
 
   @Test
   void 주문이_현재_진행중인지_확인해준다() throws Exception {
-      //given
-      //when
+    //given
+    //when
     ResultActions resultActions = mockMvc.perform(get(API + "/order/duplicate"))
         .andDo(print());
 
@@ -171,5 +182,40 @@ class OrderControllerTest extends BaseControllerTest {
                         )
                 ));
     }
+  @Test
+  void 과거의_주문_리스트를_반환한다() throws Exception {
+    //given
+    OrderEachMenuResponse eachOrderResponse1 = OrderEachMenuResponse.of("후라이드", 1);
+    OrderEachMenuResponse eachOrderResponse2 = OrderEachMenuResponse.of("양념", 2);
+    OrderEachMenuResponse eachOrderResponse3 = OrderEachMenuResponse.of("간장", 3);
+
+    PastOrderResponse response1 = PastOrderResponse.of(LocalDate.of(2023, 10, 29),
+        LocalTime.of(12, 30, 30),
+        List.of(eachOrderResponse1, eachOrderResponse2, eachOrderResponse3));
+
+    PastOrderResponse response2 = PastOrderResponse.of(LocalDate.of(2023, 10, 27),
+        LocalTime.of(4, 28, 30),
+        List.of(eachOrderResponse1, eachOrderResponse2, eachOrderResponse3));
+
+    when(orderService.getPastOrderList(any()))
+        .thenReturn(List.of(response1, response2));
+
+    //when
+    ResultActions resultActions = mockMvc.perform(get(API + "/order/past"))
+        .andDo(print());
+
+    //then
+    resultActions.andExpect(status().isOk())
+        .andDo(document("order/past/success",
+            responseFields(
+                fieldWithPath("[].day").description("주문 일자"),
+                fieldWithPath("[].dayOfTheWeek").description("주문 날짜"),
+                fieldWithPath("[].orderedTime").description("주문 시간"),
+                fieldWithPath("[].orderMenuList[].name").description("메뉴 명"),
+                fieldWithPath("[].orderMenuList[].count").description("메뉴 개수")
+            )
+        ));
+
+  }
 
 }
