@@ -22,6 +22,7 @@ import com.deundeunhaku.reliablekkuserver.order.dto.OrderResponse;
 import com.deundeunhaku.reliablekkuserver.order.dto.PastOrderResponse;
 import com.deundeunhaku.reliablekkuserver.order.dto.RegisteredMenuRequest;
 import com.deundeunhaku.reliablekkuserver.order.service.OrderService;
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
