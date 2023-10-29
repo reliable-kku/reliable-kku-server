@@ -3,11 +3,13 @@ import com.deundeunhaku.reliablekkuserver.BaseServiceTest;
 import com.deundeunhaku.reliablekkuserver.common.exception.LoginFailedException;
 import com.deundeunhaku.reliablekkuserver.member.domain.Member;
 import com.deundeunhaku.reliablekkuserver.member.dto.LoginRequest;
+import com.deundeunhaku.reliablekkuserver.member.dto.MemberMyPageResponse;
 import com.deundeunhaku.reliablekkuserver.member.dto.MemberPasswordChangeRequest;
 import com.deundeunhaku.reliablekkuserver.member.repository.MemberRepository;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -166,5 +168,16 @@ class MemberServiceTest extends BaseServiceTest {
     //then
     assertThat(isWithdraw).isFalse();
     assertThat(member.isWithdraw()).isTrue();
+  }
+
+  @Test
+  void 마이페이지의_정보를_가져오는지_검증한다(){
+    //given
+    Member member = Member.builder().realName("kim").level(5).build();
+    //when
+    MemberMyPageResponse response = memberService.getMyPageInfo(member);
+    //then
+    assertThat(response.realName()).isEqualTo(member.getRealName());
+    assertThat(response.level()).isEqualTo(member.getLevel());
   }
 }

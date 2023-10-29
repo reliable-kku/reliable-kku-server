@@ -61,3 +61,12 @@ include::{snippets}/my-pages/member-withdraw/fail/request-cookies.adoc[]
 
 ==== Response
 include::{snippets}/my-pages/member-withdraw/fail/http-response.adoc[]
+
+=== 마이페이지 정보(이름, 레벨)
+
+==== Request
+include::{snippets}/my-pages/member/information/http-request.adoc[]
+
+==== Response
+include::{snippets}/my-pages/member/information/response-body.adoc[]
+include::{snippets}/my-pages/member/information/response-fields.adoc[]

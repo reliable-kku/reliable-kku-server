@@ -1,6 +1,7 @@
 package com.deundeunhaku.reliablekkuserver.member.domain;
 
 import com.deundeunhaku.reliablekkuserver.member.constant.Role;
+import com.deundeunhaku.reliablekkuserver.member.dto.MemberMyPageResponse;
 import com.google.firebase.database.annotations.NotNull;
 import jakarta.persistence.*;
 import java.util.Collection;
@@ -71,6 +72,10 @@ public class Member implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority(role.name()));
+    }
+
+    public MemberMyPageResponse toMemberMyPageResponse() {
+        return MemberMyPageResponse.of(this.getRealName(), this.getLevel());
     }
 
     @Override
