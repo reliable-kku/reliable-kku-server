@@ -1,0 +1,42 @@
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 2
+
+== 메인 문서
+
+link:index.html[메인 문서]
+
+=== 메뉴 리스트를 반환한다
+
+==== Request
+
+include::{snippets}/admin/menu/list/success/http-request.adoc[]
+
+==== Response
+
+include::{snippets}/admin/menu/list/success/http-response.adoc[]
+include::{snippets}/admin/menu/list/success/response-fields.adoc[]
+
+=== 메뉴를 품절 또는 품절헤제 한다
+
+==== Request
+
+include::{snippets}/admin/menu/change/success/http-request.adoc[]
+
+Path Variable::
+include::{snippets}/admin/menu/change/success/path-parameters.adoc[]
+Query Parameters::
+include::{snippets}/admin/menu/change/success/query-parameters.adoc[]
+
+==== Response
+
+include::{snippets}/admin/menu/change/success/http-response.adoc[]
+include::{snippets}/admin/menu/change/success/response-fields.adoc[]
+
+
+
+
+
+
