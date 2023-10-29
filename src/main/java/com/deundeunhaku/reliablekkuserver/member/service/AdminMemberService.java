@@ -7,6 +7,7 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -24,7 +25,7 @@ public class AdminMemberService {
         .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
   }
 
-  public Page<AdminMemberManagementResponse> getMemberList(String searchKeyword, Pageable pageable) {
+  public Slice<AdminMemberManagementResponse> getMemberList(String searchKeyword, Pageable pageable) {
     return memberRepository.findMemberBySearchKeyword(searchKeyword, pageable);
 
 

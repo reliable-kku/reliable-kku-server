@@ -11,14 +11,16 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.SliceImpl;
 
 @RequiredArgsConstructor
-public class MemberRepositoryImpl implements MemberRepositoryCustom{
+public class MemberRepositoryImpl implements MemberRepositoryCustom {
 
   private final JPAQueryFactory jpaQueryFactory;
 
   @Override
-  public Page<AdminMemberManagementResponse> findMemberBySearchKeyword(String searchKeyword,
+  public Slice<AdminMemberManagementResponse> findMemberBySearchKeyword(String searchKeyword,
       Pageable pageable) {
     List<AdminMemberManagementResponse> content = jpaQueryFactory.select(
             new QAdminMemberManagementResponse(
@@ -31,19 +33,18 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom{
         .where(member.role.eq(Role.USER),
             member.realName.contains(searchKeyword).or(member.phoneNumber.contains(searchKeyword))
         )
-        .limit(pageable.getPageSize())
+        .offset(pageable.getOffset())
+        .limit(pageable.getPageSize() + 1)
         .orderBy(member.id.asc())
         .fetch();
 
-    Long count = jpaQueryFactory.select(
-            member.count()
-        ).from(member)
-        .where(member.role.eq(Role.USER),
-            member.realName.contains(searchKeyword).or(member.phoneNumber.contains(searchKeyword))
-        )
-        .fetchOne();
+    boolean hasNext = false;
+    if (content.size() > pageable.getPageSize()) {
+      content.remove(pageable.getPageSize());
+      hasNext = true;
+    }
 
-    return new PageImpl<>(content, pageable, count);
+    return new SliceImpl<>(content, pageable, hasNext);
   }
-
 }
+

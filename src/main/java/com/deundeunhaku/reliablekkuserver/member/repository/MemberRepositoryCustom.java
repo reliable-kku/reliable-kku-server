@@ -4,9 +4,10 @@ import com.deundeunhaku.reliablekkuserver.member.dto.AdminMemberManagementRespon
 import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 
 public interface MemberRepositoryCustom {
 
-  Page<AdminMemberManagementResponse> findMemberBySearchKeyword(String searchKeyword,
+  Slice<AdminMemberManagementResponse> findMemberBySearchKeyword(String searchKeyword,
       Pageable pageable);
 }

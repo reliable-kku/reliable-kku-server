@@ -1,5 +1,7 @@
 package com.deundeunhaku.reliablekkuserver.member.controller;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
@@ -18,7 +20,10 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.SliceImpl;
 import org.springframework.restdocs.payload.PayloadDocumentation;
 import org.springframework.test.web.servlet.ResultActions;
 
@@ -39,12 +44,10 @@ class AdminMemberControllerTest extends BaseControllerTest {
     AdminMemberManagementResponse response3 = AdminMemberManagementResponse.of(3L, "test3", 2,
         "010-1234-3456");
 
-    Pageable pageable = Pageable.ofSize(10);
-    pageable.withPage(1);
+    PageRequest pageable = PageRequest.of(0, 10);
 
-    when(adminMemberService.getMemberList(searchKeyword, pageable)).thenReturn(
-        new PageImpl<>(List.of(response1, response2, response3), pageable, 3
-        ));
+    when(adminMemberService.getMemberList(eq(searchKeyword), any())).thenReturn(
+        new SliceImpl<>(List.of(response1, response2, response3), pageable, true));
 
     //when
     ResultActions resultActions = mockMvc.perform(get(API + "/admin/member")
@@ -57,61 +60,11 @@ class AdminMemberControllerTest extends BaseControllerTest {
     resultActions.andExpect(status().isOk())
         .andDo(document("admin/member/list/success",
             queryParameters(
+                parameterWithName("searchKeyword").description("검색 키워드"),
                 parameterWithName("page").description("페이지 번호(0부터 시작)"),
-                parameterWithName("size").description("페이지 사이즈"),
-                parameterWithName("searchKeyword").description("검색 키워드")
+                parameterWithName("size").description("페이지 사이즈")
             ),
-            /**
-             *
-             {
-             "content": [
-             {
-             "id": 1,
-             "username": "test",
-             "level": 1,
-             "phoneNumber": "010-1234-5678"
-             },
-             {
-             "id": 2,
-             "username": "test2",
-             "level": 3,
-             "phoneNumber": "010-1111-1111"
-             },
-             {
-             "id": 3,
-             "username": "test3",
-             "level": 2,
-             "phoneNumber": "010-1234-3456"
-             }
-             ],
-             "pageable": {
-             "pageNumber": 0,
-             "pageSize": 10,
-             "sort": {
-             "empty": true,
-             "unsorted": true,
-             "sorted": false
-             },
-             "offset": 0,
-             "paged": true,
-             "unpaged": false
-             },
-             "last": true,
-             "totalPages": 1,
-             "totalElements": 3,
-             "first": true,
-             "size": 10,
-             "number": 0,
-             "sort": {
-             "empty": true,
-             "unsorted": true,
-             "sorted": false
-             },
-             "numberOfElements": 3,
-             "empty": false
-             }
-             *
-             */
+
             responseFields(
                 fieldWithPath("content[].id").description("멤버의 id"),
                 fieldWithPath("content[].username").description("멤버의 이름"),
@@ -125,14 +78,12 @@ class AdminMemberControllerTest extends BaseControllerTest {
                 fieldWithPath("pageable.offset").ignored(),
                 fieldWithPath("pageable.paged").ignored(),
                 fieldWithPath("pageable.unpaged").ignored(),
-                fieldWithPath("last").description(""),
-                fieldWithPath("totalPages").description(""),
-                fieldWithPath("totalElements").description("모든 멤버의 개수"),
+                fieldWithPath("last").description("마지막 페이지인지"),
                 fieldWithPath("first").description("첫 페이지인지"),
                 fieldWithPath("size").description("한 페이지당 멤버의 개수"),
                 fieldWithPath("number").description("현재 페이지 번호"),
                 fieldWithPath("numberOfElements").description("현재 페이지의 멤버 개수"),
-                fieldWithPath("empty").ignored(),
+                fieldWithPath("empty").description("현재 페이지가 비어있는지"),
                 fieldWithPath("sort.empty").ignored(),
                 fieldWithPath("sort.sorted").ignored(),
                 fieldWithPath("sort.unsorted").ignored()
