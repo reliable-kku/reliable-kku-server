@@ -110,6 +110,6 @@ public class AdminOrderService {
     Order order = orderRepository.findById(orderId)
         .orElseThrow(() -> new IllegalArgumentException("잘못된 요청입니다."));
 
-    order.updateOrderStatus(OrderStatus.NOT_TAKE);
+    order.updateOrderStatus(OrderStatus.COOKING);
   }
 }

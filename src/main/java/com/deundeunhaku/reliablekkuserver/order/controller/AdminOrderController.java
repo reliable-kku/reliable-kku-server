@@ -78,7 +78,7 @@ public class AdminOrderController {
   @PatchMapping("/{orderId}/recovery")
   public ResponseEntity<Void> recoveryOrder(@PathVariable Long orderId) {
     adminOrderService.notTakeOrder(orderId);
-    sseService.sendDataToUser(orderId, OrderStatus.NOT_TAKE, 0L);
+    sseService.sendDataToUser(orderId, OrderStatus.COOKING, 0L);
     //FIXME: FCM 알람 필요
     return ResponseEntity.noContent().build();
   }
