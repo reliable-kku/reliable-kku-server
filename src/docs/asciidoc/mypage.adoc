@@ -71,6 +71,8 @@ include::{snippets}/my-pages/member/information/http-request.adoc[]
 include::{snippets}/my-pages/member/information/response-body.adoc[]
 include::{snippets}/my-pages/member/information/response-fields.adoc[]
 
+=== 마이페이지 캘린더
+
 ==== Request
 include::{snippets}/order/calendar/success/http-request.adoc[]
 

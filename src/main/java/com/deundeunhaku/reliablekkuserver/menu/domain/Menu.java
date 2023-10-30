@@ -46,13 +46,12 @@ public class Menu {
     @Setter
     @ColumnDefault("false")
     private boolean isSale;
-//단방향 맞는지?
+
     @ManyToOne(fetch = FetchType.LAZY)
     private Member onlineMember;
 
 
     private String menuImageUrl;
-
 
     @Builder
     public Menu(Long id, String phoneNumber, String name, String description, Integer pricePerOne,
@@ -67,5 +66,4 @@ public class Menu {
         this.onlineMember = onlineMember;
         this.menuImageUrl = menuImageUrl;
     }
-
 }
