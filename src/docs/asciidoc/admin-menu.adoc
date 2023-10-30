@@ -36,7 +36,28 @@ include::{snippets}/admin/menu/change/success/http-response.adoc[]
 include::{snippets}/admin/menu/change/success/response-fields.adoc[]
 
 
+=== 메뉴를 추가한다
+
+==== Request
+
+include::{snippets}/admin/create-menu/success/http-request.adoc[]
+include::{snippets}/admin/create-menu/success/request-parts.adoc[]
+
+==== RequestPart
+include::{snippets}/admin/create-menu/success/request-part-menu-fields.adoc[]
+
+==== Response
+include::{snippets}/admin/create-menu/success/http-response.adoc[]
+include::{snippets}/admin/create-menu/success/response-fields.adoc[]
 
 
+=== 메뉴 Id로 메뉴를 삭제한다
 
+==== Request
+include::{snippets}/admin/menu/delete/success/http-request.adoc[]
 
+==== PathParameter
+include::{snippets}/admin/menu/delete/success/path-parameters.adoc[]
+
+==== Response
+include::{snippets}/admin/menu/delete/success/http-response.adoc[]

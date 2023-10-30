@@ -1,27 +1,25 @@
 package com.deundeunhaku.reliablekkuserver.menu.controller;
 
-import static org.mockito.Mockito.when;
-import static org.springframework.http.MediaType.APPLICATION_JSON;
-import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
-import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
-import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.patch;
-import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
-import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
-import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
-import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
-import static org.springframework.restdocs.request.RequestDocumentation.queryParameters;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
 import com.deundeunhaku.reliablekkuserver.BaseControllerTest;
 import com.deundeunhaku.reliablekkuserver.menu.dto.AdminMenuChangeResponse;
 import com.deundeunhaku.reliablekkuserver.menu.dto.MenuResponse;
 import com.deundeunhaku.reliablekkuserver.menu.service.AdminMenuService;
 import com.deundeunhaku.reliablekkuserver.menu.service.MenuService;
-import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.ResultActions;
+
+import java.util.List;
+
+import static org.mockito.Mockito.when;
+import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
+import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
+import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
+import static org.springframework.restdocs.request.RequestDocumentation.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 class AdminMenuControllerTest extends BaseControllerTest {
 
@@ -87,5 +85,22 @@ class AdminMenuControllerTest extends BaseControllerTest {
                 fieldWithPath("menuId").description("메뉴의 ID"),
                 fieldWithPath("isSoldOut").description("메뉴의 품절 여부")
             )));
+  }
+  
+  @Test
+  void 메뉴를_삭제한다() throws Exception {
+    //given
+    long menuId = 1L;
+    //when
+    ResultActions resultActions = mockMvc.perform(delete(API + "/admin/menu/{menuId}", menuId)
+            )
+            .andDo(print());
+    //then
+    resultActions.andExpect(status().isNoContent())
+            .andDo(document("admin/menu/delete/success",
+                    pathParameters(
+                            parameterWithName("menuId").description("메뉴의 ID")
+                    )
+                    ));
   }
 }
