@@ -1,14 +1,16 @@
 package com.deundeunhaku.reliablekkuserver.order.controller;
 
-import com.amazonaws.Response;
 import com.deundeunhaku.reliablekkuserver.order.constant.OrderStatus;
 import com.deundeunhaku.reliablekkuserver.order.dto.AdminOrderResponse;
 import com.deundeunhaku.reliablekkuserver.order.service.AdminOrderService;
+import com.deundeunhaku.reliablekkuserver.sse.service.SseService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,6 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class AdminOrderController {
 
   private final AdminOrderService adminOrderService;
+  private final SseService sseService;
 
   @GetMapping
   public List<AdminOrderResponse> getOrderList(@RequestParam OrderStatus orderStatus) {
@@ -31,9 +34,54 @@ public class AdminOrderController {
   public ResponseEntity<Void> changeOrderStatus(
       @PathVariable Long orderId,
       @PathVariable Integer orderMinutes) {
-    adminOrderService.setOrderToCooking(orderId, orderMinutes);
-    return ResponseEntity.status(HttpStatus.CREATED).build();
+    boolean isSet = adminOrderService.setOrderToCooking(orderId, orderMinutes);
 
+    if (isSet) {
+      adminOrderService.sendMessageToUser(orderId);
+    }
+    //FIXME: FCM 알람 필요
+    return ResponseEntity.status(HttpStatus.CREATED).build();
   }
+
+  @DeleteMapping("/{orderId}")
+  public ResponseEntity<Void> deleteOrder(@PathVariable Long orderId) {
+    adminOrderService.deleteOrder(orderId);
+    sseService.disconnect(orderId);
+    //FIXME: FCM 알람 필요
+    return ResponseEntity.noContent().build();
+  }
+
+  @PatchMapping("/{orderId}/pick-up")
+  public ResponseEntity<Void> pickUpOrder(@PathVariable Long orderId) {
+    adminOrderService.pickUpOrder(orderId);
+    sseService.sendDataToUser(orderId, OrderStatus.COOKED, 0L);
+    //FIXME: FCM 알람 필요
+    return ResponseEntity.noContent().build();
+  }
+
+  @PatchMapping("/{orderId}/finish")
+  public ResponseEntity<Void> finishOrder(@PathVariable Long orderId) {
+    adminOrderService.finishOrder(orderId);
+    sseService.sendDataToUser(orderId, OrderStatus.COOKING, 0L);
+    //FIXME: FCM 알람 필요
+    return ResponseEntity.noContent().build();
+  }
+
+  @PatchMapping("/{orderId}/not-take")
+  public ResponseEntity<Void> notTakeOrder(@PathVariable Long orderId) {
+    adminOrderService.notTakeOrder(orderId);
+    sseService.sendDataToUser(orderId, OrderStatus.NOT_TAKE, 0L);
+    //FIXME: FCM 알람 필요
+    return ResponseEntity.noContent().build();
+  }
+
+  @PatchMapping("/{orderId}/recovery")
+  public ResponseEntity<Void> recoveryOrder(@PathVariable Long orderId) {
+    adminOrderService.notTakeOrder(orderId);
+    sseService.sendDataToUser(orderId, OrderStatus.NOT_TAKE, 0L);
+    //FIXME: FCM 알람 필요
+    return ResponseEntity.noContent().build();
+  }
+
 
 }

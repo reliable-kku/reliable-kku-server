@@ -9,6 +9,7 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWit
 import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
 import static org.springframework.restdocs.request.RequestDocumentation.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -18,6 +19,7 @@ import com.deundeunhaku.reliablekkuserver.BaseControllerTest;
 import com.deundeunhaku.reliablekkuserver.member.domain.Member;
 import com.deundeunhaku.reliablekkuserver.order.dto.*;
 import com.deundeunhaku.reliablekkuserver.order.service.OrderService;
+import com.deundeunhaku.reliablekkuserver.sse.service.SseService;
 import java.util.Collections;
 import com.deundeunhaku.reliablekkuserver.order.dto.OrderEachMenuResponse;
 import com.deundeunhaku.reliablekkuserver.order.dto.OrderIdResponse;
@@ -41,6 +43,9 @@ class OrderControllerTest extends BaseControllerTest {
 
   @MockBean
   private OrderService orderService;
+
+  @MockBean
+  private SseService sseService;
 
 
   @Test
@@ -217,5 +222,4 @@ class OrderControllerTest extends BaseControllerTest {
         ));
 
   }
-
 }
