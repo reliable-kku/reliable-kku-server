@@ -38,6 +38,7 @@ public class AdminAuthenticationController {
 
     ResponseCookie accessTokenCookie = ResponseCookie.from("accessToken", accessToken)
         .maxAge(TokenDuration.ACCESS_TOKEN_DURATION.getDurationInSecond())
+        .path("/")
         .httpOnly(true)
         .build();
 
@@ -63,6 +64,7 @@ public class AdminAuthenticationController {
   private void setAccessTokenInCookie(String accessToken, HttpServletResponse response) {
     Cookie accessTokenCookie = new Cookie("accessToken", accessToken);
     accessTokenCookie.setMaxAge(TokenDuration.ACCESS_TOKEN_DURATION_ADMIN.getDurationInSecond());
+    accessTokenCookie.setPath("/");
     accessTokenCookie.setHttpOnly(true);
     response.addCookie(accessTokenCookie);
   }
