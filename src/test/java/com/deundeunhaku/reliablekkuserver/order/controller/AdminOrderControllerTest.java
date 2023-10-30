@@ -3,6 +3,7 @@ package com.deundeunhaku.reliablekkuserver.order.controller;
 import static org.mockito.Mockito.when;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.patch;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
@@ -103,6 +104,8 @@ class AdminOrderControllerTest extends BaseControllerTest {
     Long orderId = 1L;
     Integer orderMinutes = 10;
 
+    when(adminOrderService.setOrderToCooking(orderId, orderMinutes))
+        .thenReturn(true);
     //when
     ResultActions resultActions = mockMvc.perform(
             post(API + "/admin/orders/{orderId}/minutes/{orderMinutes}", orderId, orderMinutes))
@@ -119,4 +122,59 @@ class AdminOrderControllerTest extends BaseControllerTest {
 
   }
 
+  @Test
+  void 주문을_제작완료하면_픽업으로_상태를_변경한다() throws Exception {
+      //given
+    Long orderId = 1L;
+
+      //when
+    ResultActions resultActions = mockMvc.perform(
+            patch(API + "/admin/orders/{orderId}/pick-up", orderId))
+        .andDo(print());
+
+    //then
+    resultActions.andExpect(status().isNoContent())
+        .andDo(document("admin/order-pick-up/success",
+            pathParameters(
+                parameterWithName("orderId").description("주문 번호")
+            )));
+
+  }
+
+  @Test
+  void 사용자가_음식을_수령하면_관리자가_완료를_누른다() throws Exception {
+    //given
+    Long orderId = 1L;
+
+    //when
+    ResultActions resultActions = mockMvc.perform(
+            patch(API + "/admin/orders/{orderId}/finish", orderId))
+        .andDo(print());
+
+    //then
+    resultActions.andExpect(status().isNoContent())
+        .andDo(document("admin/order-finish/success",
+            pathParameters(
+                parameterWithName("orderId").description("주문 번호")
+            )));
+  }
+  
+  @Test
+  void 사용자가_음식을_미수령하면_미수령처리한다() throws Exception {
+    //given
+    Long orderId = 1L;
+
+    //when
+    ResultActions resultActions = mockMvc.perform(
+            patch(API + "/admin/orders/{orderId}/not-take", orderId))
+        .andDo(print());
+
+    //then
+    resultActions.andExpect(status().isNoContent())
+        .andDo(document("admin/order-not-take/success",
+            pathParameters(
+                parameterWithName("orderId").description("주문 번호")
+            )));
+  }
+  
 }

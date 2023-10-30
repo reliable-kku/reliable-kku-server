@@ -36,12 +36,14 @@ public class MemberAuthenticationController {
 
     ResponseCookie accessTokenCookie = ResponseCookie.from("accessToken", accessToken)
         .maxAge(TokenDuration.ACCESS_TOKEN_DURATION.getDurationInSecond())
+        .path("/")
         .httpOnly(true)
         .build();
 
     ResponseCookie refreshTokenCookie = ResponseCookie.from("refreshToken",
         refreshToken)
         .maxAge(TokenDuration.REFRESH_TOKEN_DURATION.getDurationInSecond())
+        .path("/")
         .httpOnly(true)
         .build();
 

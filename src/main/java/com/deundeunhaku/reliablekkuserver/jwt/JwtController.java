@@ -29,7 +29,9 @@ public class JwtController {
 
   @GetMapping("/valid")
   public ResponseEntity<Void> isAccessTokenValid(HttpServletRequest request,
-      HttpServletResponse response, @CookieValue(name = "accessToken") Cookie accessTokenCookie) {
+      HttpServletResponse response
+      , @CookieValue(name = "accessToken") Cookie accessTokenCookie
+  ) {
 
     if (accessTokenCookie.getValue() == null) {
       response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);

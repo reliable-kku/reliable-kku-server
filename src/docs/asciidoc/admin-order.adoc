@@ -46,3 +46,32 @@ include::{snippets}/admin/order-status/success/path-parameters.adoc[]
 include::{snippets}/admin/order-status/success/http-response.adoc[]
 
 
+=== 음식을 다 만들고 픽업 요청을 한다
+
+==== Request
+
+include::{snippets}/admin/order-pick-up/success/http-request.adoc[]
+
+Path Parameters::
+include::{snippets}/admin/order-pick-up/success/path-parameters.adoc[]
+
+==== Response
+
+include::{snippets}/admin/order-pick-up/success/http-response.adoc[]
+
+=== 음식을 수령한 후 관리자가 완료 처리한다
+
+==== Request
+
+==== Request
+
+include::{snippets}/admin/order-finish/success/http-request.adoc[]
+
+Path Parameters::
+include::{snippets}/admin/order-finish/success/path-parameters.adoc[]
+
+==== Response
+
+include::{snippets}/admin/order-finish/success/http-response.adoc[]
+
+
