@@ -15,6 +15,10 @@
 
 * link:member-login-register.html[로그인,회원가입,비밀번호 찾기 문서]
 
+=== 마이페이지 관련 문서
+
+* link:mypage.html[마이페이지 문서]
+
 === Menu 문서 ( 메뉴 리스트 ...)
 
 * link:menu.html[메뉴 문서]
