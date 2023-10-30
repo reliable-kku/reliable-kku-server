@@ -1,5 +1,7 @@
 package com.deundeunhaku.reliablekkuserver.member.controller;
 
+import static org.springframework.http.HttpHeaders.SET_COOKIE;
+
 import com.deundeunhaku.reliablekkuserver.jwt.constants.TokenDuration;
 import com.deundeunhaku.reliablekkuserver.jwt.util.JwtTokenUtils;
 import com.deundeunhaku.reliablekkuserver.member.dto.AdminLoginRequest;
@@ -8,6 +10,7 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -33,9 +36,14 @@ public class AdminAuthenticationController {
     String accessToken = jwtTokenUtils.generateJwtToken(loginRequest.username(),
         TokenDuration.ACCESS_TOKEN_DURATION_ADMIN.getDuration());
 
-    setAccessTokenInCookie(accessToken, response);
+    ResponseCookie accessTokenCookie = ResponseCookie.from("accessToken", accessToken)
+        .maxAge(TokenDuration.ACCESS_TOKEN_DURATION.getDurationInSecond())
+        .httpOnly(true)
+        .build();
 
-    return ResponseEntity.ok().build();
+    return ResponseEntity.ok()
+        .header(SET_COOKIE, accessTokenCookie.toString())
+        .build();
   }
 
   @GetMapping("/logout")
@@ -53,7 +61,7 @@ public class AdminAuthenticationController {
 
 
   private void setAccessTokenInCookie(String accessToken, HttpServletResponse response) {
-    Cookie accessTokenCookie = new Cookie("accessToken", "Bearer " + accessToken);
+    Cookie accessTokenCookie = new Cookie("accessToken", accessToken);
     accessTokenCookie.setMaxAge(TokenDuration.ACCESS_TOKEN_DURATION_ADMIN.getDurationInSecond());
     accessTokenCookie.setHttpOnly(true);
     response.addCookie(accessTokenCookie);

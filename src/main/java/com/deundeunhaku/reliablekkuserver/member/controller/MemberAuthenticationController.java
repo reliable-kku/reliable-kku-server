@@ -1,17 +1,15 @@
 package com.deundeunhaku.reliablekkuserver.member.controller;
 
+import static org.springframework.http.HttpHeaders.SET_COOKIE;
+
 import com.deundeunhaku.reliablekkuserver.jwt.constants.TokenDuration;
 import com.deundeunhaku.reliablekkuserver.jwt.util.JwtTokenUtils;
-import com.deundeunhaku.reliablekkuserver.member.domain.Member;
 import com.deundeunhaku.reliablekkuserver.member.dto.LoginRequest;
 import com.deundeunhaku.reliablekkuserver.member.service.MemberService;
-import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,8 +24,7 @@ public class MemberAuthenticationController {
   private final MemberService memberService;
 
   @PostMapping("/login")
-  public ResponseEntity<Void> login(@Valid @RequestBody LoginRequest loginRequest,
-      HttpServletResponse response) {
+  public ResponseEntity<Void> login(@Valid @RequestBody LoginRequest loginRequest) {
 
     memberService.login(loginRequest.phoneNumber(), loginRequest.password());
 
@@ -37,27 +34,21 @@ public class MemberAuthenticationController {
     String refreshToken = jwtTokenUtils.generateJwtToken(loginRequest.phoneNumber(),
         TokenDuration.REFRESH_TOKEN_DURATION.getDuration());
 
-    setAccessTokenInCookie(accessToken, response);
-    setRefreshTokenInCookie(refreshToken, response);
+    ResponseCookie accessTokenCookie = ResponseCookie.from("accessToken", accessToken)
+        .maxAge(TokenDuration.ACCESS_TOKEN_DURATION.getDurationInSecond())
+        .httpOnly(true)
+        .build();
 
-    return ResponseEntity.ok().build();
+    ResponseCookie refreshTokenCookie = ResponseCookie.from("refreshToken",
+        refreshToken)
+        .maxAge(TokenDuration.REFRESH_TOKEN_DURATION.getDurationInSecond())
+        .httpOnly(true)
+        .build();
+
+    return ResponseEntity.ok()
+        .header(SET_COOKIE, accessTokenCookie.toString())
+        .header(SET_COOKIE, refreshTokenCookie.toString())
+        .build();
   }
-
-
-
-  private void setRefreshTokenInCookie(String refreshToken, HttpServletResponse response) {
-    Cookie refreshTokenCookie = new Cookie("refreshToken", "Bearer " + refreshToken);
-    refreshTokenCookie.setMaxAge(TokenDuration.REFRESH_TOKEN_DURATION.getDurationInSecond());
-    refreshTokenCookie.setHttpOnly(true);
-    response.addCookie(refreshTokenCookie);
-  }
-
-  private void setAccessTokenInCookie(String accessToken, HttpServletResponse response) {
-    Cookie accessTokenCookie = new Cookie("accessToken", "Bearer " + accessToken);
-    accessTokenCookie.setMaxAge(TokenDuration.ACCESS_TOKEN_DURATION.getDurationInSecond());
-    accessTokenCookie.setHttpOnly(true);
-    response.addCookie(accessTokenCookie);
-  }
-
 
 }
