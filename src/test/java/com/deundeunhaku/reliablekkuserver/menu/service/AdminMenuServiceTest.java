@@ -33,7 +33,7 @@ class AdminMenuServiceTest extends BaseServiceTest {
         //when
         adminMenuService.deleteMenu(menu.getId());
         //then
-        Mockito.verify(adminMenuRepository, times(1)).findById(menuId);
-        Mockito.verify(adminMenuRepository, times(1)).deleteById(menuId);
+        verify(adminMenuRepository, times(1)).findById(menuId);
+        verify(adminMenuRepository, times(1)).deleteById(menuId);
     }
 }
