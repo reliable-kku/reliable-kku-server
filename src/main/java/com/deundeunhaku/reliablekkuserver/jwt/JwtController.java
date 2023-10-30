@@ -1,8 +1,8 @@
 package com.deundeunhaku.reliablekkuserver.jwt;
 
 import static com.deundeunhaku.reliablekkuserver.jwt.constants.TokenDuration.ACCESS_TOKEN_DURATION;
-import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
+import com.deundeunhaku.reliablekkuserver.jwt.constants.TokenDuration;
 import com.deundeunhaku.reliablekkuserver.jwt.util.JwtTokenUtils;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -26,16 +26,14 @@ public class JwtController {
 
   @GetMapping("/valid")
   public ResponseEntity<Void> isAccessTokenValid(HttpServletRequest request,
-      HttpServletResponse response) {
+      HttpServletResponse response, @CookieValue(name = "accessToken") Cookie accessTokenCookie) {
 
-    String accessTokenWithPrefix = request.getHeader(AUTHORIZATION);
-
-    if (accessTokenWithPrefix == null || !accessTokenWithPrefix.startsWith("Bearer ")) {
+    if (accessTokenCookie.getValue() == null || !accessTokenCookie.getValue().startsWith("Bearer ")) {
       response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
       return ResponseEntity.status(HttpServletResponse.SC_UNAUTHORIZED).build();
     }
 
-    String accessToken = accessTokenWithPrefix.split("Bearer ")[1];
+    String accessToken = accessTokenCookie.getValue().split("Bearer ")[1];
 
     String phoneNumber = jwtTokenUtils.getPhoneNumber(accessToken);
     Boolean validate = jwtTokenUtils.validate(accessToken, phoneNumber);
@@ -49,7 +47,8 @@ public class JwtController {
 
   @GetMapping("/update")
   public ResponseEntity<Void> updateAccessToken(
-      @CookieValue(name = "refreshToken") Cookie refreshTokenCookie
+      @CookieValue(name = "refreshToken") Cookie refreshTokenCookie,
+      HttpServletResponse response
   ) {
 
     String refreshToken = refreshTokenCookie.getValue();
@@ -60,11 +59,18 @@ public class JwtController {
     if (validate) {
       String newAccessToken = jwtTokenUtils.generateJwtToken(phoneNumber,
           ACCESS_TOKEN_DURATION.getDuration());
-      return ResponseEntity.ok().header(AUTHORIZATION, newAccessToken).build();
+      setAccessTokenInCookie(newAccessToken, response);
+      return ResponseEntity.ok().build();
     } else {
       return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
   }
 
+  private void setAccessTokenInCookie(String accessToken, HttpServletResponse response) {
+    Cookie accessTokenCookie = new Cookie("accessToken", "Bearer " + accessToken);
+    accessTokenCookie.setMaxAge(TokenDuration.ACCESS_TOKEN_DURATION.getDurationInSecond());
+    accessTokenCookie.setHttpOnly(true);
+    response.addCookie(accessTokenCookie);
+  }
 
 }
