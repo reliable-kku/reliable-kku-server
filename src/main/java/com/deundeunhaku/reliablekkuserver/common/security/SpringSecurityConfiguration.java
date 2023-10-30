@@ -41,31 +41,30 @@ public class SpringSecurityConfiguration {
   public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
     http
         .cors(AbstractHttpConfigurer::disable)
-        .csrf(csrfConfigurer ->
-            csrfConfigurer.ignoringRequestMatchers(PathRequest.toH2Console()))
+        .csrf(AbstractHttpConfigurer::disable)
         .formLogin(AbstractHttpConfigurer::disable)
         .httpBasic(AbstractHttpConfigurer::disable)
         .authorizeHttpRequests(auth ->
-        auth
-            .requestMatchers(PathRequest.toH2Console()).permitAll()
-            .requestMatchers(antMatcher("/docs/**")).permitAll()
-            .requestMatchers(antMatcher("/api/v1/login")).permitAll()
-            .requestMatchers(antMatcher("/api/v1/token/**")).permitAll()
-            .requestMatchers(antMatcher("/api/v1/auth/**")).permitAll()
-            .requestMatchers(antMatcher("/api/v1/find-password/**")).permitAll()
-            .requestMatchers(antMatcher("/api/v1/register")).permitAll()
-            .requestMatchers(antMatcher("/api/v1/register/**")).permitAll()
-            .requestMatchers(antMatcher("/api/v1/auth/admin")).permitAll()
-            .requestMatchers(antMatcher("/api/v1/admin/**")).hasRole(Role.ADMIN.name())
-            .requestMatchers(antMatcher("/api/v1/**")).hasRole(Role.USER.name())
-            .anyRequest().authenticated()
+            auth
+                .requestMatchers(PathRequest.toH2Console()).permitAll()
+                .requestMatchers(antMatcher("/docs/**")).permitAll()
+                .requestMatchers(antMatcher("/api/v1/login")).permitAll()
+                .requestMatchers(antMatcher("/api/v1/token/**")).permitAll()
+                .requestMatchers(antMatcher("/api/v1/auth/**")).permitAll()
+                .requestMatchers(antMatcher("/api/v1/find-password/**")).permitAll()
+                .requestMatchers(antMatcher("/api/v1/register")).permitAll()
+                .requestMatchers(antMatcher("/api/v1/register/**")).permitAll()
+                .requestMatchers(antMatcher("/api/v1/auth/admin")).permitAll()
+                .requestMatchers(antMatcher("/api/v1/admin/**")).hasRole(Role.ADMIN.name())
+                .requestMatchers(antMatcher("/api/v1/**")).hasRole(Role.USER.name())
+                .anyRequest().authenticated()
         )
         .sessionManagement((session) -> session
             .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+
     http
         .authenticationProvider(authenticationProvider()).addFilterBefore(
             jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
-
 
     return http.build();
   }

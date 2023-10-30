@@ -1,15 +1,18 @@
 package com.deundeunhaku.reliablekkuserver.jwt;
 
 import static com.deundeunhaku.reliablekkuserver.jwt.constants.TokenDuration.ACCESS_TOKEN_DURATION;
-import static org.springframework.http.HttpHeaders.AUTHORIZATION;
+import static org.springframework.http.HttpHeaders.SET_COOKIE;
 
+import com.deundeunhaku.reliablekkuserver.jwt.constants.TokenDuration;
 import com.deundeunhaku.reliablekkuserver.jwt.util.JwtTokenUtils;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpCookie;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,16 +29,14 @@ public class JwtController {
 
   @GetMapping("/valid")
   public ResponseEntity<Void> isAccessTokenValid(HttpServletRequest request,
-      HttpServletResponse response) {
+      HttpServletResponse response, @CookieValue(name = "accessToken") Cookie accessTokenCookie) {
 
-    String accessTokenWithPrefix = request.getHeader(AUTHORIZATION);
-
-    if (accessTokenWithPrefix == null || !accessTokenWithPrefix.startsWith("Bearer ")) {
+    if (accessTokenCookie.getValue() == null) {
       response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
       return ResponseEntity.status(HttpServletResponse.SC_UNAUTHORIZED).build();
     }
 
-    String accessToken = accessTokenWithPrefix.split("Bearer ")[1];
+    String accessToken = accessTokenCookie.getValue();
 
     String phoneNumber = jwtTokenUtils.getPhoneNumber(accessToken);
     Boolean validate = jwtTokenUtils.validate(accessToken, phoneNumber);
@@ -51,7 +52,6 @@ public class JwtController {
   public ResponseEntity<Void> updateAccessToken(
       @CookieValue(name = "refreshToken") Cookie refreshTokenCookie
   ) {
-
     String refreshToken = refreshTokenCookie.getValue();
 
     String phoneNumber = jwtTokenUtils.getPhoneNumber(refreshToken);
@@ -60,11 +60,25 @@ public class JwtController {
     if (validate) {
       String newAccessToken = jwtTokenUtils.generateJwtToken(phoneNumber,
           ACCESS_TOKEN_DURATION.getDuration());
-      return ResponseEntity.ok().header(AUTHORIZATION, newAccessToken).build();
+
+      ResponseCookie accessTokenCookie = ResponseCookie.from("accessToken", newAccessToken)
+          .maxAge(TokenDuration.ACCESS_TOKEN_DURATION.getDurationInSecond())
+          .httpOnly(true)
+          .build();
+
+      return ResponseEntity.ok()
+          .header(SET_COOKIE, accessTokenCookie.toString())
+          .build();
     } else {
       return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
   }
 
+  private void setAccessTokenInCookie(String accessToken, HttpServletResponse response) {
+    Cookie accessTokenCookie = new Cookie("accessToken", "Bearer " + accessToken);
+    accessTokenCookie.setMaxAge(TokenDuration.ACCESS_TOKEN_DURATION.getDurationInSecond());
+    accessTokenCookie.setHttpOnly(true);
+    response.addCookie(accessTokenCookie);
+  }
 
 }

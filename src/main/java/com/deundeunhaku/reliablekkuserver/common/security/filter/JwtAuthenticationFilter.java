@@ -7,6 +7,7 @@ import com.deundeunhaku.reliablekkuserver.member.repository.MemberRepository;
 import com.deundeunhaku.reliablekkuserver.member.service.MemberDetailsService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -36,14 +37,24 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
   protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
       FilterChain filterChain) throws ServletException, IOException {
 
-    final String authHeader = request.getHeader("Authorization");
+    Cookie[] cookies = request.getCookies();
 
-    if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+    String accessToken = null;
+
+    if (cookies != null) {
+      for (Cookie cookie : cookies) {
+        if (cookie.getName().equals("accessToken")) {
+          accessToken = cookie.getValue();
+        }
+      }
+    }
+
+    if (accessToken == null) {
       filterChain.doFilter(request, response);
       return;
     }
 
-    String accessToken = parseBearerToken(request);
+//    String accessToken = parseBearerToken(request);
 
     String phoneNumber = jwtTokenUtils.getPhoneNumber(accessToken);
 
