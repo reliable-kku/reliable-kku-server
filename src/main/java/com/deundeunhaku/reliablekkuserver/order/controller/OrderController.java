@@ -8,6 +8,7 @@ import com.deundeunhaku.reliablekkuserver.order.dto.OrderRegisterRequest;
 import com.deundeunhaku.reliablekkuserver.order.dto.OrderResponse;
 import com.deundeunhaku.reliablekkuserver.order.dto.PastOrderResponse;
 import com.deundeunhaku.reliablekkuserver.order.service.OrderService;
+import com.deundeunhaku.reliablekkuserver.sse.service.SseService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -24,10 +25,12 @@ import java.util.List;
 public class OrderController {
 
   private final OrderService orderService;
+  private final SseService sseService;
 
   @PostMapping
-  public ResponseEntity<OrderIdResponse> registerOrder(@RequestBody OrderRegisterRequest request, @AuthenticationPrincipal
-      Member member){
+  public ResponseEntity<OrderIdResponse> registerOrder(@RequestBody OrderRegisterRequest request,
+      @AuthenticationPrincipal
+      Member member) {
     return ResponseEntity.status(HttpStatus.CREATED)
         .body(orderService.registerOrder(request, member));
   }
@@ -39,7 +42,10 @@ public class OrderController {
 
   @DeleteMapping("/{orderId}")
   public ResponseEntity<Void> deleteOrder(@PathVariable Long orderId) {
+//    FIXME : 결제 취소 로직 넣어 민진아 ㅠㅠ
+
     orderService.deleteOrder(orderId);
+    sseService.disconnect(orderId);
     return ResponseEntity.noContent().build();
   }
 
@@ -50,19 +56,22 @@ public class OrderController {
   }
 
   @GetMapping("/calendar")
-  public ResponseEntity<List<OrderCalendarResponse>> getCalendarForMemberAndOrderDate(@AuthenticationPrincipal Member member,
-                                                                          @RequestParam(required = false) Integer year, @RequestParam(required = false) Integer month) {
+  public ResponseEntity<List<OrderCalendarResponse>> getCalendarForMemberAndOrderDate(
+      @AuthenticationPrincipal Member member,
+      @RequestParam(required = false) Integer year, @RequestParam(required = false) Integer month) {
     if (year == null || month == null) {
       year = LocalDate.now().getYear();
       month = LocalDate.now().getMonthValue();
     }
 
-    List<OrderCalendarResponse> calenderList = orderService.getOrderListByMemberAndYearAndMonth(member, year, month);
+    List<OrderCalendarResponse> calenderList = orderService.getOrderListByMemberAndYearAndMonth(
+        member, year, month);
     return ResponseEntity.ok(calenderList);
   }
 
   @GetMapping("/past")
-  public ResponseEntity<List<PastOrderResponse>> getPastOrderList(@AuthenticationPrincipal Member member) {
+  public ResponseEntity<List<PastOrderResponse>> getPastOrderList(
+      @AuthenticationPrincipal Member member) {
     return ResponseEntity.ok(orderService.getPastOrderList(member));
   }
 }
