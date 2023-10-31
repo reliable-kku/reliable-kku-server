@@ -72,7 +72,7 @@ public class MemberService {
 
     SmsCertificationNumber smsResponse = smsService.sendCertificationNumberToPhoneNumber(
         phoneNumber);
-
+    log.info("인증번호 : {}", smsResponse.certificationNumber());
     certificationNumberRepository.save(
         CertificationNumber.builder()
             .certificationNumber(smsResponse.certificationNumber())
@@ -129,7 +129,7 @@ public class MemberService {
             phoneNumber)
         .orElseThrow(() -> new IllegalArgumentException("잘못된 요청입니다."));
 
-    if (findCertificationNumber.getIsCertified().equals(false) || findCertificationNumber.getCertificationNumber().equals(certificationNumber)) {
+    if (findCertificationNumber.getIsCertified().equals(false) || findCertificationNumber.getCertificationNumber() != (certificationNumber)) {
       throw new IllegalArgumentException("잘못된 요청입니다.");
     }
 

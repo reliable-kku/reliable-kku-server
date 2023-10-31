@@ -54,7 +54,7 @@ public class SpringSecurityConfiguration {
         )
         .headers(headers ->
             headers
-                .frameOptions(FrameOptionsConfig::sameOrigin)
+                .frameOptions(FrameOptionsConfig::disable)
         );
 
 //        .sessionManagement((session) -> session
