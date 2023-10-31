@@ -136,7 +136,7 @@ public class MemberService {
     Member findMember = memberRepository.findByPhoneNumber(phoneNumber)
         .orElseThrow(() -> new IllegalArgumentException("잘못된 요청입니다."));
 
-    String newPassword = UUID.randomUUID().toString().substring(7);
+    String newPassword = UUID.randomUUID().toString().substring(0, 6);
     findMember.changePassword(passwordEncoder.encode(newPassword));
 
     smsService.sendNewPasswordToPhoneNumber(phoneNumber, newPassword);
