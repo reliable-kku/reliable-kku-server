@@ -11,18 +11,19 @@ import com.deundeunhaku.reliablekkuserver.member.repository.CertificationNumberR
 import com.deundeunhaku.reliablekkuserver.member.repository.MemberRepository;
 import com.deundeunhaku.reliablekkuserver.sms.dto.SmsCertificationNumber;
 import com.deundeunhaku.reliablekkuserver.sms.service.SmsService;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
-
+@Slf4j
 @RequiredArgsConstructor
 @Service
 public class MemberService {
@@ -61,9 +62,9 @@ public class MemberService {
   }
 
   @Transactional
-  public void sendCertificationNumber(String phoneNumber, LocalDate today) {
-    List<CertificationNumber> todayCertificationNumberList = certificationNumberRepository.findAllByCreatedAt(
-        today);
+  public void sendCertificationNumber(String phoneNumber, LocalDateTime today) {
+    List<CertificationNumber> todayCertificationNumberList = certificationNumberRepository.findAllByPhoneNumberAndCreatedAt(
+        phoneNumber, today);
 
     if (todayCertificationNumberList.size() >= 10) {
       throw new IllegalArgumentException("하루에 10번 이상 인증번호를 요청할 수 없습니다.");
@@ -81,24 +82,28 @@ public class MemberService {
 
   }
 
+  @Transactional
   public boolean isCertificationNumberCorrect(String phoneNumber, Integer certificationNumber) {
 
-    Optional<CertificationNumber> findCertificationNumber = certificationNumberRepository.findTop1ByPhoneNumberOrderByCreatedAtDesc(
+    Optional<CertificationNumber> findCertificationNumber = certificationNumberRepository.findFirstByPhoneNumberOrderByCreatedAtDesc(
         phoneNumber);
 
-    if (findCertificationNumber.isPresent() && findCertificationNumber.get()
-        .getCertificationNumber().equals(certificationNumber)) {
-      findCertificationNumber.get().certify();
-      return true;
-    }else{
+    if (findCertificationNumber.isPresent()) {
+      if (findCertificationNumber.get().getCertificationNumber().equals(certificationNumber)) {
+        log.info("인증번호 일치 : {} {}", phoneNumber, certificationNumber);
+        findCertificationNumber.get().certify();
+        return true;
+      }
       return false;
     }
+
+    return false;
   }
 
   @Transactional
   public void register(MemberRegisterRequest request) {
 
-    CertificationNumber certificationNumber = certificationNumberRepository.findTop1ByPhoneNumberOrderByCreatedAtDesc(
+    CertificationNumber certificationNumber = certificationNumberRepository.findFirstByPhoneNumberOrderByCreatedAtDesc(
             request.phoneNumber())
         .orElseThrow(() -> new IllegalArgumentException("인증번호가 일치하지 않습니다."));
 
@@ -120,7 +125,7 @@ public class MemberService {
   @Transactional
   public void changePasswordWithRandomNumber(String phoneNumber, int certificationNumber) {
 
-    CertificationNumber findCertificationNumber = certificationNumberRepository.findTop1ByPhoneNumberOrderByCreatedAtDesc(
+    CertificationNumber findCertificationNumber = certificationNumberRepository.findFirstByPhoneNumberOrderByCreatedAtDesc(
             phoneNumber)
         .orElseThrow(() -> new IllegalArgumentException("잘못된 요청입니다."));
 

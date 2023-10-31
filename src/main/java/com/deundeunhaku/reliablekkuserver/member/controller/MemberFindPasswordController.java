@@ -4,7 +4,7 @@ import com.deundeunhaku.reliablekkuserver.common.dto.BaseMessageResponse;
 import com.deundeunhaku.reliablekkuserver.member.dto.FindPasswordRequest;
 import com.deundeunhaku.reliablekkuserver.member.dto.PhoneNumberRequest;
 import com.deundeunhaku.reliablekkuserver.member.service.MemberService;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,7 +23,7 @@ public class MemberFindPasswordController {
 
   @PostMapping("/phone-number/certification-number")
   public ResponseEntity<Void> sendCertificationNumber(@RequestBody PhoneNumberRequest request) {
-    memberService.sendCertificationNumber(request.phoneNumber(), LocalDate.now());
+    memberService.sendCertificationNumber(request.phoneNumber(), LocalDateTime.now());
     return ResponseEntity.ok().build();
   }
 
