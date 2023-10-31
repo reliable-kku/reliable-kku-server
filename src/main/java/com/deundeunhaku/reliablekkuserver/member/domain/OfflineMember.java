@@ -1,5 +1,6 @@
 package com.deundeunhaku.reliablekkuserver.member.domain;
 
+import com.deundeunhaku.reliablekkuserver.common.domain.BaseEntity;
 import com.google.firebase.database.annotations.NotNull;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -12,7 +13,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @Entity
-public class OfflineMember {
+public class OfflineMember extends BaseEntity {
 
     @Id @GeneratedValue
     private Long id;

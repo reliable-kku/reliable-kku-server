@@ -1,6 +1,7 @@
 package com.deundeunhaku.reliablekkuserver.order.domain;
 
 
+import com.deundeunhaku.reliablekkuserver.common.domain.BaseEntity;
 import com.deundeunhaku.reliablekkuserver.member.domain.Member;
 import com.deundeunhaku.reliablekkuserver.member.domain.OfflineMember;
 import com.deundeunhaku.reliablekkuserver.order.constant.OrderStatus;
@@ -31,7 +32,7 @@ import org.springframework.data.annotation.CreatedDate;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @Entity
-public class Order implements Serializable {
+public class Order extends BaseEntity implements Serializable {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -56,8 +57,8 @@ public class Order implements Serializable {
   @Enumerated(EnumType.STRING)
   private OrderStatus orderStatus;
 
-  @CreatedDate
-  private LocalDate createdAt;
+  private LocalDate createdDate;
+
 
   @ManyToOne
   @JoinColumn(name = "member_id")
@@ -78,7 +79,7 @@ public class Order implements Serializable {
   @Builder
   public Order(Long id, Long todayOrderCount, LocalDateTime orderDatetime, Integer orderPrice,
       LocalDateTime expectedWaitDatetime, Boolean isOfflineOrder, OrderStatus orderStatus,
-      LocalDate createdAt, Member member, OfflineMember offlineMember) {
+      LocalDate createdDate, Member member, OfflineMember offlineMember) {
     this.id = id;
     this.todayOrderCount = todayOrderCount;
     this.orderDatetime = orderDatetime;
@@ -86,14 +87,17 @@ public class Order implements Serializable {
     this.expectedWaitDatetime = expectedWaitDatetime;
     this.isOfflineOrder = isOfflineOrder;
     this.orderStatus = orderStatus;
-    this.createdAt = createdAt;
+    this.createdDate = createdDate;
     this.member = member;
     this.offlineMember = offlineMember;
   }
 
+
+
+
+
   public static Order createOnlineOrder(Long todayOrderCount, OrderRegisterRequest request,
       Member member) {
-
     return Order
         .builder()
         .todayOrderCount(todayOrderCount)
@@ -102,8 +106,8 @@ public class Order implements Serializable {
         .expectedWaitDatetime(LocalDateTime.now())
         .isOfflineOrder(false)
         .orderStatus(OrderStatus.WAIT)
-        .createdAt(LocalDate.now())
         .member(member)
+        .createdDate(LocalDate.now())
         .build();
   }
 
@@ -117,9 +121,9 @@ public class Order implements Serializable {
         .expectedWaitDatetime(LocalDateTime.now())
         .orderPrice(request.totalPrice())
         .isOfflineOrder(true)
-        .createdAt(LocalDate.now())
         .offlineMember(member)
         .orderStatus(OrderStatus.WAIT)
+        .createdDate(LocalDate.now())
         .build();
   }
 }

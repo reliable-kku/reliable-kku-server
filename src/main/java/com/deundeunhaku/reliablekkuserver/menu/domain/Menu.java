@@ -1,5 +1,6 @@
 package com.deundeunhaku.reliablekkuserver.menu.domain;
 
+import com.deundeunhaku.reliablekkuserver.common.domain.BaseEntity;
 import com.deundeunhaku.reliablekkuserver.member.domain.Member;
 import com.google.firebase.database.annotations.NotNull;
 import jakarta.persistence.Column;
@@ -21,7 +22,7 @@ import org.hibernate.annotations.DynamicInsert;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @Entity
-public class Menu {
+public class Menu  extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

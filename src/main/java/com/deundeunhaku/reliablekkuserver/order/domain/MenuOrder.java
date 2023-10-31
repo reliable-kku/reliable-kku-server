@@ -1,5 +1,6 @@
 package com.deundeunhaku.reliablekkuserver.order.domain;
 
+import com.deundeunhaku.reliablekkuserver.common.domain.BaseEntity;
 import com.deundeunhaku.reliablekkuserver.menu.domain.Menu;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -14,7 +15,7 @@ import org.hibernate.annotations.DynamicInsert;
 @Getter
 @Entity
 @IdClass(MenuOrderId.class)
-public class MenuOrder {
+public class MenuOrder extends BaseEntity {
 
   @Id
   @NotNull

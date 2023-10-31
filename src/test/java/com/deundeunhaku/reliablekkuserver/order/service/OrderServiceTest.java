@@ -29,9 +29,9 @@ class OrderServiceTest extends BaseServiceTest {
     @Test
     void 회원의_마이페이지_캘린더_리스트를_가져오는지_검증한다(){
         //given
-        Order order1 = Order.builder().createdAt(LocalDate.of(2023, 10, 24)).build();
-        Order order2 = Order.builder().createdAt(LocalDate.of(2023, 10, 23)).build();
-        Order order3 = Order.builder().createdAt(LocalDate.of(2023, 10, 21)).build();
+        Order order1 = Order.builder().createdDate(LocalDate.of(2023, 10, 24)).build();
+        Order order2 = Order.builder().createdDate(LocalDate.of(2023, 10, 23)).build();
+        Order order3 = Order.builder().createdDate(LocalDate.of(2023, 10, 21)).build();
         List<Order> orderList = List.of(order1, order2, order3);
         Integer year = 2023;
         Integer month = 10;

@@ -1,6 +1,7 @@
 package com.deundeunhaku.reliablekkuserver.store.domain;
 
 
+import com.deundeunhaku.reliablekkuserver.common.domain.BaseEntity;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;

@@ -1,5 +1,6 @@
 package com.deundeunhaku.reliablekkuserver.member.domain;
 
+import com.deundeunhaku.reliablekkuserver.common.domain.BaseEntity;
 import com.deundeunhaku.reliablekkuserver.member.constant.Role;
 import com.deundeunhaku.reliablekkuserver.member.dto.MemberMyPageResponse;
 import com.google.firebase.database.annotations.NotNull;
@@ -20,7 +21,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @Entity
-public class Member implements UserDetails {
+public class Member extends BaseEntity implements UserDetails{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

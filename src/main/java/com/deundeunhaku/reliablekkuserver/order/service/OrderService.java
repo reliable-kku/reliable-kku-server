@@ -222,7 +222,7 @@ public class OrderService {
 
     List<OrderCalendarResponse> responseList = new ArrayList<>(orders.stream()
         .map(order -> {
-              Integer orderDay = order.getCreatedAt().getDayOfMonth();
+              Integer orderDay = order.getCreatedDate().getDayOfMonth();
               return OrderCalendarResponse.of(orderDay, true);
             }
         ).toList());
@@ -250,7 +250,7 @@ public class OrderService {
         .map(order -> {
           List<OrderEachMenuResponse> eachMenuList = menuOrderRepository.findByOrderToOrderEachMenuResponse(
               order);
-          return PastOrderResponse.of(order.getCreatedAt(), order.getOrderDatetime().toLocalTime(),
+          return PastOrderResponse.of(order.getCreatedAt().toLocalDate(), order.getOrderDatetime().toLocalTime(),
               eachMenuList);
         })
         .toList();
