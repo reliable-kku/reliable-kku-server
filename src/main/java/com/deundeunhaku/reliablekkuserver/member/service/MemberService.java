@@ -169,4 +169,9 @@ public class MemberService {
   public MemberMyPageResponse getMyPageInfo(Member member) {
         return member.toMemberMyPageResponse();
   }
+
+  @Transactional
+  public void updateFcmToken(Member member, String token) {
+    member.setFirebaseToken(token);
+  }
 }

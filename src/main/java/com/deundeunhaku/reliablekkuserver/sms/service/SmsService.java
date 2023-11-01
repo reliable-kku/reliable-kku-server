@@ -48,8 +48,38 @@ public class SmsService {
         String content = "안녕하세요! 든붕이 입니다. \n새로운 비밀번호는 " + newPassword + " 입니다.";
 
         sendSms(phoneNumber, content);
+    }
+
+    public void sendOrderCompleteMessage(String phoneNumber, Long leftMinutes) {
+        String content = "안녕하세요! 든붕이 입니다. \n주문이 완료되었습니다. \n" + leftMinutes + "분 후에 완료될 예정입니다.";
+
+        sendSms(phoneNumber, content);
+    }
+
+    public void sendOrderCancelMessage(String phoneNumber) {
+        String content = "안녕하세요! 든붕이 입니다.\n가게의 사정으로 인해 주문이 취소되었습니다.\n다음에 이용해주세요.";
+
+        sendSms(phoneNumber, content);
+    }
 
 
+    public void sendOrderPickupMessage(String phoneNumber) {
+        String content = "안녕하세요! 든붕이 입니다.\n붕어빵이 완성되었습니다!\n30분 내로 매장에서 붕어빵을 수령해주세요.";
+
+        sendSms(phoneNumber, content);
+    }
+
+    public void sendOrderNotTakeMessage(String phoneNumber) {
+        String content = "안녕하세요! 든붕이 입니다.\n붕어빵을 시간내에 수령하지 않아 미수령 처리하였습니다.";
+
+        sendSms(phoneNumber, content);
+    }
+
+
+    public void sendOrderFinishMessage(String phoneNumber) {
+        String content = "안녕하세요! 든붕이 입니다.\n붕어빵 맛있게 드세요! :>";
+
+        sendSms(phoneNumber, content);
     }
 
     private void sendSms(String phoneNumber, String content) {

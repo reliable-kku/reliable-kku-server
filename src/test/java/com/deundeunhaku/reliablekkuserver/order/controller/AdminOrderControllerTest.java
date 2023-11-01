@@ -104,8 +104,6 @@ class AdminOrderControllerTest extends BaseControllerTest {
     Long orderId = 1L;
     Integer orderMinutes = 10;
 
-    when(adminOrderService.setOrderToCooking(orderId, orderMinutes))
-        .thenReturn(true);
     //when
     ResultActions resultActions = mockMvc.perform(
             post(API + "/admin/orders/{orderId}/minutes/{orderMinutes}", orderId, orderMinutes))
