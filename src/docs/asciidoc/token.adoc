@@ -1,0 +1,21 @@
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 2
+
+== 메인 문서
+
+link:index.html[메인 문서]
+
+=== 유저의 firebase Token 을 저장한다
+
+==== Request
+
+include::{snippets}/fcm/update/http-request.adoc[]
+include::{snippets}/fcm/update/request-fields.adoc[]
+
+==== Response
+
+include::{snippets}/fcm/update/http-response.adoc[]
+
