@@ -42,6 +42,7 @@ public class SpringSecurityConfiguration {
                 .requestMatchers(PathRequest.toH2Console()).permitAll()
                 .requestMatchers(antMatcher("/docs/**")).permitAll()
                 .requestMatchers(antMatcher("/api/v1/login")).permitAll()
+                .requestMatchers(antMatcher("/api/v1/fcm")).permitAll()
                 .requestMatchers(antMatcher("/api/v1/token/**")).permitAll()
                 .requestMatchers(antMatcher("/api/v1/auth/**")).permitAll()
                 .requestMatchers(antMatcher("/api/v1/find-password/**")).permitAll()

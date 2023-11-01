@@ -263,4 +263,11 @@ public class OrderService {
 
     orderRepository.delete(order);
   }
+
+  public Long findMemberIdWithOrderId(Long orderId) {
+    Order order = orderRepository.findById(orderId)
+        .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다"));
+
+    return order.getMember().getId();
+  }
 }

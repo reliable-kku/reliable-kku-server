@@ -34,12 +34,9 @@ public class AdminOrderController {
   public ResponseEntity<Void> changeOrderStatus(
       @PathVariable Long orderId,
       @PathVariable Integer orderMinutes) {
-    boolean isSet = adminOrderService.setOrderToCooking(orderId, orderMinutes);
+    adminOrderService.setOrderToCooking(orderId, orderMinutes);
+    adminOrderService.sendOrderSetCookingMessageToUser(orderId);
 
-    if (isSet) {
-      adminOrderService.sendMessageToUser(orderId);
-    }
-    //FIXME: FCM 알람 필요
     return ResponseEntity.status(HttpStatus.CREATED).build();
   }
 
@@ -47,7 +44,8 @@ public class AdminOrderController {
   public ResponseEntity<Void> deleteOrder(@PathVariable Long orderId) {
     adminOrderService.deleteOrder(orderId);
     sseService.disconnect(orderId);
-    //FIXME: FCM 알람 필요
+    adminOrderService.sendOrderCancelMessageToUser(orderId);
+
     return ResponseEntity.noContent().build();
   }
 
@@ -55,7 +53,8 @@ public class AdminOrderController {
   public ResponseEntity<Void> pickUpOrder(@PathVariable Long orderId) {
     adminOrderService.pickUpOrder(orderId);
     sseService.sendDataToUser(orderId, OrderStatus.COOKED, 0L);
-    //FIXME: FCM 알람 필요
+    adminOrderService.sendOrderPickUpMessageToUser(orderId);
+
     return ResponseEntity.noContent().build();
   }
 
@@ -63,7 +62,8 @@ public class AdminOrderController {
   public ResponseEntity<Void> finishOrder(@PathVariable Long orderId) {
     adminOrderService.finishOrder(orderId);
     sseService.sendDataToUser(orderId, OrderStatus.COOKING, 0L);
-    //FIXME: FCM 알람 필요
+    adminOrderService.sendOrderFinishMessageToUser(orderId);
+
     return ResponseEntity.noContent().build();
   }
 
@@ -71,7 +71,8 @@ public class AdminOrderController {
   public ResponseEntity<Void> notTakeOrder(@PathVariable Long orderId) {
     adminOrderService.notTakeOrder(orderId);
     sseService.sendDataToUser(orderId, OrderStatus.NOT_TAKE, 0L);
-    //FIXME: FCM 알람 필요
+    adminOrderService.sendOrderNotTakeMessageToUser(orderId);
+
     return ResponseEntity.noContent().build();
   }
 
@@ -79,7 +80,6 @@ public class AdminOrderController {
   public ResponseEntity<Void> recoveryOrder(@PathVariable Long orderId) {
     adminOrderService.notTakeOrder(orderId);
     sseService.sendDataToUser(orderId, OrderStatus.COOKING, 0L);
-    //FIXME: FCM 알람 필요
     return ResponseEntity.noContent().build();
   }
 

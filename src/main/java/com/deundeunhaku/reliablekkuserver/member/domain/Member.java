@@ -11,6 +11,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
 import org.springframework.security.core.GrantedAuthority;
@@ -40,6 +41,7 @@ public class Member extends BaseEntity implements UserDetails{
     @ColumnDefault("1")
     private Integer level;
 
+    @Setter
     private String firebaseToken;
 
     @Enumerated(EnumType.STRING)
