@@ -47,8 +47,8 @@ public class SpringSecurityConfiguration {
                 .requestMatchers(antMatcher("/api/v1/register")).permitAll()
                 .requestMatchers(antMatcher("/api/v1/register/**")).permitAll()
                 .requestMatchers(antMatcher("/api/v1/auth/admin")).permitAll()
-                .requestMatchers(antMatcher("/api/v1/admin/**")).hasRole(Role.ADMIN.name())
-                .requestMatchers(antMatcher("/api/v1/**")).hasRole(Role.USER.name())
+                .requestMatchers(antMatcher("/api/v1/admin/**")).hasAuthority(Role.ADMIN.name())
+                .requestMatchers(antMatcher("/api/v1/**")).hasAuthority(Role.USER.name())
                 .anyRequest().authenticated()
         ).sessionManagement((session) -> session
             .sessionCreationPolicy(SessionCreationPolicy.STATELESS));

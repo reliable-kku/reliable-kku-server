@@ -78,7 +78,7 @@ public class Member extends BaseEntity implements UserDetails{
     }
 
     public MemberMyPageResponse toMemberMyPageResponse() {
-        return MemberMyPageResponse.of(this.getRealName(), this.getLevel());
+        return MemberMyPageResponse.of(realName, level);
     }
 
     @Override
