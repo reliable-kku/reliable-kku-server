@@ -64,4 +64,13 @@ include::{snippets}/order/past/success/http-request.adoc[]
 include::{snippets}/order/past/success/http-response.adoc[]
 include::{snippets}/order/past/success/response-fields.adoc[]
 
+=== 현재 주문시 대략적으로 걸리는 시간을 리턴한다 (주문시간 + 10분)
 
+==== Request
+
+include::{snippets}/order/left-time/success/http-request.adoc[]
+
+==== Response
+
+include::{snippets}/order/left-time/success/http-response.adoc[]
+include::{snippets}/order/left-time/success/response-fields.adoc[]

@@ -2,6 +2,7 @@ package com.deundeunhaku.reliablekkuserver.order.controller;
 
 
 import com.deundeunhaku.reliablekkuserver.member.domain.Member;
+import com.deundeunhaku.reliablekkuserver.order.dto.LeftTimeResponse;
 import com.deundeunhaku.reliablekkuserver.order.dto.OrderCalendarResponse;
 import com.deundeunhaku.reliablekkuserver.order.dto.OrderIdResponse;
 import com.deundeunhaku.reliablekkuserver.order.dto.OrderRegisterRequest;
@@ -73,5 +74,10 @@ public class OrderController {
   public ResponseEntity<List<PastOrderResponse>> getPastOrderList(
       @AuthenticationPrincipal Member member) {
     return ResponseEntity.ok(orderService.getPastOrderList(member));
+  }
+
+  @GetMapping("/left-time")
+  public ResponseEntity<LeftTimeResponse> getLeftTime() {
+    return ResponseEntity.ok(orderService.getLeftTime());
   }
 }

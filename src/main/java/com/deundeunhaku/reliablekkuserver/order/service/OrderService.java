@@ -24,6 +24,7 @@ import com.deundeunhaku.reliablekkuserver.sse.dto.SseDataResponse;
 import com.deundeunhaku.reliablekkuserver.sse.repository.SseInMemoryRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.Duration;
+import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
@@ -269,5 +270,21 @@ public class OrderService {
         .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다"));
 
     return order.getMember().getId();
+  }
+
+  public LeftTimeResponse getLeftTime() {
+    LocalDateTime nowDateTime = LocalDateTime.now();
+
+    Order todayLastOrder = orderRepository.findFirstByCreatedAtOrderByCreatedAtDesc(nowDateTime.toLocalDate())
+        .orElse(Order.builder().expectedWaitDatetime(nowDateTime).build());
+
+    Duration between = Duration.between(nowDateTime, todayLastOrder.getExpectedWaitDatetime());
+
+//   현재 날짜가 주문 마감 시간보다 늦거나 같으면 0분으로 반환
+    if (nowDateTime.isBefore(todayLastOrder.getExpectedWaitDatetime())) {
+      return LeftTimeResponse.of(between.toMinutes()+ 10L);
+    } else {
+      return LeftTimeResponse.of(10L);
+    }
   }
 }
