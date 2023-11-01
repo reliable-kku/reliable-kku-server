@@ -6,7 +6,6 @@ import com.deundeunhaku.reliablekkuserver.common.security.filter.JwtAuthenticati
 import com.deundeunhaku.reliablekkuserver.member.constant.Role;
 import com.deundeunhaku.reliablekkuserver.member.service.MemberDetailsService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -16,7 +15,7 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer.FrameOptionsConfig;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -39,7 +38,6 @@ public class SpringSecurityConfiguration {
         .httpBasic(AbstractHttpConfigurer::disable)
         .authorizeHttpRequests(auth ->
             auth
-                .requestMatchers(PathRequest.toH2Console()).permitAll()
                 .requestMatchers(antMatcher("/docs/**")).permitAll()
                 .requestMatchers(antMatcher("/api/v1/login")).permitAll()
                 .requestMatchers(antMatcher("/api/v1/fcm")).permitAll()
@@ -52,14 +50,8 @@ public class SpringSecurityConfiguration {
                 .requestMatchers(antMatcher("/api/v1/admin/**")).hasRole(Role.ADMIN.name())
                 .requestMatchers(antMatcher("/api/v1/**")).hasRole(Role.USER.name())
                 .anyRequest().authenticated()
-        )
-        .headers(headers ->
-            headers
-                .frameOptions(FrameOptionsConfig::disable)
-        );
-
-//        .sessionManagement((session) -> session
-//            .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+        ).sessionManagement((session) -> session
+            .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
     http
         .authenticationProvider(authenticationProvider()).addFilterBefore(
