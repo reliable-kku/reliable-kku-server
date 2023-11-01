@@ -220,6 +220,25 @@ class OrderControllerTest extends BaseControllerTest {
                 fieldWithPath("[].orderMenuList[].count").description("메뉴 개수")
             )
         ));
+  }
+
+  @Test
+  void 현재_주문하면_걸리는시간을_반환한다() throws Exception {
+      //given
+
+    when(orderService.getLeftTime())
+        .thenReturn(LeftTimeResponse.of(Duration.ofMinutes(30).toMinutes()));
+      //when
+    ResultActions resultActions = mockMvc.perform(get(API + "/order/left-time"))
+        .andDo(print());
+
+    //then
+    resultActions.andExpect(status().isOk())
+        .andDo(document("order/left-time/success",
+            responseFields(
+                fieldWithPath("leftMinutes").description("예상 걸리는 시간 (분단위)")
+            )
+        ));
 
   }
 }
