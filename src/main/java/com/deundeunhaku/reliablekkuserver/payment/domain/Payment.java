@@ -21,7 +21,7 @@ import java.time.LocalDate;
 })
 public class Payment {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Column(name = "payment_id", nullable = false, unique = true)
     private Long paymentId;
 

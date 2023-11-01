@@ -1,0 +1,15 @@
+spring:
+  config:
+    import:
+      - submodule/reliable-kku-server-submodule/application-db-dev.yaml
+    activate:
+      on-profile: dev
+  jpa:
+    generate-ddl: true
+    show-sql: true
+    hibernate:
+      ddl-auto: create-drop
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.MySQLDialect

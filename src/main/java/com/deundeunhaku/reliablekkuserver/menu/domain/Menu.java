@@ -25,7 +25,7 @@ import org.hibernate.annotations.DynamicInsert;
 public class Menu  extends BaseEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
 
     @NotNull

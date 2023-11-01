@@ -1,0 +1,15 @@
+spring:
+  config:
+    import:
+      - submodule/reliable-kku-server-submodule/application-db-prod.yaml
+    activate:
+      on-profile: prod
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: create
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.MySQLDialect
+  sql.init.mode: always
