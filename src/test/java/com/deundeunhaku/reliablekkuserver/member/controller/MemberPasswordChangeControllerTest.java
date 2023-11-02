@@ -33,7 +33,7 @@ class MemberPasswordChangeControllerTest extends BaseControllerTest {
         //when
         ResultActions resultActions = mockMvc.perform(post(API + "/my-pages/change-password/verify-current-password")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"password\":\""+password+"\"}"))
+                        .content(objectMapper.writeValueAsString(MemberPasswordChangeRequest.of(password))))
                 .andDo(print());
         //then
         resultActions.andExpect(status().isOk())
