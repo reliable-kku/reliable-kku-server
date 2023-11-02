@@ -217,7 +217,7 @@ public class OrderService {
     LocalDate firstDate = LocalDate.of(year, month, 1);
     LocalDate lastDate = firstDate.plusMonths(1L).minusDays(1L);
 
-    List<Order> orders = orderRepository.findOrderListByMemberAndCreatedAtBetween(member, firstDate,
+    List<Order> orders = orderRepository.findOrderListByMemberAndCreatedDateBetween(member, firstDate,
         lastDate);
 
     List<OrderCalendarResponse> responseList = new ArrayList<>(orders.stream()
