@@ -162,6 +162,7 @@ public class MemberService {
       return member.isWithdraw();
   }
 
+  @Transactional
   public void setMemberWithdraw(Member member) {
     member.withdraw();
   }
