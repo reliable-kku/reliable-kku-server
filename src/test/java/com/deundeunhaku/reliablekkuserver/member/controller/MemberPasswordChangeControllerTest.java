@@ -28,7 +28,7 @@ class MemberPasswordChangeControllerTest extends BaseControllerTest {
         //given
         final String password = "password";
 
-        when(memberService.isMemberPasswordMatch(any(), anyString()))
+        when(memberService.isMemberPasswordMatch(anyString(), any()))
                 .thenReturn(true);
         //when
         ResultActions resultActions = mockMvc.perform(post(API + "/my-pages/change-password/verify-current-password")
