@@ -143,13 +143,10 @@ public class MemberService {
 
   }
 
+  @Transactional
   public boolean isMemberPasswordMatch(String password, Member member) {
 
-    if (passwordEncoder.matches(password, member.getPassword())) {
-      return true;
-    }else {
-      return false;
-    }
+    return passwordEncoder.matches(password, member.getPassword());
   }
 
   @Transactional

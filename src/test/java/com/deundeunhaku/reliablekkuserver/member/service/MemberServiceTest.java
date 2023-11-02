@@ -1,4 +1,9 @@
 package com.deundeunhaku.reliablekkuserver.member.service;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.when;
+
 import com.deundeunhaku.reliablekkuserver.BaseServiceTest;
 import com.deundeunhaku.reliablekkuserver.common.exception.LoginFailedException;
 import com.deundeunhaku.reliablekkuserver.member.domain.Member;
@@ -6,18 +11,15 @@ import com.deundeunhaku.reliablekkuserver.member.dto.LoginRequest;
 import com.deundeunhaku.reliablekkuserver.member.dto.MemberMyPageResponse;
 import com.deundeunhaku.reliablekkuserver.member.dto.MemberPasswordChangeRequest;
 import com.deundeunhaku.reliablekkuserver.member.repository.MemberRepository;
+import java.util.Optional;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.springframework.http.ResponseEntity;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.password.PasswordEncoder;
-
-import java.util.Optional;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.when;
 
 class MemberServiceTest extends BaseServiceTest {
 
@@ -180,4 +182,28 @@ class MemberServiceTest extends BaseServiceTest {
     assertThat(response.realName()).isEqualTo(member.getRealName());
     assertThat(response.level()).isEqualTo(member.getLevel());
   }
+}
+
+@SpringBootTest
+class SpringBootExample {
+
+  @Autowired
+  PasswordEncoder passwordEncoder;
+
+  @Autowired
+  MemberService memberService;
+
+  @Test
+  void test() throws Exception {
+    String password = "password";
+    String encodedPassword = passwordEncoder.encode(password);
+
+    boolean matches = passwordEncoder.matches(password, encodedPassword);
+
+    boolean memberPasswordMatch = memberService.isMemberPasswordMatch(password,
+        Member.builder().password(encodedPassword).build());
+
+    Assertions.assertThat(memberPasswordMatch).isTrue();
+  }
+
 }

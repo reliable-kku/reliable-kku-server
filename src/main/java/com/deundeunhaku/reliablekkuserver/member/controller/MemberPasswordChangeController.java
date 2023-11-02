@@ -5,10 +5,12 @@ import com.deundeunhaku.reliablekkuserver.member.dto.MemberPasswordChangeRequest
 import com.deundeunhaku.reliablekkuserver.member.dto.MemberPasswordMatchResponse;
 import com.deundeunhaku.reliablekkuserver.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+@Slf4j
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/v1/my-pages")
@@ -17,6 +19,8 @@ public class MemberPasswordChangeController {
 
     @PostMapping("/change-password/verify-current-password")
     public ResponseEntity<MemberPasswordMatchResponse> getCurrentPassword(@AuthenticationPrincipal Member member, @RequestBody final String password){
+        log.info("memberId : {]", member.getId());
+        log.info("password : {}", password);
 
         boolean isPasswordMatch = memberService.isMemberPasswordMatch(password, member);
         return ResponseEntity.ok(MemberPasswordMatchResponse.of(isPasswordMatch));
