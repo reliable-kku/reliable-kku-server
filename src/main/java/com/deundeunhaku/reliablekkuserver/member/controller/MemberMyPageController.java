@@ -21,9 +21,6 @@ public class MemberMyPageController {
     @GetMapping("/member")
     public ResponseEntity<MemberMyPageResponse> getMemberInfo(@AuthenticationPrincipal Member member){
 
-        log.info("member Id: {}", member.getId());
-        log.info("member realName: {}", member.getRealName());
-
         MemberMyPageResponse response = memberService.getMyPageInfo(member);
         return ResponseEntity.ok(response);
     }
