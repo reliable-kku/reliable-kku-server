@@ -151,7 +151,8 @@ public class MemberService {
 
   @Transactional
   public boolean changeMemberPassword(Member member, MemberPasswordChangeRequest request) {
-    member.changePassword(passwordEncoder.encode(request.password()));
+    String encodedPassword = passwordEncoder.encode(request.password());
+    member.changePassword(encodedPassword);
     return true;
   }
 
