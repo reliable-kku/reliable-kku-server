@@ -18,10 +18,12 @@ public class MemberPasswordChangeController {
     private final MemberService memberService;
 
     @PostMapping("/change-password/verify-current-password")
-    public ResponseEntity<MemberPasswordMatchResponse> getCurrentPassword(@AuthenticationPrincipal Member member, @RequestBody final String password){
-        log.info("password : {}", password);
+    public ResponseEntity<MemberPasswordMatchResponse> getCurrentPassword(@AuthenticationPrincipal Member member, @RequestBody final MemberPasswordChangeRequest request){
+        log.info("password : {}", request.password());
+        log.info("member Password : {}", member.getPassword());
 
-        boolean isPasswordMatch = memberService.isMemberPasswordMatch(password, member);
+
+        boolean isPasswordMatch = memberService.isMemberPasswordMatch(request.password(), member);
 
         log.info("isPasswordMatch : {}", isPasswordMatch);
 
