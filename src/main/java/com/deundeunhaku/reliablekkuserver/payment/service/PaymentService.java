@@ -1,61 +1,70 @@
 package com.deundeunhaku.reliablekkuserver.payment.service;
 
 import com.deundeunhaku.reliablekkuserver.common.config.TossPaymentConfig;
-import com.deundeunhaku.reliablekkuserver.common.exception.ExceptionCode;
 import com.deundeunhaku.reliablekkuserver.common.exception.PaymentException;
 import com.deundeunhaku.reliablekkuserver.member.domain.Member;
 import com.deundeunhaku.reliablekkuserver.member.service.MemberService;
-import com.deundeunhaku.reliablekkuserver.payment.constants.PayType;
 import com.deundeunhaku.reliablekkuserver.payment.domain.Payment;
 import com.deundeunhaku.reliablekkuserver.payment.dto.PaymentCancelRequest;
 import com.deundeunhaku.reliablekkuserver.payment.dto.PaymentCancelResponse;
 import com.deundeunhaku.reliablekkuserver.payment.dto.PaymentSuccess;
 import com.deundeunhaku.reliablekkuserver.payment.repository.PaymentRepository;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.apache.http.client.methods.HttpHead;
+import lombok.extern.slf4j.Slf4j;
 import org.json.simple.JSONObject;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDate;
 import java.util.Base64;
 import java.util.Collections;
-import java.util.Map;
 
 @RequiredArgsConstructor
 @Service
+@Slf4j
 public class PaymentService {
 
     private final PaymentRepository paymentRepository;
     private final MemberService memberService;
     private String tossUrl = "https://api.tosspayments.com/v1/payments/";
-    private String secretKey = "${payment.toss.test_secrete_api_key}";
 
-    private String successUrl = "${payment.toss.success_url}";
-    private String failUrl = "${payment.toss.fail_url}";
+    @Value("${payment.toss.test_secrete_api_key}")
+    private String secretKey;
 
+    @Value("${payment.toss.success_url}")
+    private String successUrl;
+    @Value("${payment.toss.fail_url}")
+    private String failUrl;
 
-    //값 검증
-    public Payment requestPayment(Payment paymentRequest, Long memberId){
-        Member member = memberService.findMemberById(memberId);
-        if(paymentRequest.getAmount() < 700){
-            throw new PaymentException(ExceptionCode.INVALID_PAYMENT_AMOUNT);
-        }
-        paymentRequest.setMember(member);
-        return paymentRepository.save(paymentRequest);
-    }
     //토스 페이먼츠가 보낸 파라미터를 가지고 Service 로직에서 검증 후 반환
     @Transactional
-    public PaymentSuccess paymentSuccess(String paymentKey, String orderId, Long amount) {
-        Payment payment = verifyPayment(orderId, amount); // 요청가격 = 결제된 금액
+    public PaymentSuccess confirmPayment(String paymentKey, String orderId, Long amount, Member member) {
+
+        Payment payment = Payment.builder()
+                .paymentKey(paymentKey)
+                .orderId(orderId)
+                .amount(amount)
+                .member(member)
+                .paySuccessYn(true)
+                .build();
+
+//        Payment payment = verifyPayment(orderId, amount); // 요청가격 = 결제된 금액
         PaymentSuccess result = requestPaymentAccept(paymentKey, orderId, amount);
-        payment.setPaymentKey(paymentKey);
+
         payment.setPaySuccessYn(true);
-        return result;
+        payment.setPayType(result.getType());
+        payment.setOrderName(result.getOrderName());
+        payment.setCreatedAt(LocalDate.parse(result.getRequestedAt()));
+
+
+       paymentRepository.save(payment);
+       return result;
     }
 
     //토스페이먼츠에 최종 결제 승인 요청을 보내기 위해 필요한 정보들을 담아 POST로 보내는 부분
@@ -63,22 +72,22 @@ public class PaymentService {
     public PaymentSuccess requestPaymentAccept(String paymentKey, String orderId, Long amount) {
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = getHeaders();
-        JSONObject params = new JSONObject();
-        params.put("orderId", orderId);
-        params.put("amount", amount);
+        JSONObject requestBody = new JSONObject();
+        requestBody.put("paymentKey", paymentKey);
+        requestBody.put("orderId", orderId);
+        requestBody.put("amount", amount);
 
         PaymentSuccess result = null;
-        try{
-            result = restTemplate.postForObject(TossPaymentConfig.URL + paymentKey,
-                    new HttpEntity<>(params, headers),
+        try {
+            result = restTemplate.postForObject(TossPaymentConfig.URL + "/confirm",
+                    new HttpEntity<>(requestBody, headers),
                     PaymentSuccess.class
-                    );
-        } catch(Exception e){
-            throw new PaymentException(ExceptionCode.ALREADY_APPROVED);
+            );
+        } catch (Exception e) {
+            throw new PaymentException();
         }
         return result;
     }
-
     private HttpHeaders getHeaders() {
         HttpHeaders headers = new HttpHeaders();
         String encodeAuthKey = new String(
@@ -89,25 +98,6 @@ public class PaymentService {
         return headers;
     }
 
-    //결제 요청 금액과 실제 금액이 같은지
-    private Payment verifyPayment(String orderId, Long amount) {
-        Payment payment = paymentRepository.findByOrderId(orderId).orElseThrow(() -> {
-            throw new PaymentException(ExceptionCode.PAYMENT_NOT_FOUND);
-        });
-        if(!payment.getAmount().equals(amount)){
-            throw new PaymentException(ExceptionCode.PAYMENT_AMOUNT_EXP);
-
-        }
-        return payment;
-    }
-
-    @Transactional
-    public void paymentFail(String code, String message, String orderId) {
-        Payment payment = paymentRepository.findByOrderId(orderId).orElseThrow(() ->
-                new PaymentException(ExceptionCode.PAYMENT_NOT_FOUND));
-        payment.setPaySuccessYn(false);
-        payment.setFailReason(message);
-    }
 
     // 결제 취소를 요청하는 메서드
     public PaymentCancelResponse cancelPayment(String paymentKey, PaymentCancelRequest cancelRequest) {
@@ -135,15 +125,29 @@ public class PaymentService {
         return null;
     }
 
-   /* @Transactional
-    public Map cancelPayment(String paymentKey, String cancelReason, Integer cancelAmount) {
-        Payment payment = paymentRepository.findByPaymentKey(paymentKey).orElseThrow(() -> {
-            new PaymentException(ExceptionCode.PAYMENT_NOT_FOUND);
+    //결제 요청 금액과 실제 금액이 같은지
+    private Payment verifyPayment(String orderId, Long amount) {
+        Payment payment = paymentRepository.findByOrderId(orderId).orElseThrow(() -> {
+            throw new PaymentException();
         });
-        payment.setCancelYN(true);
-        payment.setCancelReason(cancelReason);
+        if (!payment.getAmount().equals(amount)) {
+            throw new PaymentException();
 
-        return
+        }
+        return payment;
+    }
 
-    }*/
+    @Transactional
+    public Payment requestPayment(Payment payment, Long memberId) {
+        Member member = memberService.findMemberById(memberId);
+
+        if (payment.getAmount() < 700) {
+            throw new PaymentException();
+        }
+
+        payment.setMember(member);
+        return paymentRepository.save(payment);
+    }
+
+
 }

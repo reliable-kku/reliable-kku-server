@@ -1,15 +1,15 @@
 package com.deundeunhaku.reliablekkuserver.payment.dto;
 
+import com.deundeunhaku.reliablekkuserver.payment.constants.PayType;
 import lombok.Data;
 
 @Data
 public class PaymentSuccess {
-    String mid;// 가맹점 Id -> tosspayments
+    String mId;// 가맹점 Id -> tosspayments
     String version; // Payment 객체 응답 버전
     String paymentKey;
     String orderId;
     String orderName;
-    String currency; // "KRW"
     String method; // 결제 수단
     String totalAmount;
     String balanceAmount;
@@ -21,5 +21,6 @@ public class PaymentSuccess {
     String useEscrow; // false
     String cultureExpense; // false
     PaymentSuccessCard card; // 결제 카드 정보 (아래 자세한 정보 있음)
-    String type; // 결제
+    PayType type; // 결제
+
 }

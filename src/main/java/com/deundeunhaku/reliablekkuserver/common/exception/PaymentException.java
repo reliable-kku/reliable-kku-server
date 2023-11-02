@@ -1,15 +1,12 @@
 package com.deundeunhaku.reliablekkuserver.common.exception;
 
-public class PaymentException extends RuntimeException {
-    private final ExceptionCode exceptionCode;
-/*
-    public PaymentException(){ super("결제 중 오류가 발생했습니다.");}
-*/
-    public PaymentException(ExceptionCode exceptionCode) {
-        super(exceptionCode.getMessage());
-        this.exceptionCode = exceptionCode;
-    }
+import lombok.Getter;
 
-    public ExceptionCode getExceptionCode() {
-        return exceptionCode;
-    }}
+@Getter
+public class PaymentException extends RuntimeException {
+
+    public PaymentException() {
+        super("결제 중 오류가 발생했습니다.");
+    }
+}
+
