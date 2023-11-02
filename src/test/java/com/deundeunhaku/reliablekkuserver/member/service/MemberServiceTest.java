@@ -126,9 +126,9 @@ class MemberServiceTest extends BaseServiceTest {
     Member member = Member.builder().password("mockedPassword").build();
     String password = "mockedPassword";
 
-    when(passwordEncoder.matches(member.getPassword(), password)).thenReturn(true);
+    when(passwordEncoder.matches(password, member.getPassword())).thenReturn(true);
     //when
-    boolean result = memberService.isMemberPasswordMatch(member, password);
+    boolean result = memberService.isMemberPasswordMatch(password, member);
     //then
     assertThat(result).isTrue();
   }
@@ -139,9 +139,9 @@ class MemberServiceTest extends BaseServiceTest {
     Member member = Member.builder().password("mockedPassword").build();
     String password = "mockedPassword1234";
 
-    when(passwordEncoder.matches(member.getPassword(), password)).thenReturn(false);
+    when(passwordEncoder.matches(password, member.getPassword())).thenReturn(false);
     //when
-    boolean result = memberService.isMemberPasswordMatch(member, password);
+    boolean result = memberService.isMemberPasswordMatch(password, member);
     //then
     assertThat(result).isFalse();
   }

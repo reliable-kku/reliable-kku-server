@@ -138,9 +138,9 @@ public class MemberService {
 
   }
 
-  public boolean isMemberPasswordMatch(Member member, String password) {
+  public boolean isMemberPasswordMatch(String password, Member member) {
 
-    if (passwordEncoder.matches(member.getPassword(), password)) {
+    if (passwordEncoder.matches(password, member.getPassword())) {
       return true;
     }else {
       return false;
