@@ -1,10 +1,10 @@
 package com.deundeunhaku.reliablekkuserver.member.dto;
 
 public record MemberPasswordMatchResponse(
-    boolean isPasswordMatch
+    Boolean isPasswordMatch
 ){
 
-        public static MemberPasswordMatchResponse of(boolean currentPassword) {
+        public static MemberPasswordMatchResponse of(Boolean currentPassword) {
             return new MemberPasswordMatchResponse(currentPassword);
         }
     }

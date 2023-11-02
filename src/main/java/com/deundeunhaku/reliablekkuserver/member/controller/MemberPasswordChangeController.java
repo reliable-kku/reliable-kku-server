@@ -22,6 +22,9 @@ public class MemberPasswordChangeController {
         log.info("password : {}", password);
 
         boolean isPasswordMatch = memberService.isMemberPasswordMatch(password, member);
+
+        log.info("isPasswordMatch : {}", isPasswordMatch);
+
         return ResponseEntity.ok(MemberPasswordMatchResponse.of(isPasswordMatch));
     }
 
