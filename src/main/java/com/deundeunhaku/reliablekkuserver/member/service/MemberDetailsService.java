@@ -1,6 +1,7 @@
 package com.deundeunhaku.reliablekkuserver.member.service;
 
 import com.deundeunhaku.reliablekkuserver.member.repository.MemberRepository;
+import java.io.Serializable;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -9,7 +10,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class MemberDetailsService implements UserDetailsService {
+public class MemberDetailsService implements UserDetailsService, Serializable {
 
   private final MemberRepository memberRepository;
 

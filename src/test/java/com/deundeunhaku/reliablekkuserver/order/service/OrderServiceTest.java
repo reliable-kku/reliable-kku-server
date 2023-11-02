@@ -37,7 +37,7 @@ class OrderServiceTest extends BaseServiceTest {
         Integer month = 10;
         LocalDate firstDate = LocalDate.of(year, month, 1);
         LocalDate lastDate = firstDate.plusMonths(1L).minusDays(1L);
-        when(orderRepository.findOrderListByMemberAndCreatedAtBetween(any(), eq(firstDate), eq(lastDate))).thenReturn(orderList);
+        when(orderRepository.findOrderListByMemberAndCreatedDateBetween(any(), eq(firstDate), eq(lastDate))).thenReturn(orderList);
 
         //when
         List<OrderCalendarResponse> calendarList = orderService.getOrderListByMemberAndYearAndMonth(Member.builder().build(), year, month);

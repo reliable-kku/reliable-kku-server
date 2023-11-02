@@ -143,18 +143,16 @@ public class MemberService {
 
   }
 
-  public boolean isMemberPasswordMatch(Member member, String password) {
+  @Transactional
+  public boolean isMemberPasswordMatch(String password, Member member) {
 
-    if (passwordEncoder.matches(member.getPassword(), password)) {
-      return true;
-    }else {
-      return false;
-    }
+    return passwordEncoder.matches(password, member.getPassword());
   }
 
   @Transactional
   public boolean changeMemberPassword(Member member, MemberPasswordChangeRequest request) {
-    member.changePassword(passwordEncoder.encode(request.password()));
+    String encodedPassword = passwordEncoder.encode(request.password());
+    member.changePassword(encodedPassword);
     return true;
   }
 
