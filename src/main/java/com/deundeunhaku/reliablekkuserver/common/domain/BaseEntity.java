@@ -11,7 +11,6 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-@DynamicInsert
 @EntityListeners(AuditingEntityListener.class)
 @MappedSuperclass
 @Getter
@@ -24,7 +23,4 @@ public abstract class BaseEntity {
   @LastModifiedDate
   private LocalDateTime updatedAt;
 
-  //MYSQL 에서만 작동 db 변경시 수정 필요
-  @ColumnDefault("false")
-  private Boolean delYn;
 }
