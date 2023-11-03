@@ -41,7 +41,7 @@ class OfflineOrderControllerTest extends BaseControllerTest {
     );
 
     //when
-    ResultActions resultActions = mockMvc.perform(post(API + "/offline-orders")
+    ResultActions resultActions = mockMvc.perform(post(API + "/admin/offline-orders")
             .contentType(APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(request)))
         .andDo(print());
