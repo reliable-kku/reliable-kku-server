@@ -206,10 +206,10 @@ public class OrderService {
         .toList();
 
     if (orderingOrders.size() > 0) {
-      throw new IllegalArgumentException("이미 주문이 진행중입니다.");
+      return OrderIdResponse.of(orderingOrders.get(0).getId());
     }
+    throw new IllegalArgumentException("이미 주문이 진행중입니다.");
 
-    return OrderIdResponse.of(orderingOrders.get(0).getId());
   }
 
   public List<OrderCalendarResponse> getOrderListByMemberAndYearAndMonth(Member member,
