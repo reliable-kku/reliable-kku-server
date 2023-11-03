@@ -1,8 +1,6 @@
 package com.deundeunhaku.reliablekkuserver.payment.controller;
 
 import com.deundeunhaku.reliablekkuserver.common.config.TossPaymentConfig;
-import com.deundeunhaku.reliablekkuserver.member.domain.Member;
-import com.deundeunhaku.reliablekkuserver.order.domain.Order;
 import com.deundeunhaku.reliablekkuserver.payment.dto.PaymentCancelRequest;
 import com.deundeunhaku.reliablekkuserver.payment.dto.PaymentCancelResponse;
 import com.deundeunhaku.reliablekkuserver.payment.dto.PaymentConfirmRequest;
@@ -11,7 +9,6 @@ import com.deundeunhaku.reliablekkuserver.payment.service.PaymentService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -25,38 +22,18 @@ public class PaymentController {
 
 // 경주가 일단 결제를 완료하고 여기서 서버에서한번더 재검증 (결제 확인? 완료?)
     @PostMapping("/confirm")
-    public ResponseEntity<PaymentSuccess> confirmPayment(@AuthenticationPrincipal Member member, @RequestBody @Valid PaymentConfirmRequest request){
+    public ResponseEntity<PaymentSuccess> confirmPayment(@RequestBody @Valid PaymentConfirmRequest request){
 
-        paymentService.confirmPayment(request.paymentKey(), request.orderId(), request.amount(), member);
+        paymentService.confirmPayment(request.paymentKey(), request.orderId(), request.amount());
         return ResponseEntity.ok().build();
     }
 
-    @PostMapping("/{paymentKey}/cancel")
+
+    @PostMapping("/{orderId}/cancel")
     public ResponseEntity<PaymentCancelResponse> cancelPayment(
-            @PathVariable String paymentKey,
-            @RequestParam Order order,
-            @RequestBody PaymentCancelRequest cancelRequest) {
-        PaymentCancelResponse response = paymentService.cancelPayment(paymentKey, cancelRequest);
-        return ResponseEntity.ok(response);
+            @PathVariable Long orderId,
+            @RequestBody @Valid PaymentCancelRequest cancelRequest) {
+        paymentService.cancelPayment(orderId, cancelRequest);
+        return ResponseEntity.ok().build();
     }
-
-    /*    @GetMapping("/requestPayment/fail")
-    public ResponseEntity paymentFail(@RequestParam String code, @RequestParam String message, @RequestParam String orderId){
-        paymentService.paymentFail(code, message, orderId);
-        return ResponseEntity.ok().body(PaymentFail.builder()
-                .errorCode(code)
-                .errorMessage(message)
-                .orderId(orderId)
-                .build()
-        );
-    }*/
-
-
-    /*@PostMapping("/requestPayment")
-    public ResponseEntity<PaymentResponse> requestPayments(@AuthenticationPrincipal Member member, @RequestBody @Valid PaymentRequest paymentReq) {
-        PaymentResponse paymentRes = paymentService.requestPayment(paymentReq.toEntity(), member.getId()).toPaymentResDto();
-        paymentRes.setSuccessUrl(paymentReq.getSuccessUrl() == null ? tossPaymentConfig.getSuccessUrl() : paymentReq.getSuccessUrl());
-        paymentRes.setFailUrl(paymentReq.getFailUrl() == null ? tossPaymentConfig.getFailUrl() : paymentReq.getSuccessUrl());
-        return ResponseEntity.ok(paymentRes);
-    }*/
 }

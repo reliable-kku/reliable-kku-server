@@ -1,11 +1,8 @@
 package com.deundeunhaku.reliablekkuserver.payment.dto;
 
 import com.deundeunhaku.reliablekkuserver.payment.constants.PayType;
-import com.deundeunhaku.reliablekkuserver.payment.domain.Payment;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
-
-import java.util.UUID;
 
 @Getter
 @Data
@@ -28,14 +25,4 @@ public class PaymentRequest {
 
     private String failUrl;
 
-
-    public Payment toEntity(){
-        return Payment.builder()
-                    .orderId(UUID.randomUUID().toString())
-                    .payType(payType)
-                    .amount(amount)
-                    .orderName(orderName)
-                    .paySuccessYn(false)
-                    .build();
-    }
 }

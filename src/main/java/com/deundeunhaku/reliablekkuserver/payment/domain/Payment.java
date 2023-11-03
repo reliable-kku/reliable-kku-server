@@ -1,13 +1,10 @@
 package com.deundeunhaku.reliablekkuserver.payment.domain;
 
-import com.deundeunhaku.reliablekkuserver.member.domain.Member;
+import com.deundeunhaku.reliablekkuserver.common.domain.BaseEntity;
+import com.deundeunhaku.reliablekkuserver.order.domain.Order;
 import com.deundeunhaku.reliablekkuserver.payment.constants.PayType;
-import com.deundeunhaku.reliablekkuserver.payment.dto.PaymentResponse;
 import jakarta.persistence.*;
 import lombok.*;
-import org.springframework.data.domain.Auditable;
-
-import java.time.LocalDate;
 
 @Entity
 @Getter
@@ -16,33 +13,31 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(indexes = {
-        @Index(name = "idx_payment_member", columnList = "member"),
-        @Index(name = "idx_payment_paymentKey", columnList = "paymentKey" ),
+        @Index(name = "idx_payment_paymentKey", columnList = "paymentKey" )
 })
-public class Payment {
+public class Payment extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    @Column(name = "payment_id", nullable = false, unique = true)
-    private Long paymentId;
+    private Long id;
 
-    @Column(nullable = false, name="pay_type")
+    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private PayType payType;
 
-    @Column(nullable = false, name="pay_amount")
+    @Column(nullable = false)
     private Long amount;
 
     @Column(nullable = false)
-    private String orderId;
+    private String tossOrderId;
 
     @Column(nullable = false)
     private String orderName;
 
     private boolean paySuccessYn;
 
-    @ManyToOne(cascade = CascadeType.PERSIST)
-    @JoinColumn(name = "member")
-    private Member member;
+    @OneToOne
+    @JoinColumn(name = "order_tb_id")
+    private Order order;
 
     @Column
     private String paymentKey;
@@ -56,19 +51,4 @@ public class Payment {
     @Column
     private String cancelReason;
 
-    @Column(nullable = false)
-    private LocalDate createdAt;
-
-    public PaymentResponse toPaymentResDto() {
-        return PaymentResponse.builder()
-                .payType(payType.getPayType())
-                .amount(amount)
-                .orderName(orderName)
-                .orderId(orderId)
-                .customerName(member.getRealName())
-                .createAt(String.valueOf(getCreatedAt()))
-                .cancelYn(cancelYN)
-                .failResponse(failReason)
-                .build();
-    }
 }
