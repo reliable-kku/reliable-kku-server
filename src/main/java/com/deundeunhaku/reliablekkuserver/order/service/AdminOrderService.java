@@ -45,11 +45,22 @@ public class AdminOrderService {
           Duration duration = Duration.between(order.getOrderDatetime(),
               order.getExpectedWaitDatetime());
 
+          if (order.getIsOfflineOrder()) {
+            return AdminOrderResponse.of(
+                order.getTodayOrderCount(),
+                order.getOfflineMember().getPhoneNumber(),
+                order.getOrderDatetime().toLocalTime(),
+                true,
+                duration.toMinutes(),
+                totalCount,
+                eachMenuList
+            );
+          }
           return AdminOrderResponse.of(
               order.getTodayOrderCount(),
               order.getMember().getPhoneNumber(),
               order.getOrderDatetime().toLocalTime(),
-              order.getIsOfflineOrder(),
+              false,
               duration.toMinutes(),
               totalCount,
               eachMenuList

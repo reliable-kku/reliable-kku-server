@@ -99,7 +99,7 @@ public class OrderService {
 
     Long maxId = getMaxTodayOrderCount();
 
-    Order offlineOrder = Order.createOfflineOrder(maxId, request, offlineMember);
+    Order offlineOrder = Order.createOfflineOrder(maxId + 1, request, offlineMember);
     orderRepository.save(offlineOrder);
 
     List<RegisteredMenuRequest> menuRequestList = request.registeredMenus();
@@ -218,7 +218,8 @@ public class OrderService {
     LocalDate firstDate = LocalDate.of(year, month, 1);
     LocalDate lastDate = firstDate.plusMonths(1L).minusDays(1L);
 
-    List<Order> orders = orderRepository.findOrderListByMemberAndCreatedDateBetween(member, firstDate,
+    List<Order> orders = orderRepository.findOrderListByMemberAndCreatedDateBetween(member,
+        firstDate,
         lastDate);
 
     List<OrderCalendarResponse> responseList = new ArrayList<>(orders.stream()
@@ -251,7 +252,8 @@ public class OrderService {
         .map(order -> {
           List<OrderEachMenuResponse> eachMenuList = menuOrderRepository.findByOrderToOrderEachMenuResponse(
               order);
-          return PastOrderResponse.of(order.getCreatedAt().toLocalDate(), order.getOrderDatetime().toLocalTime(),
+          return PastOrderResponse.of(order.getCreatedAt().toLocalDate(),
+              order.getOrderDatetime().toLocalTime(),
               eachMenuList);
         })
         .toList();
@@ -275,16 +277,22 @@ public class OrderService {
   public LeftTimeResponse getLeftTime() {
     LocalDateTime nowDateTime = LocalDateTime.now();
 
-    Order todayLastOrder = orderRepository.findFirstByCreatedAtOrderByCreatedAtDesc(nowDateTime.toLocalDate())
+    Order todayLastOrder = orderRepository.findFirstByCreatedAtOrderByCreatedAtDesc(
+            nowDateTime.toLocalDate())
         .orElse(Order.builder().expectedWaitDatetime(nowDateTime).build());
 
     Duration between = Duration.between(nowDateTime, todayLastOrder.getExpectedWaitDatetime());
 
 //   현재 날짜가 주문 마감 시간보다 늦거나 같으면 0분으로 반환
     if (nowDateTime.isBefore(todayLastOrder.getExpectedWaitDatetime())) {
-      return LeftTimeResponse.of(between.toMinutes()+ 10L);
+      return LeftTimeResponse.of(between.toMinutes() + 10L);
     } else {
       return LeftTimeResponse.of(10L);
     }
+  }
+
+  public void updateOrderStatusToCancel(Long orderId) {
+    orderRepository.findById(orderId)
+        .ifPresent(order -> order.updateOrderStatus(OrderStatus.CANCELED));
   }
 }
