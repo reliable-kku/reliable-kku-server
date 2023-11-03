@@ -19,6 +19,7 @@ import com.deundeunhaku.reliablekkuserver.BaseControllerTest;
 import com.deundeunhaku.reliablekkuserver.member.domain.Member;
 import com.deundeunhaku.reliablekkuserver.order.dto.*;
 import com.deundeunhaku.reliablekkuserver.order.service.OrderService;
+import com.deundeunhaku.reliablekkuserver.payment.service.PaymentService;
 import com.deundeunhaku.reliablekkuserver.sse.service.SseService;
 import java.util.Collections;
 import com.deundeunhaku.reliablekkuserver.order.dto.OrderEachMenuResponse;
@@ -46,6 +47,9 @@ class OrderControllerTest extends BaseControllerTest {
 
   @MockBean
   private SseService sseService;
+
+  @MockBean
+  private PaymentService paymentService;
 
 
   @Test

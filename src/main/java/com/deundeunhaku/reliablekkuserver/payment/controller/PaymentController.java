@@ -22,9 +22,9 @@ public class PaymentController {
     private final PaymentService paymentService;
     private final TossPaymentConfig tossPaymentConfig;
 
-// 경주가 일단 결제를 완료하고 여기서 서버에서한번더 재검증 (결제 확인? 완료?)
+    // 경주가 일단 결제를 완료하고 여기서 서버에서한번더 재검증 (결제 확인? 완료?)
     @PostMapping("/confirm")
-    public ResponseEntity<PaymentSuccess> confirmPayment(@RequestBody @Valid PaymentConfirmRequest request){
+    public ResponseEntity<PaymentSuccess> confirmPayment(@RequestBody @Valid PaymentConfirmRequest request) {
 
         paymentService.confirmPayment(request.paymentKey(), request.orderId(), request.amount());
         return ResponseEntity.ok().build();

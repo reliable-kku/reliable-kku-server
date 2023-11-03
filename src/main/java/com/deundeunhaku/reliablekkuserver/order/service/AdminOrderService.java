@@ -8,6 +8,8 @@ import com.deundeunhaku.reliablekkuserver.order.dto.AdminOrderResponse;
 import com.deundeunhaku.reliablekkuserver.order.dto.OrderEachMenuResponse;
 import com.deundeunhaku.reliablekkuserver.order.repository.MenuOrderRepository;
 import com.deundeunhaku.reliablekkuserver.order.repository.OrderRepository;
+import com.deundeunhaku.reliablekkuserver.payment.dto.PaymentCancelRequest;
+import com.deundeunhaku.reliablekkuserver.payment.service.PaymentService;
 import com.deundeunhaku.reliablekkuserver.sms.service.SmsService;
 import com.deundeunhaku.reliablekkuserver.sse.service.SseService;
 import java.time.Duration;
@@ -26,6 +28,7 @@ public class AdminOrderService {
   private final SseService sseService;
   private final FcmService fcmService;
   private final SmsService smsService;
+  private final PaymentService paymentService;
 
 
   public Order findByOrderId(Long orderId) {
@@ -159,10 +162,8 @@ public class AdminOrderService {
   @Transactional
   public void deleteOrder(Long orderId) {
     Order order = findByOrderId(orderId);
-
-//    FIXME : 결제 취소 로직 넣어줘 민진아 ㅠㅠ
     if (order.getMember() != null) {
-//      결제 취소 로직
+      paymentService.cancelPayment(orderId, PaymentCancelRequest.of("관리자가 취소"));
     }
     order.updateOrderStatus(OrderStatus.CANCELED);
   }
