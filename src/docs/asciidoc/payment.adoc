@@ -1,0 +1,39 @@
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 2
+
+== 메인 문서
+
+link:index.html[메인 문서]
+
+=== 결제를 승인한다
+
+==== Request
+include::{snippets}/payments/confirm/success/http-request.adoc[]
+include::{snippets}/payments/confirm/success/request-fields.adoc[]
+
+==== Response
+include::{snippets}/payments/confirm/success/http-response.adoc[]
+
+=== 결제를 실패한다
+
+==== Request
+include::{snippets}/payments/confirm/fail/http-request.adoc[]
+include::{snippets}/payments/confirm/fail/request-fields.adoc[]
+
+==== Response
+include::{snippets}/payments/confirm/fail/http-response.adoc[]
+include::{snippets}/payments/confirm/fail/response-fields.adoc[]
+
+
+=== 토스 서버 에러
+
+==== Request
+include::{snippets}/payments/confirm/tossError/http-request.adoc[]
+include::{snippets}/payments/confirm/tossError/request-fields.adoc[]
+
+==== Response
+include::{snippets}/payments/confirm/tossError/http-response.adoc[]
+include::{snippets}/payments/confirm/tossError/response-fields.adoc[]
