@@ -51,9 +51,9 @@ public class OrderController {
   }
 
   @GetMapping("/duplicate")
-  public ResponseEntity<Void> isMemberNowOrdered(@AuthenticationPrincipal Member member) {
-    orderService.isMemberNowOrdered(member);
-    return ResponseEntity.noContent().build();
+  public ResponseEntity<OrderIdResponse> isMemberNowOrdered(@AuthenticationPrincipal Member member) {
+    OrderIdResponse response = orderService.isMemberNowOrdered(member);
+    return ResponseEntity.ok(response);
   }
 
   @GetMapping("/calendar")

@@ -196,19 +196,20 @@ public class OrderService {
         .orElse(0L);
   }
 
-  public void isMemberNowOrdered(Member member) {
+  public OrderIdResponse isMemberNowOrdered(Member member) {
     List<Order> orderByMember = orderRepository.findOrderByMember(member);
     List<OrderStatus> orderProceedingStatus = List.of(OrderStatus.WAIT, OrderStatus.COOKING,
         OrderStatus.COOKED);
 
-    List<OrderStatus> isOrderProceeding = orderByMember.stream()
-        .map(Order::getOrderStatus)
-        .filter(orderProceedingStatus::contains)
+    List<Order> orderingOrders = orderByMember.stream()
+        .filter(o -> orderProceedingStatus.contains(o.getOrderStatus()))
         .toList();
 
-    if (isOrderProceeding.size() > 0) {
+    if (orderingOrders.size() > 0) {
       throw new IllegalArgumentException("이미 주문이 진행중입니다.");
     }
+
+    return OrderIdResponse.of(orderingOrders.get(0).getId());
   }
 
   public List<OrderCalendarResponse> getOrderListByMemberAndYearAndMonth(Member member,

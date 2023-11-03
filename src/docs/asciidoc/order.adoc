@@ -15,6 +15,17 @@ include::{snippets}/order/duplicate/success/http-request.adoc[]
 
 ==== Response
 include::{snippets}/order/duplicate/success/http-response.adoc[]
+include::{snippets}/order/duplicate/success/response-fields.adoc[]
+
+=== 주문이 만약 현재 진행중이아니면 400을 던진다
+
+==== Request
+include::{snippets}/order/duplicate/fail/http-request.adoc[]
+
+==== Response
+
+include::{snippets}/order/duplicate/fail/http-response.adoc[]
+include::{snippets}/order/duplicate/fail/response-fields.adoc[]
 
 
 === 주문을 저장한다 (토스 PG 결제 이후)

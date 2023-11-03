@@ -146,13 +146,40 @@ class OrderControllerTest extends BaseControllerTest {
   @Test
   void 주문이_현재_진행중인지_확인해준다() throws Exception {
     //given
+    when(orderService.isMemberNowOrdered(any()))
+        .thenReturn(OrderIdResponse.of(1L));
+
     //when
     ResultActions resultActions = mockMvc.perform(get(API + "/order/duplicate"))
         .andDo(print());
 
     //then
-    resultActions.andExpect(status().isNoContent())
-        .andDo(document("order/duplicate/success"));
+    resultActions.andExpect(status().isOk())
+        .andDo(document("order/duplicate/success",
+            responseFields(
+                fieldWithPath("id").description("주문 아이디")
+            )
+        ));
+
+  }
+
+  @Test
+  void 주문이_만약_현재진행중이아니면_에러를던진다() throws Exception {
+    //given
+    when(orderService.isMemberNowOrdered(any()))
+        .thenThrow(new IllegalArgumentException("주문이 진행중이지 않습니다."));
+
+    //when
+    ResultActions resultActions = mockMvc.perform(get(API + "/order/duplicate"))
+        .andDo(print());
+
+    //then
+    resultActions.andExpect(status().isBadRequest())
+        .andDo(document("order/duplicate/fail",
+            responseFields(
+                fieldWithPath("message").description("에러 메세지")
+            )
+        ));
 
   }
 
