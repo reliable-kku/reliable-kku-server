@@ -27,4 +27,5 @@ public class PaymentCancelResponse{
     private PaymentSuccessCard card; // 결제 카드 정보 (아래 자세한 정보 있음)
     private PayType type; // 결제
     private List<PaymentCancelDataResponse> cancels;
+
 }

@@ -99,7 +99,7 @@ public class OrderService {
 
     Long maxId = getMaxTodayOrderCount();
 
-    Order offlineOrder = Order.createOfflineOrder(maxId, request, offlineMember);
+    Order offlineOrder = Order.createOfflineOrder(maxId + 1, request, offlineMember);
     orderRepository.save(offlineOrder);
 
     List<RegisteredMenuRequest> menuRequestList = request.registeredMenus();
@@ -188,7 +188,7 @@ public class OrderService {
   }
 
   private Long getMaxTodayOrderCount() {
-    List<Order> todayOrderList = orderRepository.findOrderByCreatedAt(LocalDate.now());
+    List<Order> todayOrderList = orderRepository.findOrderByCreatedDate(LocalDate.now());
 
     return todayOrderList.stream()
         .map(Order::getTodayOrderCount)
@@ -196,19 +196,20 @@ public class OrderService {
         .orElse(0L);
   }
 
-  public void isMemberNowOrdered(Member member) {
+  public OrderIdResponse isMemberNowOrdered(Member member) {
     List<Order> orderByMember = orderRepository.findOrderByMember(member);
     List<OrderStatus> orderProceedingStatus = List.of(OrderStatus.WAIT, OrderStatus.COOKING,
         OrderStatus.COOKED);
 
-    List<OrderStatus> isOrderProceeding = orderByMember.stream()
-        .map(Order::getOrderStatus)
-        .filter(orderProceedingStatus::contains)
+    List<Order> orderingOrders = orderByMember.stream()
+        .filter(o -> orderProceedingStatus.contains(o.getOrderStatus()))
         .toList();
 
-    if (isOrderProceeding.size() > 0) {
-      throw new IllegalArgumentException("이미 주문이 진행중입니다.");
+    if (orderingOrders.size() > 0) {
+      return OrderIdResponse.of(orderingOrders.get(0).getId());
     }
+    throw new IllegalArgumentException("이미 주문이 진행중입니다.");
+
   }
 
   public List<OrderCalendarResponse> getOrderListByMemberAndYearAndMonth(Member member,
@@ -217,7 +218,8 @@ public class OrderService {
     LocalDate firstDate = LocalDate.of(year, month, 1);
     LocalDate lastDate = firstDate.plusMonths(1L).minusDays(1L);
 
-    List<Order> orders = orderRepository.findOrderListByMemberAndCreatedDateBetween(member, firstDate,
+    List<Order> orders = orderRepository.findOrderListByMemberAndCreatedDateBetween(member,
+        firstDate,
         lastDate);
 
     List<OrderCalendarResponse> responseList = new ArrayList<>(orders.stream()
@@ -250,7 +252,8 @@ public class OrderService {
         .map(order -> {
           List<OrderEachMenuResponse> eachMenuList = menuOrderRepository.findByOrderToOrderEachMenuResponse(
               order);
-          return PastOrderResponse.of(order.getCreatedAt().toLocalDate(), order.getOrderDatetime().toLocalTime(),
+          return PastOrderResponse.of(order.getCreatedAt().toLocalDate(),
+              order.getOrderDatetime().toLocalTime(),
               eachMenuList);
         })
         .toList();
@@ -274,16 +277,22 @@ public class OrderService {
   public LeftTimeResponse getLeftTime() {
     LocalDateTime nowDateTime = LocalDateTime.now();
 
-    Order todayLastOrder = orderRepository.findFirstByCreatedAtOrderByCreatedAtDesc(nowDateTime.toLocalDate())
+    Order todayLastOrder = orderRepository.findFirstByCreatedAtOrderByCreatedAtDesc(
+            nowDateTime.toLocalDate())
         .orElse(Order.builder().expectedWaitDatetime(nowDateTime).build());
 
     Duration between = Duration.between(nowDateTime, todayLastOrder.getExpectedWaitDatetime());
 
 //   현재 날짜가 주문 마감 시간보다 늦거나 같으면 0분으로 반환
     if (nowDateTime.isBefore(todayLastOrder.getExpectedWaitDatetime())) {
-      return LeftTimeResponse.of(between.toMinutes()+ 10L);
+      return LeftTimeResponse.of(between.toMinutes() + 10L);
     } else {
       return LeftTimeResponse.of(10L);
     }
+  }
+
+  public void updateOrderStatusToCancel(Long orderId) {
+    orderRepository.findById(orderId)
+        .ifPresent(order -> order.updateOrderStatus(OrderStatus.CANCELED));
   }
 }

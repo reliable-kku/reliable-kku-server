@@ -10,7 +10,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface OrderRepository extends JpaRepository<Order, Long> , OrderRepositoryCustom{
 
-  List<Order> findOrderByCreatedAt(LocalDate createdAt);
+  List<Order> findOrderByCreatedDate(LocalDate createdDate);
 
   List<Order> findOrderByMember(Member member);
 

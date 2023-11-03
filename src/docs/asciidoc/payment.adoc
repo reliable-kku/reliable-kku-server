@@ -75,3 +75,4 @@ include::{snippets}/payments/cancel/tossErrors/path-parameters.adoc[]
 ==== Response
 include::{snippets}/payments/cancel/tossErrors/http-response.adoc[]
 include::{snippets}/payments/cancel/tossErrors/response-fields.adoc[]
+

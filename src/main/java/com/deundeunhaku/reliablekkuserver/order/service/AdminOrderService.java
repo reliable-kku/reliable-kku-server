@@ -36,7 +36,7 @@ public class AdminOrderService {
   public List<AdminOrderResponse> getOrderList(OrderStatus orderStatus) {
     List<Order> orderList = orderRepository.findByOrderStatusOrderByOrderDatetimeAsc(orderStatus);
 
-    return orderList.stream()
+    List<AdminOrderResponse> collect = orderList.stream()
         .map(order -> {
           List<OrderEachMenuResponse> eachMenuList = menuOrderRepository.findByOrderToOrderEachMenuResponse(
               order);
@@ -45,17 +45,29 @@ public class AdminOrderService {
           Duration duration = Duration.between(order.getOrderDatetime(),
               order.getExpectedWaitDatetime());
 
+          if (order.getIsOfflineOrder()) {
+            return AdminOrderResponse.of(
+                order.getTodayOrderCount(),
+                order.getOfflineMember().getPhoneNumber(),
+                order.getOrderDatetime().toLocalTime(),
+                true,
+                duration.toMinutes(),
+                totalCount,
+                eachMenuList
+            );
+          }
           return AdminOrderResponse.of(
               order.getTodayOrderCount(),
               order.getMember().getPhoneNumber(),
               order.getOrderDatetime().toLocalTime(),
-              order.getIsOfflineOrder(),
+              false,
               duration.toMinutes(),
               totalCount,
               eachMenuList
           );
         })
         .collect(Collectors.toList());
+    return collect;
   }
 
 

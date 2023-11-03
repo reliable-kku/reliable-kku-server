@@ -1,6 +1,8 @@
 package com.deundeunhaku.reliablekkuserver.payment.controller;
 
 import com.deundeunhaku.reliablekkuserver.common.config.TossPaymentConfig;
+import com.deundeunhaku.reliablekkuserver.member.domain.Member;
+import com.deundeunhaku.reliablekkuserver.order.domain.Order;
 import com.deundeunhaku.reliablekkuserver.payment.dto.PaymentCancelRequest;
 import com.deundeunhaku.reliablekkuserver.payment.dto.PaymentCancelResponse;
 import com.deundeunhaku.reliablekkuserver.payment.dto.PaymentConfirmRequest;

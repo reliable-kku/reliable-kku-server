@@ -45,15 +45,15 @@ public class OrderController {
   public ResponseEntity<Void> deleteOrder(@PathVariable Long orderId) {
 //    FIXME : 결제 취소 로직 넣어 민진아 ㅠㅠ
 
-    orderService.deleteOrder(orderId);
+    orderService.updateOrderStatusToCancel(orderId);
     sseService.disconnect(orderId);
     return ResponseEntity.noContent().build();
   }
 
   @GetMapping("/duplicate")
-  public ResponseEntity<Void> isMemberNowOrdered(@AuthenticationPrincipal Member member) {
-    orderService.isMemberNowOrdered(member);
-    return ResponseEntity.noContent().build();
+  public ResponseEntity<OrderIdResponse> isMemberNowOrdered(@AuthenticationPrincipal Member member) {
+    OrderIdResponse response = orderService.isMemberNowOrdered(member);
+    return ResponseEntity.ok(response);
   }
 
   @GetMapping("/calendar")

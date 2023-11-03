@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api/v1/offline-orders")
+@RequestMapping("/api/v1/admin/offline-orders")
 public class OfflineOrderController {
 
   private final OrderService orderService;
