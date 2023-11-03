@@ -30,6 +30,9 @@
 === 가게 문서
 * link:store.html[가게 문서]
 
+=== 결제 문서
+* link:payment.adoc[토스pg 결제 문서]
+
 
 == 관리자
 
