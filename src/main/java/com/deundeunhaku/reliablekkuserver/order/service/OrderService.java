@@ -188,7 +188,7 @@ public class OrderService {
   }
 
   private Long getMaxTodayOrderCount() {
-    List<Order> todayOrderList = orderRepository.findOrderByCreatedAt(LocalDate.now());
+    List<Order> todayOrderList = orderRepository.findOrderByCreatedDate(LocalDate.now());
 
     return todayOrderList.stream()
         .map(Order::getTodayOrderCount)

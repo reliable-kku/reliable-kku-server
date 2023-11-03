@@ -22,15 +22,11 @@ import org.hibernate.annotations.DynamicInsert;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @Entity
-public class Menu  extends BaseEntity {
+public class Menu extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
-
-    @NotNull
-    @Column(unique = true)
-    private String phoneNumber;
 
     @NotNull
     @Column(unique = true)
@@ -55,10 +51,10 @@ public class Menu  extends BaseEntity {
     private String menuImageUrl;
 
     @Builder
-    public Menu(Long id, String phoneNumber, String name, String description, Integer pricePerOne,
-        Integer pricePerThree, boolean isSale, Member onlineMember, String menuImageUrl) {
+    public Menu(Long id, String name, String description, Integer pricePerOne,
+        Integer pricePerThree,
+        boolean isSale, Member onlineMember, String menuImageUrl) {
         this.id = id;
-        this.phoneNumber = phoneNumber;
         this.name = name;
         this.description = description;
         this.pricePerOne = pricePerOne;

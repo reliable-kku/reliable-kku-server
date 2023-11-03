@@ -1,0 +1,40 @@
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 2
+
+== 메인 문서
+
+link:index.html[메인 문서]
+
+=== 서버와 SSE 연결한다
+
+==== Request
+
+include::{snippets}/order/sse/connect/success/http-request.adoc[]
+
+query parameters::
+include::{snippets}/order/sse/connect/success/query-parameters.adoc[]
+
+==== Response
+
+include::{snippets}/order/sse/connect/success/http-response.adoc[]
+
+
+-----
+
+status 라는 이름으로 <- addEvent~~에 담을 값
+
+    orderStatus : string
+    leftMinutes : number
+를 반환한다
+
+orderStatus 는 총 5가지의 값을 전달한다 앞의 영어의 값이 넘어온다
+->
+WAIT("주문 대기중"),
+COOKING("조리중"),
+COOKED("조리 완료"),
+PICKUP("픽업 완료"),
+CANCELED("주문 취소"),
+NOT_TAKE("픽업 안함");

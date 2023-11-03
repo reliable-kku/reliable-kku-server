@@ -31,9 +31,9 @@ include::{snippets}/payments/confirm/fail/response-fields.adoc[]
 === 토스 서버 에러
 
 ==== Request
-include::{snippets}/payments/confirm/tossError/http-request.adoc[]
-include::{snippets}/payments/confirm/tossError/request-fields.adoc[]
+include::{snippets}/payments/confirm/tossErrors/http-request.adoc[]
+include::{snippets}/payments/confirm/tossErrors/request-fields.adoc[]
 
 ==== Response
-include::{snippets}/payments/confirm/tossError/http-response.adoc[]
-include::{snippets}/payments/confirm/tossError/response-fields.adoc[]
+include::{snippets}/payments/confirm/tossErrors/http-response.adoc[]
+include::{snippets}/payments/confirm/tossErrors/response-fields.adoc[]

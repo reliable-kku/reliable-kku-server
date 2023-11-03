@@ -30,6 +30,13 @@
 === 가게 문서
 * link:store.html[가게 문서]
 
+=== Payment 문서 ( 결제 관련 문서 )
+
+* link:payment.html[결제 관련 문서]
+
+=== Sse 문서
+
+* link:sse.html[Sse 문서]
 
 == 관리자
 
