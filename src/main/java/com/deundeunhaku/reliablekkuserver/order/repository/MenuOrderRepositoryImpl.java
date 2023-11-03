@@ -23,7 +23,7 @@ public class MenuOrderRepositoryImpl implements MenuOrderRepositoryCustom {
         .select(
             new QOrderEachMenuResponse(menu.name, menuOrder.count)
         ).from(menu)
-        .innerJoin(menuOrder.menu, menu)
+        .innerJoin(menuOrder).on(menuOrder.menu.eq(menu))
         .fetch();
   }
 }

@@ -36,7 +36,7 @@ public class AdminOrderService {
   public List<AdminOrderResponse> getOrderList(OrderStatus orderStatus) {
     List<Order> orderList = orderRepository.findByOrderStatusOrderByOrderDatetimeAsc(orderStatus);
 
-    return orderList.stream()
+    List<AdminOrderResponse> collect = orderList.stream()
         .map(order -> {
           List<OrderEachMenuResponse> eachMenuList = menuOrderRepository.findByOrderToOrderEachMenuResponse(
               order);
@@ -67,6 +67,7 @@ public class AdminOrderService {
           );
         })
         .collect(Collectors.toList());
+    return collect;
   }
 
 
