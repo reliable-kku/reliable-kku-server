@@ -9,6 +9,8 @@ import com.deundeunhaku.reliablekkuserver.order.dto.OrderRegisterRequest;
 import com.deundeunhaku.reliablekkuserver.order.dto.OrderResponse;
 import com.deundeunhaku.reliablekkuserver.order.dto.PastOrderResponse;
 import com.deundeunhaku.reliablekkuserver.order.service.OrderService;
+import com.deundeunhaku.reliablekkuserver.payment.dto.PaymentCancelRequest;
+import com.deundeunhaku.reliablekkuserver.payment.service.PaymentService;
 import com.deundeunhaku.reliablekkuserver.sse.service.SseService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -43,9 +45,8 @@ public class OrderController {
 
   @DeleteMapping("/{orderId}")
   public ResponseEntity<Void> deleteOrder(@PathVariable Long orderId) {
-//    FIXME : 결제 취소 로직 넣어 민진아 ㅠㅠ
-
-    orderService.updateOrderStatusToCancel(orderId);
+    paymentService.cancelPayment(orderId, PaymentCancelRequest.of("고객이 주문 전 취소하였습니다"));
+    orderService.deleteOrder(orderId);
     sseService.disconnect(orderId);
     return ResponseEntity.noContent().build();
   }

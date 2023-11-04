@@ -56,7 +56,7 @@ public class OrderService {
 
   @Transactional
   public OrderIdResponse registerOrder(OrderRegisterRequest request, Member member) {
-    Payment payment = paymentRepository.findByOrderId(request.tossOrderId())
+    Payment payment = paymentRepository.findByTossOrderId(request.tossOrderId())
         .orElseThrow(() -> new IllegalArgumentException("잘못된 요청입니다."));
 
     if (!payment.isPaySuccessYn()) {

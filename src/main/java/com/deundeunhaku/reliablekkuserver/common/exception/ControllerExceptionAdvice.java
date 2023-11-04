@@ -12,6 +12,12 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class ControllerExceptionAdvice {
 
+    @ExceptionHandler(PaymentCancelException.class)
+    public ResponseEntity<ErrorResponse> paymentCancelException(PaymentCancelException e){
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(ErrorResponse.of(e.getMessage()));
+    }
+
     @ExceptionHandler(PaymentException.class)
     public ResponseEntity<ErrorResponse> paymentException(PaymentException e) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
