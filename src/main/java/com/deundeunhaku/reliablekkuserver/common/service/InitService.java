@@ -11,7 +11,7 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-@Profile("local")
+//@Profile("local")
 @RequiredArgsConstructor
 @Service
 public class InitService {
