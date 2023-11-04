@@ -448,8 +448,10 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_오프라인_주문하기_성공">오프라인 주문하기 성공</a></li>
 <li><a href="#_관리자_주문_리스트_조회">관리자 주문 리스트 조회</a></li>
 <li><a href="#_관리자_주문_접수_조리시간_선택후_주문_접수">관리자 주문 접수 (조리시간 선택후 주문 접수)</a></li>
+<li><a href="#_관리자_주문_취소">관리자 주문 취소</a></li>
 <li><a href="#_음식을_다_만들고_픽업_요청을_한다">음식을 다 만들고 픽업 요청을 한다</a></li>
 <li><a href="#_음식을_수령한_후_관리자가_완료_처리한다">음식을 수령한 후 관리자가 완료 처리한다</a></li>
+<li><a href="#_관리자_주문_미수령처리">관리자 주문 미수령처리</a></li>
 </ul>
 </li>
 </ul>
@@ -690,9 +692,55 @@ Content-Type: application/x-www-form-urlencoded</code></pre>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_음식을_다_만들고_픽업_요청을_한다">음식을 다 만들고 픽업 요청을 한다</h3>
+<h3 id="_관리자_주문_취소">관리자 주문 취소</h3>
 <div class="sect3">
 <h4 id="_request_4">Request</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">DELETE /api/v1/admin/orders/1 HTTP/1.1
+Host: localhost:8080</code></pre>
+</div>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Path Parameters</dt>
+<dd>
+<p>./api/v1/admin/orders/{orderId}</p>
+</dd>
+</dl>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Parameter</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>orderId</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">주문 번호</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect3">
+<h4 id="_response_4">Response</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">HTTP/1.1 204 No Content</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_음식을_다_만들고_픽업_요청을_한다">음식을 다 만들고 픽업 요청을 한다</h3>
+<div class="sect3">
+<h4 id="_request_5">Request</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">PATCH /api/v1/admin/orders/1/pick-up HTTP/1.1
@@ -727,7 +775,7 @@ Host: localhost:8080</code></pre>
 </table>
 </div>
 <div class="sect3">
-<h4 id="_response_4">Response</h4>
+<h4 id="_response_5">Response</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">HTTP/1.1 204 No Content</code></pre>
@@ -737,10 +785,6 @@ Host: localhost:8080</code></pre>
 </div>
 <div class="sect2">
 <h3 id="_음식을_수령한_후_관리자가_완료_처리한다">음식을 수령한 후 관리자가 완료 처리한다</h3>
-<div class="sect3">
-<h4 id="_request_5">Request</h4>
-
-</div>
 <div class="sect3">
 <h4 id="_request_6">Request</h4>
 <div class="listingblock">
@@ -777,7 +821,53 @@ Host: localhost:8080</code></pre>
 </table>
 </div>
 <div class="sect3">
-<h4 id="_response_5">Response</h4>
+<h4 id="_response_6">Response</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">HTTP/1.1 204 No Content</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_관리자_주문_미수령처리">관리자 주문 미수령처리</h3>
+<div class="sect3">
+<h4 id="_request_7">Request</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">PATCH /api/v1/admin/orders/1/not-take HTTP/1.1
+Host: localhost:8080</code></pre>
+</div>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Path Parameters</dt>
+<dd>
+<p>./api/v1/admin/orders/{orderId}/not-take</p>
+</dd>
+</dl>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Parameter</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>orderId</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">주문 번호</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect3">
+<h4 id="_response_7">Response</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">HTTP/1.1 204 No Content</code></pre>
@@ -791,7 +881,7 @@ Host: localhost:8080</code></pre>
 <div id="footer">
 <div id="footer-text">
 Version 0.0.1-SNAPSHOT<br>
-Last updated 2023-11-04 20:54:08 +0900
+Last updated 2023-11-04 22:18:13 +0900
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>

@@ -2,6 +2,7 @@ package com.deundeunhaku.reliablekkuserver.order.controller;
 
 import static org.mockito.Mockito.when;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.delete;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.patch;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
@@ -18,6 +19,7 @@ import com.deundeunhaku.reliablekkuserver.order.constant.OrderStatus;
 import com.deundeunhaku.reliablekkuserver.order.dto.AdminOrderResponse;
 import com.deundeunhaku.reliablekkuserver.order.dto.OrderEachMenuResponse;
 import com.deundeunhaku.reliablekkuserver.order.service.AdminOrderService;
+import com.deundeunhaku.reliablekkuserver.sse.service.SseService;
 import java.time.LocalTime;
 import java.util.List;
 import org.junit.jupiter.api.Test;
@@ -28,6 +30,8 @@ class AdminOrderControllerTest extends BaseControllerTest {
 
   @MockBean
   private AdminOrderService adminOrderService;
+  @MockBean
+  private SseService sseService;
 
   @Test
   void 관리자가_볼_주문리스트를_반환한다() throws Exception {
@@ -125,11 +129,28 @@ class AdminOrderControllerTest extends BaseControllerTest {
   }
 
   @Test
-  void 주문을_제작완료하면_픽업으로_상태를_변경한다() throws Exception {
+  void 관리자가_주문을_취소한다() throws Exception {
       //given
-    Long orderId = 1L;
+    final Long orderId = 1L;
 
       //when
+    ResultActions resultActions = mockMvc.perform(delete(API + "/admin/orders/{orderId}", orderId))
+        .andDo(print());
+
+    //then
+    resultActions.andExpect(status().isNoContent())
+        .andDo(document("admin/order-cancel/success",
+            pathParameters(
+                parameterWithName("orderId").description("주문 번호")
+            )));
+  }
+
+  @Test
+  void 주문을_제작완료하면_픽업으로_상태를_변경한다() throws Exception {
+    //given
+    Long orderId = 1L;
+
+    //when
     ResultActions resultActions = mockMvc.perform(
             patch(API + "/admin/orders/{orderId}/pick-up", orderId))
         .andDo(print());
@@ -160,7 +181,7 @@ class AdminOrderControllerTest extends BaseControllerTest {
                 parameterWithName("orderId").description("주문 번호")
             )));
   }
-  
+
   @Test
   void 사용자가_음식을_미수령하면_미수령처리한다() throws Exception {
     //given
@@ -178,5 +199,5 @@ class AdminOrderControllerTest extends BaseControllerTest {
                 parameterWithName("orderId").description("주문 번호")
             )));
   }
-  
+
 }
