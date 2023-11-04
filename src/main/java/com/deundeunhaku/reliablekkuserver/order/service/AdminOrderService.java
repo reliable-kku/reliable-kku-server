@@ -188,12 +188,14 @@ public class AdminOrderService {
     order.updateOrderStatus(OrderStatus.PICKUP);
   }
 
+  @Transactional
   public void finishOrder(Long orderId) {
     Order order = findByOrderId(orderId);
 
     order.updateOrderStatus(OrderStatus.FINISH);
   }
 
+  @Transactional
   public void notTakeOrder(Long orderId) {
     Order order = findByOrderId(orderId);
 
