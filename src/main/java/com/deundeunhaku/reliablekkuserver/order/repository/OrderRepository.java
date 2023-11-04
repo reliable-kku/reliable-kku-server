@@ -14,7 +14,7 @@ public interface OrderRepository extends JpaRepository<Order, Long> , OrderRepos
 
   List<Order> findOrderByMember(Member member);
 
-  List<Order> findByOrderStatusOrderByOrderDatetimeAsc(OrderStatus orderStatus);
+  List<Order> findByOrderStatusInOrderByOrderDatetimeAsc(List<OrderStatus> orderStatus);
 
   List<Order> findOrderListByMemberAndCreatedDateBetween(Member member, LocalDate firstDate, LocalDate lastDate);
 

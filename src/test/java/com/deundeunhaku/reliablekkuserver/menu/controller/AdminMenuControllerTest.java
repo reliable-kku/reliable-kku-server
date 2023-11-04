@@ -32,9 +32,9 @@ class AdminMenuControllerTest extends BaseControllerTest {
   @Test
   void 메뉴의_리스트를_반환한다() throws Exception {
     //given
-    MenuResponse menuResponse1 = MenuResponse.of(1L, "imageUrl1", "든붕이", "든붕이임", 1000, 3000);
-    MenuResponse menuResponse2 = MenuResponse.of(2L, "imageUrl2", "팥붕이", "팥붕이야", 2000, 5000);
-    MenuResponse menuResponse3 = MenuResponse.of(3L, "imageUrl3", "누붕이", "누붕이일까", 3000, 7000);
+    MenuResponse menuResponse1 = MenuResponse.of(1L, "imageUrl1", "든붕이", "든붕이임", 1000, 3000, true);
+    MenuResponse menuResponse2 = MenuResponse.of(2L, "imageUrl2", "팥붕이", "팥붕이야", 2000, 5000, true);
+    MenuResponse menuResponse3 = MenuResponse.of(3L, "imageUrl3", "누붕이", "누붕이일까", 3000, 7000, true);
 
     when(menuService.getMenuList())
         .thenReturn(List.of(menuResponse1, menuResponse2, menuResponse3));
@@ -51,7 +51,9 @@ class AdminMenuControllerTest extends BaseControllerTest {
                 fieldWithPath("[].menuName").description("메뉴의 이름"),
                 fieldWithPath("[].description").description("메뉴 설명"),
                 fieldWithPath("[].pricePerOne").description("메뉴의 가격"),
-                fieldWithPath("[].pricePerThree").description("메뉴의 할인된 가격")
+                fieldWithPath("[].pricePerThree").description("메뉴의 할인된 가격"),
+                fieldWithPath("[].isSale").description("메뉴의 품절 여부")
+
             )));
   }
 

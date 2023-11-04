@@ -23,9 +23,12 @@ include::{snippets}/offline-order/register/success/http-response.adoc[]
 
 ==== Request
 
+
 include::{snippets}/admin/order-list/success/http-request.adoc[]
 Query Parameters::
+WAIT COOKING PICKUP 이거 넣으면돼
 include::{snippets}/admin/order-list/success/query-parameters.adoc[]
+
 
 ==== Response
 

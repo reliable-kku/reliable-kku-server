@@ -13,6 +13,7 @@ import com.deundeunhaku.reliablekkuserver.payment.service.PaymentService;
 import com.deundeunhaku.reliablekkuserver.sms.service.SmsService;
 import com.deundeunhaku.reliablekkuserver.sse.service.SseService;
 import java.time.Duration;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -37,7 +38,15 @@ public class AdminOrderService {
   }
 
   public List<AdminOrderResponse> getOrderList(OrderStatus orderStatus) {
-    List<Order> orderList = orderRepository.findByOrderStatusOrderByOrderDatetimeAsc(orderStatus);
+
+    List<Order> orderList = new ArrayList<>();
+
+    switch (orderStatus) {
+      case WAIT ->orderList = orderRepository.findByOrderStatusInOrderByOrderDatetimeAsc(List.of(OrderStatus.WAIT));
+      case COOKING -> orderList = orderRepository.findByOrderStatusInOrderByOrderDatetimeAsc(List.of(OrderStatus.COOKING, OrderStatus.COOKED));
+      case PICKUP -> orderList = orderRepository.findByOrderStatusInOrderByOrderDatetimeAsc(
+          List.of(OrderStatus.PICKUP, OrderStatus.CANCELED, OrderStatus.NOT_TAKE));
+    }
 
     List<AdminOrderResponse> collect = orderList.stream()
         .map(order -> {
