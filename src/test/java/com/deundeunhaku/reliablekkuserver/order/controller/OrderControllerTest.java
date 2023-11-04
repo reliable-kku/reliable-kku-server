@@ -227,10 +227,12 @@ class OrderControllerTest extends BaseControllerTest {
 
     PastOrderResponse response1 = PastOrderResponse.of(LocalDate.of(2023, 10, 29),
         LocalTime.of(12, 30, 30),
+        1000,
         List.of(eachOrderResponse1, eachOrderResponse2, eachOrderResponse3));
 
     PastOrderResponse response2 = PastOrderResponse.of(LocalDate.of(2023, 10, 27),
         LocalTime.of(4, 28, 30),
+        1200,
         List.of(eachOrderResponse1, eachOrderResponse2, eachOrderResponse3));
 
     when(orderService.getPastOrderList(any()))
@@ -247,8 +249,10 @@ class OrderControllerTest extends BaseControllerTest {
                 fieldWithPath("[].day").description("주문 일자"),
                 fieldWithPath("[].dayOfTheWeek").description("주문 날짜"),
                 fieldWithPath("[].orderedTime").description("주문 시간"),
+                fieldWithPath("[].totalPrice").description("총 가격"),
+                fieldWithPath("[].totalCount").description("총 주문 수량"),
                 fieldWithPath("[].orderMenuList[].name").description("메뉴 명"),
-                fieldWithPath("[].orderMenuList[].count").description("메뉴 개수")
+                fieldWithPath("[].orderMenuList[].count").description("메뉴 별 주문 수량")
             )
         ));
   }

@@ -254,6 +254,7 @@ public class OrderService {
               order);
           return PastOrderResponse.of(order.getCreatedAt().toLocalDate(),
               order.getOrderDatetime().toLocalTime(),
+              order.getOrderPrice(),
               eachMenuList);
         })
         .toList();
@@ -277,7 +278,7 @@ public class OrderService {
   public LeftTimeResponse getLeftTime() {
     LocalDateTime nowDateTime = LocalDateTime.now();
 
-    Order todayLastOrder = orderRepository.findFirstByCreatedAtOrderByCreatedAtDesc(
+    Order todayLastOrder = orderRepository.findFirstByCreatedDateOrderByCreatedDateDesc(
             nowDateTime.toLocalDate())
         .orElse(Order.builder().expectedWaitDatetime(nowDateTime).build());
 

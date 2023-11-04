@@ -775,9 +775,9 @@ Host: localhost:8080</code></pre>
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">HTTP/1.1 200 OK
 Content-Type: application/json
-Content-Length: 337
+Content-Length: 403
 
-[{"day":29,"dayOfTheWeek":"SUNDAY","orderedTime":"12:30:30","orderMenuList":[{"name":"후라이드","count":1},{"name":"양념","count":2},{"name":"간장","count":3}]},{"day":27,"dayOfTheWeek":"FRIDAY","orderedTime":"04:28:30","orderMenuList":[{"name":"후라이드","count":1},{"name":"양념","count":2},{"name":"간장","count":3}]}]</code></pre>
+[{"day":29,"dayOfTheWeek":"SUNDAY","orderedTime":"12:30:30","totalPrice":1000,"totalCount":6,"orderMenuList":[{"name":"후라이드","count":1},{"name":"양념","count":2},{"name":"간장","count":3}]},{"day":27,"dayOfTheWeek":"FRIDAY","orderedTime":"04:28:30","totalPrice":1200,"totalCount":6,"orderMenuList":[{"name":"후라이드","count":1},{"name":"양념","count":2},{"name":"간장","count":3}]}]</code></pre>
 </div>
 </div>
 <table class="tableblock frame-all grid-all stretch">
@@ -810,6 +810,16 @@ Content-Length: 337
 <td class="tableblock halign-left valign-top"><p class="tableblock">주문 시간</p></td>
 </tr>
 <tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].totalPrice</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">총 가격</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].totalCount</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">총 주문 수량</p></td>
+</tr>
+<tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].orderMenuList[].name</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">메뉴 명</p></td>
@@ -817,7 +827,7 @@ Content-Length: 337
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].orderMenuList[].count</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">메뉴 개수</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">메뉴 별 주문 수량</p></td>
 </tr>
 </tbody>
 </table>
