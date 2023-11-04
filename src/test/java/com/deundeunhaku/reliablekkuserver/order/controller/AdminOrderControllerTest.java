@@ -36,7 +36,7 @@ class AdminOrderControllerTest extends BaseControllerTest {
   @Test
   void 관리자가_볼_주문리스트를_반환한다() throws Exception {
     //given
-    String orderStatus = OrderStatus.COOKED.name();
+    String orderStatus = OrderStatus.COOKING.name();
 
     OrderEachMenuResponse eachOrderResponse1 = OrderEachMenuResponse.of("후라이드", 1);
     OrderEachMenuResponse eachOrderResponse2 = OrderEachMenuResponse.of("양념", 2);
@@ -78,7 +78,7 @@ class AdminOrderControllerTest extends BaseControllerTest {
     List<AdminOrderResponse> response = List.of(adminOrderResponse1,
         adminOrderResponse2, adminOrderResponse3);
 
-    when(adminOrderService.getOrderList(OrderStatus.COOKED))
+    when(adminOrderService.getOrderList(OrderStatus.COOKING))
         .thenReturn(response);
     //when
     ResultActions resultActions = mockMvc.perform(get(API + "/admin/orders")

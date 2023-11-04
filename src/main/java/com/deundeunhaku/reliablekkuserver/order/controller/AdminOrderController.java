@@ -52,7 +52,7 @@ public class AdminOrderController {
   @PatchMapping("/{orderId}/pick-up")
   public ResponseEntity<Void> pickUpOrder(@PathVariable Long orderId) {
     adminOrderService.pickUpOrder(orderId);
-    sseService.sendDataToUser(orderId, OrderStatus.COOKED, 0L);
+    sseService.sendDataToUser(orderId, OrderStatus.PICKUP, 0L);
     adminOrderService.sendOrderPickUpMessageToUser(orderId);
 
     return ResponseEntity.noContent().build();
@@ -61,7 +61,7 @@ public class AdminOrderController {
   @PatchMapping("/{orderId}/finish")
   public ResponseEntity<Void> finishOrder(@PathVariable Long orderId) {
     adminOrderService.finishOrder(orderId);
-    sseService.sendDataToUser(orderId, OrderStatus.COOKING, 0L);
+    sseService.sendDataToUser(orderId, OrderStatus.FINISH, 0L);
     adminOrderService.sendOrderFinishMessageToUser(orderId);
 
     return ResponseEntity.noContent().build();

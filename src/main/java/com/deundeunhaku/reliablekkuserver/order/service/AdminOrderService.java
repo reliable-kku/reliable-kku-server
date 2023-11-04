@@ -45,9 +45,9 @@ public class AdminOrderService {
       case WAIT -> orderList = orderRepository.findByOrderStatusInOrderByOrderDatetimeAsc(
           List.of(OrderStatus.WAIT));
       case COOKING -> orderList = orderRepository.findByOrderStatusInOrderByOrderDatetimeAsc(
-          List.of(OrderStatus.COOKING, OrderStatus.COOKED));
-      case PICKUP -> orderList = orderRepository.findByOrderStatusInOrderByOrderDatetimeAsc(
-          List.of(OrderStatus.PICKUP, OrderStatus.CANCELED, OrderStatus.NOT_TAKE));
+          List.of(OrderStatus.COOKING, OrderStatus.PICKUP));
+      case FINISH -> orderList = orderRepository.findByOrderStatusInOrderByOrderDatetimeAsc(
+          List.of(OrderStatus.FINISH, OrderStatus.CANCELED, OrderStatus.NOT_TAKE));
     }
 
     List<AdminOrderResponse> collect = orderList.stream()
@@ -185,13 +185,13 @@ public class AdminOrderService {
   public void pickUpOrder(Long orderId) {
     Order order = findByOrderId(orderId);
 
-    order.updateOrderStatus(OrderStatus.COOKED);
+    order.updateOrderStatus(OrderStatus.PICKUP);
   }
 
   public void finishOrder(Long orderId) {
     Order order = findByOrderId(orderId);
 
-    order.updateOrderStatus(OrderStatus.COOKING);
+    order.updateOrderStatus(OrderStatus.FINISH);
   }
 
   public void notTakeOrder(Long orderId) {
