@@ -29,6 +29,8 @@ public class OrderController {
 
   private final OrderService orderService;
   private final SseService sseService;
+  private final PaymentService paymentService;
+
 
   @PostMapping
   public ResponseEntity<OrderIdResponse> registerOrder(@RequestBody OrderRegisterRequest request,
