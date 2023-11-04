@@ -7,9 +7,11 @@ import com.deundeunhaku.reliablekkuserver.menu.domain.Menu;
 import com.deundeunhaku.reliablekkuserver.menu.repository.MenuRepository;
 import javax.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Profile;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+@Profile("local")
 @RequiredArgsConstructor
 @Service
 public class InitService {

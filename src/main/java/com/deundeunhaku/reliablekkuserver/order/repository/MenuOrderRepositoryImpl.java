@@ -22,8 +22,9 @@ public class MenuOrderRepositoryImpl implements MenuOrderRepositoryCustom {
     return queryFactory
         .select(
             new QOrderEachMenuResponse(menu.name, menuOrder.count)
-        ).from(menu)
-        .innerJoin(menuOrder).on(menuOrder.menu.eq(menu))
+        ).from(menuOrder)
+        .innerJoin(menu).on(menuOrder.menu.id.eq(menu.id))
+        .where(menuOrder.order.eq(order))
         .fetch();
   }
 }
