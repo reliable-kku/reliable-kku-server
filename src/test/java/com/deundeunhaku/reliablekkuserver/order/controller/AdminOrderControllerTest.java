@@ -40,6 +40,7 @@ class AdminOrderControllerTest extends BaseControllerTest {
 
     AdminOrderResponse adminOrderResponse1 = AdminOrderResponse.of(
         1L,
+        1L,
         "01012341234",
         LocalTime.of(12, 30, 30),
         true,
@@ -50,6 +51,7 @@ class AdminOrderControllerTest extends BaseControllerTest {
 
     AdminOrderResponse adminOrderResponse2 = AdminOrderResponse.of(
         2L,
+        2L,
         "01011111111",
         LocalTime.of(12, 11, 30),
         false,
@@ -59,6 +61,7 @@ class AdminOrderControllerTest extends BaseControllerTest {
     );
 
     AdminOrderResponse adminOrderResponse3 = AdminOrderResponse.of(
+        3L,
         3L,
         "01022222222",
         LocalTime.of(9, 12, 30),
@@ -85,6 +88,7 @@ class AdminOrderControllerTest extends BaseControllerTest {
                 parameterWithName("orderStatus").description("주문 상태")
             ),
             responseFields(
+                fieldWithPath("[].orderId").description("order의 id 값"),
                 fieldWithPath("[].todayOrderCount").description("주문 번호"),
                 fieldWithPath("[].phoneNumber").description("주문자 전화번호"),
                 fieldWithPath("[].orderTime").description("주문 시간"),

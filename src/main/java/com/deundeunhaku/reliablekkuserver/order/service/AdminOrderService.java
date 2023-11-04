@@ -42,8 +42,10 @@ public class AdminOrderService {
     List<Order> orderList = new ArrayList<>();
 
     switch (orderStatus) {
-      case WAIT ->orderList = orderRepository.findByOrderStatusInOrderByOrderDatetimeAsc(List.of(OrderStatus.WAIT));
-      case COOKING -> orderList = orderRepository.findByOrderStatusInOrderByOrderDatetimeAsc(List.of(OrderStatus.COOKING, OrderStatus.COOKED));
+      case WAIT -> orderList = orderRepository.findByOrderStatusInOrderByOrderDatetimeAsc(
+          List.of(OrderStatus.WAIT));
+      case COOKING -> orderList = orderRepository.findByOrderStatusInOrderByOrderDatetimeAsc(
+          List.of(OrderStatus.COOKING, OrderStatus.COOKED));
       case PICKUP -> orderList = orderRepository.findByOrderStatusInOrderByOrderDatetimeAsc(
           List.of(OrderStatus.PICKUP, OrderStatus.CANCELED, OrderStatus.NOT_TAKE));
     }
@@ -59,6 +61,7 @@ public class AdminOrderService {
 
           if (order.getIsOfflineOrder()) {
             return AdminOrderResponse.of(
+                order.getId(),
                 order.getTodayOrderCount(),
                 order.getOfflineMember().getPhoneNumber(),
                 order.getOrderDatetime().toLocalTime(),
@@ -69,6 +72,7 @@ public class AdminOrderService {
             );
           }
           return AdminOrderResponse.of(
+              order.getId(),
               order.getTodayOrderCount(),
               order.getMember().getPhoneNumber(),
               order.getOrderDatetime().toLocalTime(),
