@@ -218,5 +218,9 @@ public class AdminOrderService {
     order.updateOrderStatus(OrderStatus.NOT_TAKE);
   }
 
+  public AdminSalesResponse getSalesBetween(LocalDate startDate, LocalDate endDate) {
+
+    return null;
+  }
 }
 

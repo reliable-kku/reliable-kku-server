@@ -19,7 +19,6 @@ import com.deundeunhaku.reliablekkuserver.order.constant.OrderStatus;
 import com.deundeunhaku.reliablekkuserver.order.dto.AdminOrderResponse;
 import com.deundeunhaku.reliablekkuserver.order.dto.OrderEachMenuResponse;
 import com.deundeunhaku.reliablekkuserver.order.service.AdminOrderService;
-import com.deundeunhaku.reliablekkuserver.sse.service.SseService;
 import java.time.LocalTime;
 import java.util.List;
 import org.junit.jupiter.api.Test;
@@ -30,8 +29,6 @@ class AdminOrderControllerTest extends BaseControllerTest {
 
   @MockBean
   private AdminOrderService adminOrderService;
-  @MockBean
-  private SseService sseService;
 
   @Test
   void 관리자가_볼_주문리스트를_반환한다() throws Exception {
