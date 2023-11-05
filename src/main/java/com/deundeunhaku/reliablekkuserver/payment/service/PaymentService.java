@@ -68,7 +68,7 @@ public class PaymentService {
 
         PaymentSuccess result = null;
         try {
-            result = restTemplate.postForObject(TossPaymentConfig.URL + "/confirm",
+            result = restTemplate.postForObject(TossPaymentConfig.URL + "confirm",
                     new HttpEntity<>(requestBody, headers),
                     PaymentSuccess.class
             );
