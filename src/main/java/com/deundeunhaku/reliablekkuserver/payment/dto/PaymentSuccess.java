@@ -22,7 +22,7 @@ public class PaymentSuccess {
   private LocalDateTime approvedAt;
   private Boolean useEscrow;
   private Boolean cultureExpense;
-  private PaymentCardResponse card;
+//  private PaymentCardResponse card;
   private String virtualAccount;
   private String transfer;
   private String mobilePhone;
