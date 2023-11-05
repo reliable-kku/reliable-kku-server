@@ -27,4 +27,15 @@ public class MenuOrderRepositoryImpl implements MenuOrderRepositoryCustom {
         .where(menuOrder.order.eq(order))
         .fetch();
   }
+
+  @Override
+  public List<String> findMenuNameByEachMenuOrder(Order order) {
+    return queryFactory
+            .select(
+                    menu.name
+            ).from(menuOrder)
+            .innerJoin(menu).on(menuOrder.menu.id.eq(menu.id))
+            .where(menuOrder.order.eq(order))
+            .fetch();
+  }
 }

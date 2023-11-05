@@ -7,4 +7,6 @@ import java.util.List;
 public interface MenuOrderRepositoryCustom {
 
   List<OrderEachMenuResponse> findByOrderToOrderEachMenuResponse(Order order);
+
+  List<String> findMenuNameByEachMenuOrder(Order order);
 }
