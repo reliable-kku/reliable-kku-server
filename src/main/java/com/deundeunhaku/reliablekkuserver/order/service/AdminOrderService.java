@@ -199,7 +199,7 @@ public class AdminOrderService {
   public void notTakeOrder(Long orderId) {
     Order order = findByOrderId(orderId);
 
-    order.updateOrderStatus(OrderStatus.COOKING);
+    order.updateOrderStatus(OrderStatus.NOT_TAKE);
   }
 
 }
