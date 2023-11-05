@@ -7,6 +7,7 @@ import com.deundeunhaku.reliablekkuserver.order.domain.Order;
 import com.deundeunhaku.reliablekkuserver.order.dto.AdminOrderResponse;
 import com.deundeunhaku.reliablekkuserver.order.dto.AdminSalesResponse;
 import com.deundeunhaku.reliablekkuserver.order.dto.OrderEachMenuResponse;
+import com.deundeunhaku.reliablekkuserver.order.repository.AdminOrderRepository;
 import com.deundeunhaku.reliablekkuserver.order.repository.MenuOrderRepository;
 import com.deundeunhaku.reliablekkuserver.order.repository.OrderRepository;
 import com.deundeunhaku.reliablekkuserver.payment.dto.PaymentCancelRequest;
@@ -27,6 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class AdminOrderService {
 
   private final OrderRepository orderRepository;
+  private final AdminOrderRepository adminOrderRepository;
   private final MenuOrderRepository menuOrderRepository;
   private final SseService sseService;
   private final FcmService fcmService;
@@ -220,7 +222,34 @@ public class AdminOrderService {
 
   public AdminSalesResponse getSalesBetween(LocalDate startDate, LocalDate endDate) {
 
-    return null;
+    List<Order> notCancelOrders = adminOrderRepository.findOrderByOrderStatusNotInCANCEL(
+        startDate, endDate);
+
+    List<Order> cancelOrders = adminOrderRepository.findOrderByOrderStatusInCANCEL(
+        startDate, endDate);
+
+    return AdminSalesResponse.of(
+        getSumOfOrderPrices(notCancelOrders),
+        getOrdersSize(notCancelOrders),
+        getAvgOfOrderPrices(notCancelOrders),
+        getSumOfOrderPrices(cancelOrders) * -1,
+        getOrdersSize(cancelOrders),
+        getAvgOfOrderPrices(cancelOrders) * -1
+    );
+  }
+
+  private static int getAvgOfOrderPrices(List<Order> orders) {
+    return Math.round(
+        (float) orders.stream().map(Order::getOrderPrice).reduce(0, Integer::sum)
+        / orders.size());
+  }
+
+  private static int getOrdersSize(List<Order> orders) {
+    return orders.size();
+  }
+
+  private static Integer getSumOfOrderPrices(List<Order> orders) {
+    return orders.stream().map(Order::getOrderPrice).reduce(0, Integer::sum);
   }
 }
 
