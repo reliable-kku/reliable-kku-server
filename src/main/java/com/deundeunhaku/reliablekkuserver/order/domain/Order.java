@@ -29,7 +29,7 @@ import java.time.LocalDateTime;
 public class Order extends BaseEntity implements Serializable {
 
   @Id
-  @GeneratedValue(strategy = GenerationType.SEQUENCE)
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
   @NotNull

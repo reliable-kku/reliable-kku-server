@@ -20,7 +20,8 @@ public class AdminMenuService {
   public AdminMenuChangeResponse changeSoldOut(Long menuId, boolean isSoldOut) {
     Menu menu = adminMenuRepository.findById(menuId)
         .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 메뉴입니다."));
-      menu.setSale(!isSoldOut);
+
+    menu.setSale(!isSoldOut);
 
     return AdminMenuChangeResponse.of(menu.getId(), menu.isSale());
   }

@@ -23,9 +23,12 @@ include::{snippets}/offline-order/register/success/http-response.adoc[]
 
 ==== Request
 
+
 include::{snippets}/admin/order-list/success/http-request.adoc[]
 Query Parameters::
+WAIT COOKING FINISH 이거 넣으면돼
 include::{snippets}/admin/order-list/success/query-parameters.adoc[]
+
 
 ==== Response
 
@@ -46,6 +49,20 @@ include::{snippets}/admin/order-status/success/path-parameters.adoc[]
 include::{snippets}/admin/order-status/success/http-response.adoc[]
 
 
+=== 관리자 주문 취소
+
+==== Request
+
+include::{snippets}/admin/order-cancel/success/http-request.adoc[]
+Path Parameters::
+include::{snippets}/admin/order-cancel/success/path-parameters.adoc[]
+
+==== Response
+
+include::{snippets}/admin/order-cancel/success/http-response.adoc[]
+
+
+
 === 음식을 다 만들고 픽업 요청을 한다
 
 ==== Request
@@ -63,8 +80,6 @@ include::{snippets}/admin/order-pick-up/success/http-response.adoc[]
 
 ==== Request
 
-==== Request
-
 include::{snippets}/admin/order-finish/success/http-request.adoc[]
 
 Path Parameters::
@@ -73,5 +88,30 @@ include::{snippets}/admin/order-finish/success/path-parameters.adoc[]
 ==== Response
 
 include::{snippets}/admin/order-finish/success/http-response.adoc[]
+
+=== 관리자 주문 미수령처리
+
+==== Request
+
+include::{snippets}/admin/order-not-take/success/http-request.adoc[]
+Path Parameters::
+include::{snippets}/admin/order-not-take/success/path-parameters.adoc[]
+
+==== Response
+
+include::{snippets}/admin/order-not-take/success/http-response.adoc[]
+
+=== 매출관리 - 매출 리스트를 반환한다 (만약 당일 검색할려면 startDate 에만 넣어도 되고, 두개 같은 날짜를 넣어도돼)
+
+==== Request
+
+include::{snippets}/admin-sales/http-request.adoc[]
+Query Parameters::
+include::{snippets}/admin-sales/query-parameters.adoc[]
+
+==== Response
+
+include::{snippets}/admin-sales/http-response.adoc[]
+include::{snippets}/admin-sales/response-fields.adoc[]
 
 

@@ -5,7 +5,9 @@ import com.deundeunhaku.reliablekkuserver.fcm.service.FcmService;
 import com.deundeunhaku.reliablekkuserver.order.constant.OrderStatus;
 import com.deundeunhaku.reliablekkuserver.order.domain.Order;
 import com.deundeunhaku.reliablekkuserver.order.dto.AdminOrderResponse;
+import com.deundeunhaku.reliablekkuserver.order.dto.AdminSalesResponse;
 import com.deundeunhaku.reliablekkuserver.order.dto.OrderEachMenuResponse;
+import com.deundeunhaku.reliablekkuserver.order.repository.AdminOrderRepository;
 import com.deundeunhaku.reliablekkuserver.order.repository.MenuOrderRepository;
 import com.deundeunhaku.reliablekkuserver.order.repository.OrderRepository;
 import com.deundeunhaku.reliablekkuserver.payment.dto.PaymentCancelRequest;
@@ -13,6 +15,8 @@ import com.deundeunhaku.reliablekkuserver.payment.service.PaymentService;
 import com.deundeunhaku.reliablekkuserver.sms.service.SmsService;
 import com.deundeunhaku.reliablekkuserver.sse.service.SseService;
 import java.time.Duration;
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class AdminOrderService {
 
   private final OrderRepository orderRepository;
+  private final AdminOrderRepository adminOrderRepository;
   private final MenuOrderRepository menuOrderRepository;
   private final SseService sseService;
   private final FcmService fcmService;
@@ -37,7 +42,17 @@ public class AdminOrderService {
   }
 
   public List<AdminOrderResponse> getOrderList(OrderStatus orderStatus) {
-    List<Order> orderList = orderRepository.findByOrderStatusOrderByOrderDatetimeAsc(orderStatus);
+
+    List<Order> orderList = new ArrayList<>();
+
+    switch (orderStatus) {
+      case WAIT -> orderList = orderRepository.findByOrderStatusInOrderByOrderDatetimeAsc(
+          List.of(OrderStatus.WAIT));
+      case COOKING -> orderList = orderRepository.findByOrderStatusInOrderByOrderDatetimeAsc(
+          List.of(OrderStatus.COOKING, OrderStatus.PICKUP));
+      case FINISH -> orderList = orderRepository.findByOrderStatusInOrderByOrderDatetimeAsc(
+          List.of(OrderStatus.FINISH, OrderStatus.CANCELED, OrderStatus.NOT_TAKE));
+    }
 
     List<AdminOrderResponse> collect = orderList.stream()
         .map(order -> {
@@ -50,6 +65,7 @@ public class AdminOrderService {
 
           if (order.getIsOfflineOrder()) {
             return AdminOrderResponse.of(
+                order.getId(),
                 order.getTodayOrderCount(),
                 order.getOfflineMember().getPhoneNumber(),
                 order.getOrderDatetime().toLocalTime(),
@@ -60,6 +76,7 @@ public class AdminOrderService {
             );
           }
           return AdminOrderResponse.of(
+              order.getId(),
               order.getTodayOrderCount(),
               order.getMember().getPhoneNumber(),
               order.getOrderDatetime().toLocalTime(),
@@ -164,7 +181,9 @@ public class AdminOrderService {
     Order order = findByOrderId(orderId);
     if (order.getMember() != null) {
       paymentService.cancelPayment(orderId, PaymentCancelRequest.of("관리자가 취소"));
+      sseService.disconnect(orderId);
     }
+
     order.updateOrderStatus(OrderStatus.CANCELED);
   }
 
@@ -172,20 +191,65 @@ public class AdminOrderService {
   public void pickUpOrder(Long orderId) {
     Order order = findByOrderId(orderId);
 
-    order.updateOrderStatus(OrderStatus.COOKED);
+    if (order.getOfflineMember() == null) {
+      sseService.sendDataToUser(orderId, OrderStatus.PICKUP, 0L);
+    }
+
+    order.updateOrderStatus(OrderStatus.PICKUP);
   }
 
+  @Transactional
   public void finishOrder(Long orderId) {
     Order order = findByOrderId(orderId);
 
-    order.updateOrderStatus(OrderStatus.COOKING);
+    if (order.getOfflineMember() == null) {
+      sseService.sendDataToUser(orderId, OrderStatus.FINISH, 0L);
+    }
+
+    order.updateOrderStatus(OrderStatus.FINISH);
   }
 
+  @Transactional
   public void notTakeOrder(Long orderId) {
     Order order = findByOrderId(orderId);
 
-    order.updateOrderStatus(OrderStatus.COOKING);
+    if (order.getOfflineMember() == null) {
+      sseService.sendDataToUser(orderId, OrderStatus.NOT_TAKE, 0L);
+    }
+
+    order.updateOrderStatus(OrderStatus.NOT_TAKE);
   }
 
+  public AdminSalesResponse getSalesBetween(LocalDate startDate, LocalDate endDate) {
+
+    List<Order> notCancelOrders = adminOrderRepository.findOrderByOrderStatusNotInCANCEL(
+        startDate, endDate);
+
+    List<Order> cancelOrders = adminOrderRepository.findOrderByOrderStatusInCANCEL(
+        startDate, endDate);
+
+    return AdminSalesResponse.of(
+        getSumOfOrderPrices(notCancelOrders),
+        getOrdersSize(notCancelOrders),
+        getAvgOfOrderPrices(notCancelOrders),
+        getSumOfOrderPrices(cancelOrders) * -1,
+        getOrdersSize(cancelOrders),
+        getAvgOfOrderPrices(cancelOrders) * -1
+    );
+  }
+
+  private static int getAvgOfOrderPrices(List<Order> orders) {
+    return Math.round(
+        (float) orders.stream().map(Order::getOrderPrice).reduce(0, Integer::sum)
+        / orders.size());
+  }
+
+  private static int getOrdersSize(List<Order> orders) {
+    return orders.size();
+  }
+
+  private static Integer getSumOfOrderPrices(List<Order> orders) {
+    return orders.stream().map(Order::getOrderPrice).reduce(0, Integer::sum);
+  }
 }
 

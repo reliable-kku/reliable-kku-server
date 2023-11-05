@@ -2,6 +2,7 @@ package com.deundeunhaku.reliablekkuserver.order.controller;
 
 import static org.mockito.Mockito.when;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.delete;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.patch;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
@@ -32,13 +33,14 @@ class AdminOrderControllerTest extends BaseControllerTest {
   @Test
   void 관리자가_볼_주문리스트를_반환한다() throws Exception {
     //given
-    String orderStatus = OrderStatus.COOKED.name();
+    String orderStatus = OrderStatus.COOKING.name();
 
     OrderEachMenuResponse eachOrderResponse1 = OrderEachMenuResponse.of("후라이드", 1);
     OrderEachMenuResponse eachOrderResponse2 = OrderEachMenuResponse.of("양념", 2);
     OrderEachMenuResponse eachOrderResponse3 = OrderEachMenuResponse.of("간장", 3);
 
     AdminOrderResponse adminOrderResponse1 = AdminOrderResponse.of(
+        1L,
         1L,
         "01012341234",
         LocalTime.of(12, 30, 30),
@@ -50,6 +52,7 @@ class AdminOrderControllerTest extends BaseControllerTest {
 
     AdminOrderResponse adminOrderResponse2 = AdminOrderResponse.of(
         2L,
+        2L,
         "01011111111",
         LocalTime.of(12, 11, 30),
         false,
@@ -59,6 +62,7 @@ class AdminOrderControllerTest extends BaseControllerTest {
     );
 
     AdminOrderResponse adminOrderResponse3 = AdminOrderResponse.of(
+        3L,
         3L,
         "01022222222",
         LocalTime.of(9, 12, 30),
@@ -71,7 +75,7 @@ class AdminOrderControllerTest extends BaseControllerTest {
     List<AdminOrderResponse> response = List.of(adminOrderResponse1,
         adminOrderResponse2, adminOrderResponse3);
 
-    when(adminOrderService.getOrderList(OrderStatus.COOKED))
+    when(adminOrderService.getOrderList(OrderStatus.COOKING))
         .thenReturn(response);
     //when
     ResultActions resultActions = mockMvc.perform(get(API + "/admin/orders")
@@ -85,6 +89,7 @@ class AdminOrderControllerTest extends BaseControllerTest {
                 parameterWithName("orderStatus").description("주문 상태")
             ),
             responseFields(
+                fieldWithPath("[].orderId").description("order의 id 값"),
                 fieldWithPath("[].todayOrderCount").description("주문 번호"),
                 fieldWithPath("[].phoneNumber").description("주문자 전화번호"),
                 fieldWithPath("[].orderTime").description("주문 시간"),
@@ -121,11 +126,28 @@ class AdminOrderControllerTest extends BaseControllerTest {
   }
 
   @Test
-  void 주문을_제작완료하면_픽업으로_상태를_변경한다() throws Exception {
+  void 관리자가_주문을_취소한다() throws Exception {
       //given
-    Long orderId = 1L;
+    final Long orderId = 1L;
 
       //when
+    ResultActions resultActions = mockMvc.perform(delete(API + "/admin/orders/{orderId}", orderId))
+        .andDo(print());
+
+    //then
+    resultActions.andExpect(status().isNoContent())
+        .andDo(document("admin/order-cancel/success",
+            pathParameters(
+                parameterWithName("orderId").description("주문 번호")
+            )));
+  }
+
+  @Test
+  void 주문을_제작완료하면_픽업으로_상태를_변경한다() throws Exception {
+    //given
+    Long orderId = 1L;
+
+    //when
     ResultActions resultActions = mockMvc.perform(
             patch(API + "/admin/orders/{orderId}/pick-up", orderId))
         .andDo(print());
@@ -156,7 +178,7 @@ class AdminOrderControllerTest extends BaseControllerTest {
                 parameterWithName("orderId").description("주문 번호")
             )));
   }
-  
+
   @Test
   void 사용자가_음식을_미수령하면_미수령처리한다() throws Exception {
     //given
@@ -174,5 +196,5 @@ class AdminOrderControllerTest extends BaseControllerTest {
                 parameterWithName("orderId").description("주문 번호")
             )));
   }
-  
+
 }

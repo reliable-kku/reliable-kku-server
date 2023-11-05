@@ -65,7 +65,7 @@ public class OrderService {
 
     List<Order> orderByMember = orderRepository.findOrderByMember(member);
     List<OrderStatus> orderProceedingStatus = List.of(OrderStatus.WAIT, OrderStatus.COOKING,
-        OrderStatus.COOKED);
+        OrderStatus.PICKUP);
 
     List<OrderStatus> isOrderProceeding = orderByMember.stream()
         .map(Order::getOrderStatus)
@@ -199,7 +199,7 @@ public class OrderService {
   public OrderIdResponse isMemberNowOrdered(Member member) {
     List<Order> orderByMember = orderRepository.findOrderByMember(member);
     List<OrderStatus> orderProceedingStatus = List.of(OrderStatus.WAIT, OrderStatus.COOKING,
-        OrderStatus.COOKED);
+        OrderStatus.PICKUP);
 
     List<Order> orderingOrders = orderByMember.stream()
         .filter(o -> orderProceedingStatus.contains(o.getOrderStatus()))
