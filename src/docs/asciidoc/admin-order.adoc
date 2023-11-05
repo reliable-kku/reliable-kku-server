@@ -101,4 +101,17 @@ include::{snippets}/admin/order-not-take/success/path-parameters.adoc[]
 
 include::{snippets}/admin/order-not-take/success/http-response.adoc[]
 
+=== 매출관리 - 매출 리스트를 반환한다 (만약 당일 검색할려면 startDate 에만 넣어도 되고, 두개 같은 날짜를 넣어도돼)
+
+==== Request
+
+include::{snippets}/admin-sales/http-request.adoc[]
+Query Parameters::
+include::{snippets}/admin-sales/query-parameters.adoc[]
+
+==== Response
+
+include::{snippets}/admin-sales/http-response.adoc[]
+include::{snippets}/admin-sales/response-fields.adoc[]
+
 

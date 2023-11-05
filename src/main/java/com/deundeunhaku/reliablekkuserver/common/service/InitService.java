@@ -40,6 +40,33 @@ public class InitService {
             .build()
     );
 
+    memberRepository.save(
+        Member.builder()
+            .phoneNumber("01076152022")
+            .password(passwordEncoder.encode("1234"))
+            .realName("선규땅")
+            .role(Role.USER)
+            .build()
+    );
+
+    memberRepository.save(
+        Member.builder()
+            .phoneNumber("01057490339")
+            .password(passwordEncoder.encode("1234"))
+            .realName("갱쥬")
+            .role(Role.USER)
+            .build()
+    );
+
+    memberRepository.save(
+        Member.builder()
+            .phoneNumber("01087665450")
+            .password(passwordEncoder.encode("1234"))
+            .realName("나는과대다")
+            .role(Role.USER)
+            .build()
+    );
+
     menuRepository.save(
         Menu.builder()
             .name("팥붕")
