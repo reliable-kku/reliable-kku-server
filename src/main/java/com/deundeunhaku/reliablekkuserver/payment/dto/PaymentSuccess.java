@@ -1,81 +1,110 @@
 package com.deundeunhaku.reliablekkuserver.payment.dto;
 
 import com.deundeunhaku.reliablekkuserver.payment.constants.PayType;
-import java.time.LocalDateTime;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
 
-@AllArgsConstructor
-@Getter
-public class PaymentSuccess {
-
-  private String mId;// 가맹점 Id -> tosspayments
-  private String version; // Payment 객체 응답 버전
-  private String lastTransactionKey;
-  private String paymentKey;
-  private String orderId;
-  private String orderName;
-  private String currency;
-  private String method; // 결제 수단
-  private String status;
-  private LocalDateTime requestedAt;
-  private LocalDateTime approvedAt;
-  private Boolean useEscrow;
-  private Boolean cultureExpense;
-//  private PaymentCardResponse card;
-  private String virtualAccount;
-  private String transfer;
-  private String mobilePhone;
-  private String giftCertificate;
-  private String foreignEasyPay;
-  private String cashReceipt;
-  private String cashReceipts;
-  private Receipt receipt;
-  private Checkout checkout;
-  private String discount;
-  private String cancels;
-  private String secret;
-  private PayType type;
-  private String easyPay;
-  private String country;
-  private String failure;
-  private Integer totalAmount;
-  private Integer balanceAmount;
-  private Integer suppliedAmount;
-  private Integer vat;
-  private Integer taxFreeAmount;
-  private Integer taxExemptionAmount;
+public record PaymentSuccess(
+    String mid,
+    String lastTransactionKey,
+    String paymentKey,
+    String orderId,
+    String orderName,
+    Integer taxExemptionAmount,
+    String status,
+    String requestedAt,
+    String approvedAt,
+    Boolean useEscrow,
+    Boolean cultureExpense,
+    PaymentCardResponse card,
+    String secret,
+    PayType type,
+    EasyPay easyPay,
+    String country,
+    Boolean isPartialCancelable,
+    Receipt receipt,
+    Checkout checkout,
+    String currency,
+    Integer totalAmount,
+    Integer balanceAmount,
+    Integer suppliedAmount,
+    Integer vat,
+    Integer taxFreeAmount,
+    String method,
+    String version
+) {
 
 }
 
-@AllArgsConstructor
-@Getter
-class PaymentCardResponse {
+//   String mId,// 가맹점 Id -> tosspayments
+//   String version, // Payment 객체 응답 버전
+//   String lastTransactionKey,
+//   String paymentKey,
+//   String orderId,
+//   String orderName,
+//   String currency,
+//   String method, // 결제 수단
+//   String status,
+//   LocalDateTime requestedAt,
+//   LocalDateTime approvedAt,
+//   Boolean useEscrow,
+//   Boolean cultureExpense,
+// PaymentCardResponse card,
+////   String virtualAccount,
+////   String transfer,
+////   String mobilePhone,
+////   String giftCertificate,
+////   String foreignEasyPay,
+////   String cashReceipt,
+////   String cashReceipts,
+////   Receipt receipt,
+////   Checkout checkout,
+////   String discount,
+////   String cancels,
+////   String secret,
+//   PayType type,
+//   EasyPay easyPay,
+//   String country,
+////   String failure,
+//   Integer totalAmount,
+//   Integer balanceAmount,
+//   Integer suppliedAmount,
+//   Integer vat,
+//   Integer taxFreeAmount,
+//   Integer taxExemptionAmount
 
-  private String amount;
-  private String issuerCode;
-  private String acquirerCode;
-  private String number;
-  private Integer installmentPlanMonths;
-  private Boolean isInterestFree;
-  private String interestPayer;
-  private String approveNo;
-  private Boolean useCardPoint;
-  private String cardType;
-  private String ownerType;
-  private String acquireStatus;
+
+record PaymentCardResponse(
+    String amount,
+    String issuerCode,
+    String acquirerCode,
+    String number,
+    Integer installmentPlanMonths,
+    Boolean isInterestFree,
+//  String interestPayer,
+    String approveNo,
+    Boolean useCardPoint,
+    String cardType,
+    String ownerType,
+    String acquireStatus
+) {
+
 }
 
-@AllArgsConstructor
-@Getter
-class Receipt {
+record Receipt(
+    String url
+) {
 
-  private String url;
 }
 
-@AllArgsConstructor
-@Getter
-class Checkout {
+record Checkout(
+    String url
+) {
 
-  private String url;
+}
+
+record EasyPay(
+    String provider,
+    Integer amount,
+    Integer discountAmount
+) {
+
 }
