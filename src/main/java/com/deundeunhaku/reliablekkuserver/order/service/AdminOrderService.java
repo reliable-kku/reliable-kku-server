@@ -5,6 +5,7 @@ import com.deundeunhaku.reliablekkuserver.fcm.service.FcmService;
 import com.deundeunhaku.reliablekkuserver.order.constant.OrderStatus;
 import com.deundeunhaku.reliablekkuserver.order.domain.Order;
 import com.deundeunhaku.reliablekkuserver.order.dto.AdminOrderResponse;
+import com.deundeunhaku.reliablekkuserver.order.dto.AdminSalesResponse;
 import com.deundeunhaku.reliablekkuserver.order.dto.OrderEachMenuResponse;
 import com.deundeunhaku.reliablekkuserver.order.repository.MenuOrderRepository;
 import com.deundeunhaku.reliablekkuserver.order.repository.OrderRepository;
@@ -13,6 +14,7 @@ import com.deundeunhaku.reliablekkuserver.payment.service.PaymentService;
 import com.deundeunhaku.reliablekkuserver.sms.service.SmsService;
 import com.deundeunhaku.reliablekkuserver.sse.service.SseService;
 import java.time.Duration;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -177,13 +179,19 @@ public class AdminOrderService {
     Order order = findByOrderId(orderId);
     if (order.getMember() != null) {
       paymentService.cancelPayment(orderId, PaymentCancelRequest.of("관리자가 취소"));
+      sseService.disconnect(orderId);
     }
+
     order.updateOrderStatus(OrderStatus.CANCELED);
   }
 
   @Transactional
   public void pickUpOrder(Long orderId) {
     Order order = findByOrderId(orderId);
+
+    if (order.getOfflineMember() == null) {
+      sseService.sendDataToUser(orderId, OrderStatus.PICKUP, 0L);
+    }
 
     order.updateOrderStatus(OrderStatus.PICKUP);
   }
@@ -192,12 +200,20 @@ public class AdminOrderService {
   public void finishOrder(Long orderId) {
     Order order = findByOrderId(orderId);
 
+    if (order.getOfflineMember() == null) {
+      sseService.sendDataToUser(orderId, OrderStatus.FINISH, 0L);
+    }
+
     order.updateOrderStatus(OrderStatus.FINISH);
   }
 
   @Transactional
   public void notTakeOrder(Long orderId) {
     Order order = findByOrderId(orderId);
+
+    if (order.getOfflineMember() == null) {
+      sseService.sendDataToUser(orderId, OrderStatus.NOT_TAKE, 0L);
+    }
 
     order.updateOrderStatus(OrderStatus.NOT_TAKE);
   }

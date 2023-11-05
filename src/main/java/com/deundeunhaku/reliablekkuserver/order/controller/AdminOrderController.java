@@ -23,7 +23,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class AdminOrderController {
 
   private final AdminOrderService adminOrderService;
-  private final SseService sseService;
 
   @GetMapping
   public List<AdminOrderResponse> getOrderList(@RequestParam OrderStatus orderStatus) {
@@ -43,7 +42,6 @@ public class AdminOrderController {
   @DeleteMapping("/{orderId}")
   public ResponseEntity<Void> deleteOrder(@PathVariable Long orderId) {
     adminOrderService.deleteOrder(orderId);
-    sseService.disconnect(orderId);
     adminOrderService.sendOrderCancelMessageToUser(orderId);
 
     return ResponseEntity.noContent().build();
@@ -52,7 +50,6 @@ public class AdminOrderController {
   @PatchMapping("/{orderId}/pick-up")
   public ResponseEntity<Void> pickUpOrder(@PathVariable Long orderId) {
     adminOrderService.pickUpOrder(orderId);
-    sseService.sendDataToUser(orderId, OrderStatus.PICKUP, 0L);
     adminOrderService.sendOrderPickUpMessageToUser(orderId);
 
     return ResponseEntity.noContent().build();
@@ -61,7 +58,6 @@ public class AdminOrderController {
   @PatchMapping("/{orderId}/finish")
   public ResponseEntity<Void> finishOrder(@PathVariable Long orderId) {
     adminOrderService.finishOrder(orderId);
-    sseService.sendDataToUser(orderId, OrderStatus.FINISH, 0L);
     adminOrderService.sendOrderFinishMessageToUser(orderId);
 
     return ResponseEntity.noContent().build();
@@ -70,7 +66,6 @@ public class AdminOrderController {
   @PatchMapping("/{orderId}/not-take")
   public ResponseEntity<Void> notTakeOrder(@PathVariable Long orderId) {
     adminOrderService.notTakeOrder(orderId);
-    sseService.sendDataToUser(orderId, OrderStatus.NOT_TAKE, 0L);
     adminOrderService.sendOrderNotTakeMessageToUser(orderId);
 
     return ResponseEntity.noContent().build();
@@ -79,7 +74,6 @@ public class AdminOrderController {
   @PatchMapping("/{orderId}/recovery")
   public ResponseEntity<Void> recoveryOrder(@PathVariable Long orderId) {
     adminOrderService.notTakeOrder(orderId);
-    sseService.sendDataToUser(orderId, OrderStatus.COOKING, 0L);
     return ResponseEntity.noContent().build();
   }
 
