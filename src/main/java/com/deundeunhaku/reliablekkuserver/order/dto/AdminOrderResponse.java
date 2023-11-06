@@ -4,7 +4,6 @@ import java.time.LocalTime;
 import java.util.List;
 
 public record AdminOrderResponse(
-
     Long orderId,
     Long todayOrderCount,
     String phoneNumber,

@@ -14,17 +14,22 @@ import com.deundeunhaku.reliablekkuserver.order.repository.OrderRepository;
 import com.deundeunhaku.reliablekkuserver.payment.dto.PaymentCancelRequest;
 import com.deundeunhaku.reliablekkuserver.payment.service.PaymentService;
 import com.deundeunhaku.reliablekkuserver.sms.service.SmsService;
+import com.deundeunhaku.reliablekkuserver.sse.repository.SSERepository;
 import com.deundeunhaku.reliablekkuserver.sse.service.SseService;
+import java.io.IOException;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 @RequiredArgsConstructor
 @Service
@@ -37,7 +42,6 @@ public class AdminOrderService {
   private final FcmService fcmService;
   private final SmsService smsService;
   private final PaymentService paymentService;
-
 
   public Order findByOrderId(Long orderId) {
     return orderRepository.findById(orderId)
@@ -269,6 +273,29 @@ public class AdminOrderService {
     }
 
     return responseList;
+  }
+
+  public SseEmitter connectSse() {
+
+    boolean isEmitterExists = sseService.existsEmitterById(0L);
+
+    if (isEmitterExists) {
+      SseEmitter sseEmitter = sseService.getEmitter(0L);
+
+      try {
+        sseEmitter.send(SseEmitter.event()
+            .name("connect")
+            .data("성공!"));
+
+      } catch (IOException e) {
+        throw new RuntimeException(e);
+      }
+
+    }
+
+
+
+    return null;
   }
 }
 

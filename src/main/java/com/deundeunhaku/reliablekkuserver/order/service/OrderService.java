@@ -8,6 +8,7 @@ import com.deundeunhaku.reliablekkuserver.menu.repository.MenuRepository;
 import com.deundeunhaku.reliablekkuserver.order.constant.OrderStatus;
 import com.deundeunhaku.reliablekkuserver.order.domain.MenuOrder;
 import com.deundeunhaku.reliablekkuserver.order.domain.Order;
+import com.deundeunhaku.reliablekkuserver.order.dto.AdminOrderResponse;
 import com.deundeunhaku.reliablekkuserver.order.dto.LeftTimeResponse;
 import com.deundeunhaku.reliablekkuserver.order.dto.OfflineOrderRequest;
 import com.deundeunhaku.reliablekkuserver.order.dto.OrderCalendarResponse;
@@ -23,6 +24,7 @@ import com.deundeunhaku.reliablekkuserver.payment.domain.Payment;
 import com.deundeunhaku.reliablekkuserver.payment.repository.PaymentRepository;
 import com.deundeunhaku.reliablekkuserver.sse.dto.SseDataResponse;
 import com.deundeunhaku.reliablekkuserver.sse.repository.SseInMemoryRepository;
+import com.deundeunhaku.reliablekkuserver.sse.service.SseService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.time.Duration;
@@ -51,8 +53,7 @@ public class OrderService {
   private final MenuOrderRepository menuOrderRepository;
   private final MenuRepository menuRepository;
   private final OfflineMemberRepository offlineMemberRepository;
-  private final SseInMemoryRepository sseRepository;
-  private final ObjectMapper objectMapper;
+  private final SseService sseService;
 
   @Transactional
   public OrderIdResponse registerOrder(OrderRegisterRequest request, Member member) {
@@ -89,6 +90,24 @@ public class OrderService {
       menuOrderRepository.save(MenuOrder.createMenuOrder(menu, savedOrder, menuRequest.count()));
     }
 
+    Integer allCount = 0;
+    for (RegisteredMenuRequest menuRequest : menuRequestList) {
+      allCount += menuRequest.count();
+    }
+
+    AdminOrderResponse adminOrderResponse = AdminOrderResponse.of(
+        savedOrder.getId(),
+        savedOrder.getTodayOrderCount(),
+        savedOrder.getMember().getPhoneNumber(),
+        savedOrder.getOrderDatetime().toLocalTime(),
+        savedOrder.getOfflineMember() != null,
+        Duration.between(savedOrder.getExpectedWaitDatetime(), savedOrder.getOrderDatetime())
+            .toMinutes(),
+        allCount,
+        menuOrderRepository.findByOrderToOrderEachMenuResponse(savedOrder)
+    );
+    sseService.sendDataToAdmin(adminOrderResponse);
+
     return OrderIdResponse.of(savedOrder.getId());
   }
 
@@ -114,38 +133,45 @@ public class OrderService {
 
   public SseEmitter connect(Long orderId) {
 
-    Optional<SseEmitter> optionalSseEmitter = sseRepository.get(orderId);
+    boolean isExists = sseService.existsEmitterById(orderId);
 
     Order order = orderRepository.findById(orderId)
         .orElseThrow(() -> new IllegalArgumentException("잘못된 주문입니다."));
 
     Duration leftDuration = Duration.between(order.getExpectedWaitDatetime(),
         order.getOrderDatetime());
-    SseDataResponse response = SseDataResponse.of(order.getOrderStatus(),
-        leftDuration.toMinutes());
 
     try {
 
-      if (optionalSseEmitter.isPresent()) {
-        SseEmitter sseEmitter = optionalSseEmitter.get();
+      if (isExists) {
+        SseEmitter sseEmitter = sseService.getEmitter(orderId);
+
+        if (sseEmitter == null) {
+          return null;
+        }
 
         sseEmitter.send(SseEmitter.event()
-            .name("status")
-            .data(objectMapper.writeValueAsString(response), MediaType.APPLICATION_JSON)
-        );
+            .name("connect")
+            .data("성공!"));
+
+        sseService.sendDataToUser(orderId, OrderStatus.WAIT, leftDuration.toMinutes());
+
         return sseEmitter;
       } else {
         SseEmitter sseEmitter = new SseEmitter();
-        log.info("SseEmitter 생성 {}", sseEmitter.toString());
+        log.info("SseEmitter 생성 {}", sseEmitter);
 
-        sseRepository.put(orderId, sseEmitter);
+        sseService.saveEmitter(orderId, sseEmitter);
 
-        sseEmitter.onCompletion(() -> sseRepository.remove(orderId));
-        sseEmitter.onTimeout(() -> sseRepository.remove(orderId));
+        sseEmitter.onCompletion(() -> sseService.removeEmitter(orderId));
+        sseEmitter.onTimeout(() -> sseService.removeEmitter(orderId));
 
         sseEmitter.send(SseEmitter.event()
-            .name("status")
-            .data(objectMapper.writeValueAsString(response), MediaType.APPLICATION_JSON));
+            .name("connect")
+            .data("성공!"));
+
+        sseService.sendDataToUser(orderId, OrderStatus.WAIT, leftDuration.toMinutes());
+
         return sseEmitter;
       }
     } catch (IOException e) {
