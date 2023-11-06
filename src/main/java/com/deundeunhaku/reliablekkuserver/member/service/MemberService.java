@@ -50,6 +50,10 @@ public class MemberService {
         Member findMember = memberRepository.findByPhoneNumber(phoneNumber)
                 .orElseThrow(LoginFailedException::new);
 
+        if(findMember.isWithdraw()){
+            throw new IllegalArgumentException("이미 회원 탈퇴한 유저입니다.");
+        }
+        
         boolean isPasswordMatch = passwordEncoder.matches(password, findMember.getPassword());
 
         if (!isPasswordMatch) {
@@ -174,7 +178,12 @@ public class MemberService {
 
     @Transactional
     public void setMemberWithdraw(Member member) {
-        member.withdraw();
+        entityManager.clear();
+
+        Member findMember = memberRepository.findById(member.getId())
+                .orElseThrow(() -> new IllegalArgumentException("잘못된 요청입니다."));
+
+        findMember.withdraw();
     }
 
     public MemberMyPageResponse getMyPageInfo(Member member) {
