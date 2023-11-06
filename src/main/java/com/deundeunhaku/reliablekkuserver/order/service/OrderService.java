@@ -136,7 +136,11 @@ public class OrderService {
     boolean isExists = sseService.existsEmitterById(orderId);
 
     Order order = orderRepository.findById(orderId)
-        .orElseThrow(() -> new IllegalArgumentException("잘못된 주문입니다."));
+        .orElse(null);
+
+    if (order == null) {
+      return null;
+    }
 
     Duration leftDuration = Duration.between(order.getExpectedWaitDatetime(),
         order.getOrderDatetime());
@@ -175,7 +179,9 @@ public class OrderService {
         return sseEmitter;
       }
     } catch (IOException e) {
-      throw new IllegalArgumentException("잘못된 요청입니다.");
+      log.warn("SseEmitter 생성 실패");
+      return null;
+//      throw new IllegalArgumentException("잘못된 요청입니다.");
     }
   }
 
