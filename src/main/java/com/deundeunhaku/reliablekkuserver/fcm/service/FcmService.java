@@ -8,8 +8,10 @@ import com.google.firebase.messaging.FirebaseMessagingException;
 import com.google.firebase.messaging.Message;
 import com.google.firebase.messaging.Notification;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @RequiredArgsConstructor
 @Service
 public class FcmService {
@@ -37,12 +39,14 @@ public class FcmService {
                 try {
                     firebaseMessaging.send(message);
                 } catch (FirebaseMessagingException e) {
-                    e.printStackTrace();
-                    throw new RuntimeException("알림 보내기를 실패하였습니다. targetUserId=" + request.targetUserId());
+                    log.warn("알림 보내기를 실패하였습니다. targetUserId={}", request.targetUserId());
+//                    e.printStackTrace();
+//                    throw new RuntimeException("알림 보내기를 실패하였습니다. targetUserId=" + request.targetUserId());
                 }
             } else {
-                throw new RuntimeException("서버에 저장된 해당 유저의 FirebaseToken이 존재하지 않습니다. targetUserId="
-                    + request.targetUserId());
+        log.warn("서버에 저장된 해당 유저의 FirebaseToken이 존재하지 않습니다. targetUserId={}", request.targetUserId());
+//                throw new RuntimeException("서버에 저장된 해당 유저의 FirebaseToken이 존재하지 않습니다. targetUserId="
+//                    + request.targetUserId());
             }
     }
 
