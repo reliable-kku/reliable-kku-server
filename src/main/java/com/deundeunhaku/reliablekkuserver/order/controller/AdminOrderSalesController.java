@@ -1,8 +1,10 @@
 package com.deundeunhaku.reliablekkuserver.order.controller;
 
+import com.deundeunhaku.reliablekkuserver.order.dto.AdminSalesEachTimeResponse;
 import com.deundeunhaku.reliablekkuserver.order.dto.AdminSalesResponse;
 import com.deundeunhaku.reliablekkuserver.order.service.AdminOrderService;
 import java.time.LocalDate;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,5 +26,11 @@ public class AdminOrderSalesController {
 
     return ResponseEntity.ok(adminOrderService.getSalesBetween(startDate, endDate));
   }
+
+  @GetMapping("/monthly")
+  public ResponseEntity<List<AdminSalesEachTimeResponse>> getMonthlySales(@RequestParam LocalDate date) {
+    return ResponseEntity.ok(adminOrderService.getEachTimeSalesByDate(date));
+  }
+
 
 }
