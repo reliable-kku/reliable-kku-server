@@ -1,6 +1,7 @@
 package com.deundeunhaku.reliablekkuserver.order.controller;
 
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
@@ -12,9 +13,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.deundeunhaku.reliablekkuserver.BaseControllerTest;
+import com.deundeunhaku.reliablekkuserver.order.dto.AdminSalesEachTimeResponse;
 import com.deundeunhaku.reliablekkuserver.order.dto.AdminSalesResponse;
 import com.deundeunhaku.reliablekkuserver.order.service.AdminOrderService;
 import java.time.LocalDate;
+import java.time.LocalTime;
+import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -29,7 +33,7 @@ class AdminOrderSalesControllerTest extends BaseControllerTest {
 
   @Test
   void 매출_내역의_리스트를_반환해준다() throws Exception {
-      //given
+    //given
     final LocalDate startDate = LocalDate.of(2021, 1, 1);
     final LocalDate endDate = LocalDate.of(2021, 1, 31);
 
@@ -37,7 +41,7 @@ class AdminOrderSalesControllerTest extends BaseControllerTest {
         AdminSalesResponse.of(100, 12, 123, 1234, 123123, 123)
     );
 
-      //when
+    //when
     ResultActions resultActions = mockMvc.perform(get(API + "/admin/sales")
             .param("startDate", startDate.toString())
             .param("endDate", endDate.toString()))
@@ -57,6 +61,37 @@ class AdminOrderSalesControllerTest extends BaseControllerTest {
                 fieldWithPath("refundAmount").description("환불매출"),
                 fieldWithPath("refundCount").description("환불 건수"),
                 fieldWithPath("avgRefundAmount").description("평균 환불 금액")
+            )
+        ));
+
+  }
+
+  @Test
+  void 월별_시간별_매출의_합을_반환한다() throws Exception {
+    //given
+    LocalDate localDate = LocalDate.of(2021, 1, 1);
+
+    when(adminOrderService.getEachTimeSalesByDate(any())).thenReturn(
+        List.of(
+            AdminSalesEachTimeResponse.of(LocalTime.of(1, 0), 1000),
+            AdminSalesEachTimeResponse.of(LocalTime.of(2, 0), 2030)
+        )
+    );
+
+    //when
+    ResultActions resultActions = mockMvc.perform(get(API + "/admin/sales/monthly")
+            .param("date", localDate.toString()))
+        .andDo(print());
+
+    //then
+    resultActions.andExpect(status().isOk())
+        .andDo(document("admin-sales-monthly",
+            queryParameters(
+                parameterWithName("date").description("조회 날짜")
+            ),
+            responseFields(
+                fieldWithPath("[].eachTime").description("시간"),
+                fieldWithPath("[].totalPrice").description("매출")
             )
         ));
 

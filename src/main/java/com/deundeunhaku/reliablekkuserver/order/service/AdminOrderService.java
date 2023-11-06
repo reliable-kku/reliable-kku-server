@@ -5,6 +5,7 @@ import com.deundeunhaku.reliablekkuserver.fcm.service.FcmService;
 import com.deundeunhaku.reliablekkuserver.order.constant.OrderStatus;
 import com.deundeunhaku.reliablekkuserver.order.domain.Order;
 import com.deundeunhaku.reliablekkuserver.order.dto.AdminOrderResponse;
+import com.deundeunhaku.reliablekkuserver.order.dto.AdminSalesEachTimeResponse;
 import com.deundeunhaku.reliablekkuserver.order.dto.AdminSalesResponse;
 import com.deundeunhaku.reliablekkuserver.order.dto.OrderEachMenuResponse;
 import com.deundeunhaku.reliablekkuserver.order.repository.AdminOrderRepository;
@@ -16,6 +17,8 @@ import com.deundeunhaku.reliablekkuserver.sms.service.SmsService;
 import com.deundeunhaku.reliablekkuserver.sse.service.SseService;
 import java.time.Duration;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -250,6 +253,22 @@ public class AdminOrderService {
 
   private static Integer getSumOfOrderPrices(List<Order> orders) {
     return orders.stream().map(Order::getOrderPrice).reduce(0, Integer::sum);
+  }
+
+  public List<AdminSalesEachTimeResponse> getEachTimeSalesByDate(LocalDate date) {
+
+    List<AdminSalesEachTimeResponse> responseList = new ArrayList<>();
+
+    for (int hour = 0; hour < 24; hour++) {
+      LocalDateTime startTime = LocalDateTime.of(date.getYear(), date.getMonth(),
+          date.getDayOfMonth(), hour, 0, 0);
+      LocalDateTime endTime = LocalDateTime.of(date.getYear(), date.getMonth(),
+          date.getDayOfMonth(), hour, 59, 59);
+
+      responseList.add(adminOrderRepository.findByEachTimeSumOfOrderPriceByDateBetween(date, startTime, endTime));
+    }
+
+    return responseList;
   }
 }
 

@@ -114,4 +114,18 @@ include::{snippets}/admin-sales/query-parameters.adoc[]
 include::{snippets}/admin-sales/http-response.adoc[]
 include::{snippets}/admin-sales/response-fields.adoc[]
 
+=== 매출관리 - 해당날의 시간별 매출을 반환한다 (그래프)
+
+==== Request
+
+include::{snippets}/admin-sales-monthly/http-request.adoc[]
+Query Parameters::
+include::{snippets}/admin-sales-monthly/query-parameters.adoc[]
+
+==== Response
+
+include::{snippets}/admin-sales-monthly/http-response.adoc[]
+include::{snippets}/admin-sales-monthly/response-fields.adoc[]
+
+
 

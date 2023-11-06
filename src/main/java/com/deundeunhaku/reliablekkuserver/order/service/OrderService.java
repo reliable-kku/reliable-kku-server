@@ -198,8 +198,7 @@ public class OrderService {
 
   public OrderIdResponse isMemberNowOrdered(Member member) {
     List<Order> orderByMember = orderRepository.findOrderByMember(member);
-    List<OrderStatus> orderProceedingStatus = List.of(OrderStatus.WAIT, OrderStatus.COOKING,
-        OrderStatus.PICKUP);
+    List<OrderStatus> orderProceedingStatus = List.of(OrderStatus.WAIT, OrderStatus.COOKING, OrderStatus.PICKUP);
 
     List<Order> orderingOrders = orderByMember.stream()
         .filter(o -> orderProceedingStatus.contains(o.getOrderStatus()))
@@ -208,7 +207,7 @@ public class OrderService {
     if (orderingOrders.size() > 0) {
       return OrderIdResponse.of(orderingOrders.get(0).getId());
     }
-    throw new IllegalArgumentException("이미 주문이 진행중입니다.");
+    throw new IllegalArgumentException("주문이 없습니다.");
 
   }
 
