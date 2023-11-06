@@ -139,3 +139,14 @@ include::{snippets}/admin-sales-calendar/query-parameters.adoc[]
 include::{snippets}/admin-sales-calendar/http-response.adoc[]
 include::{snippets}/admin-sales-calendar/response-fields.adoc[]
 
+=== SSE 연결을 한다
+
+==== Request
+
+include::{snippets}/admin-sse-connect/http-request.adoc[]
+
+==== Response
+
+include::{snippets}/admin-sse-connect/http-response.adoc[]
+
+자세한건 경주 주문 코드... 참고

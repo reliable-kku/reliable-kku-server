@@ -18,19 +18,40 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.temporal.TemporalAdjusters;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import static java.time.temporal.TemporalAdjusters.firstDayOfMonth;
 import static java.time.temporal.TemporalAdjusters.lastDayOfMonth;
 
+@Slf4j
 @RequiredArgsConstructor
 @Service
+public class AdminOrderService {
+
+    private final OrderRepository orderRepository;
+    private final AdminOrderRepository adminOrderRepository;
+    private final MenuOrderRepository menuOrderRepository;
+    private final SseService sseService;
+    private final FcmService fcmService;
+    private final SmsService smsService;
+    private final PaymentService paymentService;
+
+
+    public Order findByOrderId(Long orderId) {
+        return orderRepository.findById(orderId)
+                .orElseThrow(() -> new IllegalArgumentException("잘못된 주문입니다."));
+    }
+
 public class AdminOrderService {
 
     private final OrderRepository orderRepository;
@@ -307,4 +328,44 @@ public class AdminOrderService {
         );
     }
 }
+
+  public SseEmitter connectSse() {
+
+    boolean isEmitterExists = sseService.existsEmitterById(0L);
+
+    if (isEmitterExists) {
+      SseEmitter sseEmitter = sseService.getEmitter(0L);
+
+      try {
+        sseEmitter.send(SseEmitter.event()
+            .name("connect")
+            .data("성공!"));
+
+      } catch (IOException e) {
+        throw new RuntimeException(e);
+      }
+
+    } else {
+      SseEmitter sseEmitter = new SseEmitter();
+      log.info("SseEmitter 생성 {}", sseEmitter);
+
+      sseService.saveEmitter(0L, sseEmitter);
+
+      sseEmitter.onCompletion(() -> sseService.removeEmitter(0L));
+      sseEmitter.onTimeout(() -> sseService.removeEmitter(0L));
+
+      try {
+        sseEmitter.send(SseEmitter.event()
+            .name("connect")
+            .data("성공!"));
+      } catch (IOException e) {
+        throw new RuntimeException(e);
+      }
+      return sseEmitter;
+    }
+
+    return null;
+  }
+}
+
 
