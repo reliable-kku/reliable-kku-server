@@ -127,5 +127,15 @@ include::{snippets}/admin-sales-monthly/query-parameters.adoc[]
 include::{snippets}/admin-sales-monthly/http-response.adoc[]
 include::{snippets}/admin-sales-monthly/response-fields.adoc[]
 
+=== 매출관리 - 해당 월의 매출 달력 데이터를 반환한다
 
+==== Request
+include::{snippets}/admin-sales-calendar/http-request.adoc[]
+
+QueryParameters::
+include::{snippets}/admin-sales-calendar/query-parameters.adoc[]
+
+==== Response
+include::{snippets}/admin-sales-calendar/http-response.adoc[]
+include::{snippets}/admin-sales-calendar/response-fields.adoc[]
 
