@@ -14,23 +14,21 @@ import com.deundeunhaku.reliablekkuserver.order.repository.OrderRepository;
 import com.deundeunhaku.reliablekkuserver.payment.dto.PaymentCancelRequest;
 import com.deundeunhaku.reliablekkuserver.payment.service.PaymentService;
 import com.deundeunhaku.reliablekkuserver.sms.service.SmsService;
-import com.deundeunhaku.reliablekkuserver.sse.repository.SSERepository;
 import com.deundeunhaku.reliablekkuserver.sse.service.SseService;
 import java.io.IOException;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.MediaType;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
+@Slf4j
 @RequiredArgsConstructor
 @Service
 public class AdminOrderService {
@@ -269,7 +267,9 @@ public class AdminOrderService {
       LocalDateTime endTime = LocalDateTime.of(date.getYear(), date.getMonth(),
           date.getDayOfMonth(), hour, 59, 59);
 
-      responseList.add(adminOrderRepository.findByEachTimeSumOfOrderPriceByDateBetween(date, startTime, endTime));
+      responseList.add(
+          adminOrderRepository.findByEachTimeSumOfOrderPriceByDateBetween(date, startTime,
+              endTime));
     }
 
     return responseList;
@@ -291,11 +291,27 @@ public class AdminOrderService {
         throw new RuntimeException(e);
       }
 
+    } else {
+      SseEmitter sseEmitter = new SseEmitter();
+      log.info("SseEmitter 생성 {}", sseEmitter);
+
+      sseService.saveEmitter(0L, sseEmitter);
+
+      sseEmitter.onCompletion(() -> sseService.removeEmitter(0L));
+      sseEmitter.onTimeout(() -> sseService.removeEmitter(0L));
+
+      try {
+        sseEmitter.send(SseEmitter.event()
+            .name("connect")
+            .data("성공!"));
+      } catch (IOException e) {
+        throw new RuntimeException(e);
+      }
+      return sseEmitter;
     }
-
-
 
     return null;
   }
 }
+
 
