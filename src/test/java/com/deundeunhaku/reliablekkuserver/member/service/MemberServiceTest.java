@@ -12,6 +12,8 @@ import com.deundeunhaku.reliablekkuserver.member.dto.MemberMyPageResponse;
 import com.deundeunhaku.reliablekkuserver.member.dto.MemberPasswordChangeRequest;
 import com.deundeunhaku.reliablekkuserver.member.repository.MemberRepository;
 import java.util.Optional;
+
+import jakarta.persistence.EntityManager;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -34,6 +36,9 @@ class MemberServiceTest extends BaseServiceTest {
 
   @Mock
   private AuthenticationManager authenticationManager;
+
+  @Mock
+  private EntityManager em;
 
   @Test
   void 회원이_존재하는지_검증한다() throws Exception {
@@ -151,13 +156,19 @@ class MemberServiceTest extends BaseServiceTest {
   @Test
   void 변경할_비밀번호를_받으면_비밀번호를_변경한다() {
     //given
-    MemberPasswordChangeRequest request = MemberPasswordChangeRequest.of( "changePassword");
+    String initialPassword = "password";
+    String newPassword = "changePassword";
 
-    Member member = Member.builder().password("password").build();
+    Member member = Member.builder().id(1L).password(initialPassword).build();
+    MemberPasswordChangeRequest request = MemberPasswordChangeRequest.of(newPassword);
+
+    when(memberRepository.findById(member.getId()))
+            .thenReturn(Optional.of(member));
     //when
     boolean isChanged = memberService.changeMemberPassword(member, request);
     //then
     assertThat(isChanged).isTrue();
+    assertThat(passwordEncoder.matches(newPassword, member.getPassword()));
   }
 
   @Test
