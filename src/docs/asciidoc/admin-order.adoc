@@ -138,7 +138,6 @@ include::{snippets}/admin-sales-calendar/query-parameters.adoc[]
 ==== Response
 include::{snippets}/admin-sales-calendar/http-response.adoc[]
 include::{snippets}/admin-sales-calendar/response-fields.adoc[]
-
 === SSE 연결을 한다
 
 ==== Request
