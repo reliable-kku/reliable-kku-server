@@ -4,7 +4,10 @@ import jakarta.persistence.Column;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.MappedSuperclass;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
+
 import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
 import org.springframework.data.annotation.CreatedDate;
@@ -16,11 +19,12 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @Getter
 public abstract class BaseEntity {
 
+  @Setter
   @Column(updatable = false)
   @CreatedDate
-  private LocalDateTime createdAt;
+  protected LocalDateTime createdAt;
 
   @LastModifiedDate
-  private LocalDateTime updatedAt;
+  protected LocalDateTime updatedAt;
 
 }
