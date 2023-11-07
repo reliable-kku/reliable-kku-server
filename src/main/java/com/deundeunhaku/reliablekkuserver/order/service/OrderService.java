@@ -131,6 +131,7 @@ public class OrderService {
 
   }
 
+  @Transactional
   public SseEmitter connect(Long orderId) {
 
     boolean isExists = sseService.existsEmitterById(orderId);
