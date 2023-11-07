@@ -1,4 +1,3 @@
-
 server:
   tomcat:
     threads:
@@ -8,6 +7,8 @@ server:
     accept-count: 100 # 작업큐의 사이즈
     connection-timeout: 20000 # timeout 판단 기준 시간, 20초
 spring:
+  jpa:
+    open-in-view: false
   mvc:
     async:
       request-timeout: -1
