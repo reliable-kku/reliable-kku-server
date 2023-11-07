@@ -1,6 +1,7 @@
 package com.deundeunhaku.reliablekkuserver.order.controller;
 
 import com.deundeunhaku.reliablekkuserver.order.constant.OrderStatus;
+import com.deundeunhaku.reliablekkuserver.order.domain.Order;
 import com.deundeunhaku.reliablekkuserver.order.dto.AdminOrderResponse;
 import com.deundeunhaku.reliablekkuserver.order.service.AdminOrderService;
 import com.deundeunhaku.reliablekkuserver.sse.service.SseService;
@@ -33,47 +34,59 @@ public class AdminOrderController {
   public ResponseEntity<Void> changeOrderStatus(
       @PathVariable Long orderId,
       @PathVariable Integer orderMinutes) {
-    adminOrderService.setOrderToCooking(orderId, orderMinutes);
-    adminOrderService.sendOrderSetCookingMessageToUser(orderId);
+    Order order = adminOrderService.findByOrderId(orderId);
+
+    adminOrderService.setOrderToCooking(order, orderMinutes);
+    adminOrderService.sendOrderSetCookingMessageToUser(order);
 
     return ResponseEntity.status(HttpStatus.CREATED).build();
   }
 
   @DeleteMapping("/{orderId}")
   public ResponseEntity<Void> deleteOrder(@PathVariable Long orderId) {
-    adminOrderService.deleteOrder(orderId);
-    adminOrderService.sendOrderCancelMessageToUser(orderId);
+    Order order = adminOrderService.findByOrderId(orderId);
+
+    adminOrderService.deleteOrder(order);
+    adminOrderService.sendOrderCancelMessageToUser(order);
 
     return ResponseEntity.noContent().build();
   }
 
   @PatchMapping("/{orderId}/pick-up")
   public ResponseEntity<Void> pickUpOrder(@PathVariable Long orderId) {
-    adminOrderService.pickUpOrder(orderId);
-    adminOrderService.sendOrderPickUpMessageToUser(orderId);
+    Order order = adminOrderService.findByOrderId(orderId);
+
+    adminOrderService.pickUpOrder(order);
+    adminOrderService.sendOrderPickUpMessageToUser(order);
 
     return ResponseEntity.noContent().build();
   }
 
   @PatchMapping("/{orderId}/finish")
   public ResponseEntity<Void> finishOrder(@PathVariable Long orderId) {
-    adminOrderService.finishOrder(orderId);
-    adminOrderService.sendOrderFinishMessageToUser(orderId);
+    Order order = adminOrderService.findByOrderId(orderId);
+
+    adminOrderService.finishOrder(order);
+    adminOrderService.sendOrderFinishMessageToUser(order);
 
     return ResponseEntity.noContent().build();
   }
 
   @PatchMapping("/{orderId}/not-take")
   public ResponseEntity<Void> notTakeOrder(@PathVariable Long orderId) {
-    adminOrderService.notTakeOrder(orderId);
-    adminOrderService.sendOrderNotTakeMessageToUser(orderId);
+    Order order = adminOrderService.findByOrderId(orderId);
+
+    adminOrderService.notTakeOrder(order);
+    adminOrderService.sendOrderNotTakeMessageToUser(order);
 
     return ResponseEntity.noContent().build();
   }
 
   @PatchMapping("/{orderId}/recovery")
   public ResponseEntity<Void> recoveryOrder(@PathVariable Long orderId) {
-    adminOrderService.notTakeOrder(orderId);
+    Order order = adminOrderService.findByOrderId(orderId);
+
+    adminOrderService.setOrderCooking(order);
     return ResponseEntity.noContent().build();
   }
 

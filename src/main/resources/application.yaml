@@ -20,7 +20,6 @@ spring:
       - submodule/reliable-kku-server-submodule/application-sms.yaml
   datasource:
     hikari:
-      maximum-pool-size: 30
-      idle-timeout: 30000
+      maximum-pool-size: 50
 
 
