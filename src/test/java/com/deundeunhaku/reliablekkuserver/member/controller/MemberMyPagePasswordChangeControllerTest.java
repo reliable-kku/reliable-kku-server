@@ -18,7 +18,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-class MemberPasswordChangeControllerTest extends BaseControllerTest {
+class MemberMyPagePasswordChangeControllerTest extends BaseControllerTest {
 
     @MockBean
     MemberService memberService;

@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/v1/my-pages")
-public class MemberPasswordChangeController {
+public class MemberMyPagePasswordChangeController {
     private final MemberService memberService;
 
     @PostMapping("/change-password/verify-current-password")
