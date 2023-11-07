@@ -1,6 +1,9 @@
 package com.deundeunhaku.reliablekkuserver.payment.dto;
 
 import com.deundeunhaku.reliablekkuserver.payment.constants.PayType;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 public record PaymentSuccess(
     String mid,
@@ -72,21 +75,22 @@ public record PaymentSuccess(
 //   Integer taxExemptionAmount
 
 
-record PaymentCardResponse(
-    String amount,
-    String issuerCode,
-    String acquirerCode,
-    String number,
-    Integer installmentPlanMonths,
-    Boolean isInterestFree,
-//  String interestPayer,
-    String approveNo,
-    Boolean useCardPoint,
-    String cardType,
-    String ownerType,
-    String acquireStatus
-) {
-
+@AllArgsConstructor
+@NoArgsConstructor
+@Data
+class PaymentCardResponse{
+    private String amount;
+    private String issuerCode;
+    private String acquirerCode;
+    private String number;
+    private Integer installmentPlanMonths;
+    private Boolean isInterestFree;
+    private String interestPayer;
+    private String approveNo;
+    private Boolean useCardPoint;
+    private String cardType;
+    private String ownerType;
+    private String acquireStatus;
 }
 
 record Receipt(

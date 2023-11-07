@@ -4,10 +4,18 @@ import com.deundeunhaku.reliablekkuserver.common.config.TossPaymentConfig;
 import com.deundeunhaku.reliablekkuserver.common.exception.PaymentCancelException;
 import com.deundeunhaku.reliablekkuserver.common.exception.PaymentException;
 import com.deundeunhaku.reliablekkuserver.payment.domain.Payment;
-import com.deundeunhaku.reliablekkuserver.payment.dto.*;
+import com.deundeunhaku.reliablekkuserver.payment.dto.PaymentCancelRequest;
+import com.deundeunhaku.reliablekkuserver.payment.dto.PaymentCancelResponse;
+import com.deundeunhaku.reliablekkuserver.payment.dto.PaymentConfirmRequest;
+import com.deundeunhaku.reliablekkuserver.payment.dto.PaymentErrorResponse;
+import com.deundeunhaku.reliablekkuserver.payment.dto.PaymentSuccess;
 import com.deundeunhaku.reliablekkuserver.payment.repository.PaymentRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
+import java.util.Collections;
+import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -20,11 +28,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
-
-import java.nio.charset.StandardCharsets;
-import java.util.Base64;
-import java.util.Collections;
-import java.util.Objects;
 
 @RequiredArgsConstructor
 @Service
@@ -108,6 +111,7 @@ public class PaymentService {
   public void cancelPayment(Long orderId, PaymentCancelRequest cancelRequest) {
     Payment payment = paymentRepository.findPaymentKeyByOrderId(orderId)
         .orElseThrow(PaymentCancelException::new);
+
 //        Order order = orderRepository.findById(orderId).orElseThrow(IllegalArgumentException::new);
 
     /*Payment payment = paymentRepository.findByPaymentKeyAndOrderId(paymentKey, order).orElseThrow(PaymentException::new);*/
@@ -140,18 +144,29 @@ public class PaymentService {
     HttpHeaders headers = getHeaders();
     PaymentCancelRequest requestBody = PaymentCancelRequest.of(cancelRequest.cancelReason());
 
-    PaymentCancelResponse result = null;
+    String result = "";
     try {
-      result = restTemplate.postForObject(TossPaymentConfig.URL + paymentKey + "/cancel",
-          new HttpEntity<>(requestBody, headers), PaymentCancelResponse.class
-      );
+//      result = restTemplate.postForObject(TossPaymentConfig.URL + paymentKey + "/cancel",
+//          new HttpEntity<>(requestBody, headers), PaymentCancelResponse.class
+//      );
+      result = restTemplate.exchange(TossPaymentConfig.URL + paymentKey + "/cancel",
+          HttpMethod.POST,
+          new HttpEntity<>(requestBody, headers),
+          String.class
+      ).getBody();
+      log.info("result : {}", result);
+
+      return objectMapper.readValue(result, PaymentCancelResponse.class);
+
     } catch (HttpClientErrorException e) {
       PaymentErrorResponse errorResponse = e.getResponseBodyAs(PaymentErrorResponse.class);
       log.warn(Objects.requireNonNull(errorResponse).message());
 
       throw new PaymentCancelException(errorResponse.message());
+    } catch (JsonProcessingException e) {
+      throw new RuntimeException(e);
     }
-    return result;
+
   }
 
 }

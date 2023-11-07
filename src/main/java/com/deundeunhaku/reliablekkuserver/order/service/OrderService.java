@@ -22,11 +22,7 @@ import com.deundeunhaku.reliablekkuserver.order.repository.MenuOrderRepository;
 import com.deundeunhaku.reliablekkuserver.order.repository.OrderRepository;
 import com.deundeunhaku.reliablekkuserver.payment.domain.Payment;
 import com.deundeunhaku.reliablekkuserver.payment.repository.PaymentRepository;
-import com.deundeunhaku.reliablekkuserver.sse.dto.SseDataResponse;
-import com.deundeunhaku.reliablekkuserver.sse.repository.SseInMemoryRepository;
 import com.deundeunhaku.reliablekkuserver.sse.service.SseService;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import java.io.IOException;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -34,11 +30,9 @@ import java.time.Month;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
@@ -81,6 +75,8 @@ public class OrderService {
 
     Order onlineOrder = Order.createOnlineOrder(maxId + 1, request, member);
     Order savedOrder = orderRepository.save(onlineOrder);
+
+    payment.setOrder(savedOrder);
 
     List<RegisteredMenuRequest> menuRequestList = request.registeredMenus();
 
@@ -170,7 +166,6 @@ public class OrderService {
 //            .name("connect")
 //            .data("성공!"));
 
-
       sseService.sendDataToUser(order);
 
       return sseEmitter;
@@ -222,7 +217,8 @@ public class OrderService {
 
   public OrderIdResponse isMemberNowOrdered(Member member) {
     List<Order> orderByMember = orderRepository.findOrderByMember(member);
-    List<OrderStatus> orderProceedingStatus = List.of(OrderStatus.WAIT, OrderStatus.COOKING, OrderStatus.PICKUP);
+    List<OrderStatus> orderProceedingStatus = List.of(OrderStatus.WAIT, OrderStatus.COOKING,
+        OrderStatus.PICKUP);
 
     List<Order> orderingOrders = orderByMember.stream()
         .filter(o -> orderProceedingStatus.contains(o.getOrderStatus()))

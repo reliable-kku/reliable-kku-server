@@ -56,7 +56,12 @@ public class SseService {
   @Transactional
   public void disconnect(Long orderId) {
     SseEmitter sseEmitter = sseRepository.get(orderId)
-        .orElseThrow(() -> new IllegalArgumentException("잘못된 요청입니다."));
+        .orElse(null);
+
+    if (sseEmitter == null) {
+      log.warn("주문 취소,  SseEmitter가 존재하지 않습니다. orderId: {}", orderId);
+      return;
+    }
 
     SseDataResponse response = SseDataResponse.of(OrderStatus.CANCELED,
         0L);
@@ -67,8 +72,8 @@ public class SseService {
           .data(objectMapper.writeValueAsString(response), MediaType.APPLICATION_JSON));
 
       sseRepository.remove(orderId);
-    }catch (Exception e){
-      throw new IllegalArgumentException("잘못된 요청입니다.");
+    } catch (Exception e) {
+      log.warn("주문 취소, SseEmitter 메시지 전송 실패, orderId: {}", orderId);
     }
   }
 
