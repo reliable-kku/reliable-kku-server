@@ -5,6 +5,7 @@ import static com.deundeunhaku.reliablekkuserver.order.domain.QOrder.order;
 import com.deundeunhaku.reliablekkuserver.order.constant.OrderStatus;
 import com.deundeunhaku.reliablekkuserver.order.domain.Order;
 import com.deundeunhaku.reliablekkuserver.order.dto.*;
+import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -37,7 +38,7 @@ public class AdminOrderRepositoryImpl implements AdminOrderRepositoryCustom {
       LocalDateTime endTime) {
     return queryFactory.select(
             new QAdminSalesEachTimeResponse(
-                order.orderDatetime,
+                Expressions.asDateTime(startTime),
                 order.orderPrice.sum().coalesce(0).as("sumOfPriceOfDay")
             )
         )
