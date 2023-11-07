@@ -22,6 +22,7 @@ spring:
   datasource:
     hikari:
       maximum-pool-size: 50
+      leak-detection-threshold: 2000
 
 logging:
   level:
