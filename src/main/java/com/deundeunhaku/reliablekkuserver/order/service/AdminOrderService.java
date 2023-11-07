@@ -1,10 +1,18 @@
 package com.deundeunhaku.reliablekkuserver.order.service;
 
+import static java.time.temporal.TemporalAdjusters.firstDayOfMonth;
+import static java.time.temporal.TemporalAdjusters.lastDayOfMonth;
+
 import com.deundeunhaku.reliablekkuserver.fcm.dto.FcmBaseRequest;
 import com.deundeunhaku.reliablekkuserver.fcm.service.FcmService;
 import com.deundeunhaku.reliablekkuserver.order.constant.OrderStatus;
 import com.deundeunhaku.reliablekkuserver.order.domain.Order;
-import com.deundeunhaku.reliablekkuserver.order.dto.*;
+import com.deundeunhaku.reliablekkuserver.order.dto.AdminOrderResponse;
+import com.deundeunhaku.reliablekkuserver.order.dto.AdminSalesCalendarResponse;
+import com.deundeunhaku.reliablekkuserver.order.dto.AdminSalesEachTimeResponse;
+import com.deundeunhaku.reliablekkuserver.order.dto.AdminSalesResponse;
+import com.deundeunhaku.reliablekkuserver.order.dto.OrderEachMenuResponse;
+import com.deundeunhaku.reliablekkuserver.order.dto.TotalSalesMonthOfDay;
 import com.deundeunhaku.reliablekkuserver.order.repository.AdminOrderRepository;
 import com.deundeunhaku.reliablekkuserver.order.repository.MenuOrderRepository;
 import com.deundeunhaku.reliablekkuserver.order.repository.OrderRepository;
@@ -12,26 +20,17 @@ import com.deundeunhaku.reliablekkuserver.payment.dto.PaymentCancelRequest;
 import com.deundeunhaku.reliablekkuserver.payment.service.PaymentService;
 import com.deundeunhaku.reliablekkuserver.sms.service.SmsService;
 import com.deundeunhaku.reliablekkuserver.sse.service.SseService;
-
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.temporal.TemporalAdjusters;
-
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
-
-import static java.time.temporal.TemporalAdjusters.firstDayOfMonth;
-import static java.time.temporal.TemporalAdjusters.lastDayOfMonth;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -274,7 +273,6 @@ public class AdminOrderService {
           adminOrderRepository.findByEachTimeSumOfOrderPriceByDateBetween(date, startTime,
               endTime));
     }
-
     return responseList;
   }
 
@@ -344,5 +342,4 @@ public class AdminOrderService {
     return null;
   }
 }
-
 

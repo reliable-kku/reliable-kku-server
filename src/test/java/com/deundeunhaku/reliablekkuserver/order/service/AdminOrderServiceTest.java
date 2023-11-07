@@ -157,17 +157,19 @@ class AdminOrderServiceTest extends BaseServiceTest {
       when(adminOrderRepository.findCalendarMonthDataByStartDateAndLastDateBetween(thisMonthFirstDay, thisMonthLastDay)).thenReturn(100000);
       when(adminOrderRepository.findTotalRefundSalesOfMonthByStartDateAndLastDateBetween(thisMonthFirstDay, thisMonthLastDay)).thenReturn(3000);
 
-//      List<TotalSalesMonthOfDay> monthOfDaysList = new ArrayList<>();
-//      for (int day = 1; day >= date.with(lastDayOfMonth()).getDayOfMonth(); day++ ){
-//      LocalDate eachDay = LocalDate.of(date.getYear(), date.getMonth(), day);
-//      monthOfDaysList.add(adminOrderRepository.findTotalSalesMonthOfDayByDate(eachDay));
-
+      List<TotalSalesMonthOfDay> monthOfDaysList = new ArrayList<>();
+      for (int day = 1; day >= date.with(lastDayOfMonth()).getDayOfMonth(); day++ ) {
+          LocalDate eachDay = LocalDate.of(date.getYear(), date.getMonth(), day);
+          TotalSalesMonthOfDay dayData = new TotalSalesMonthOfDay(7000, 700);
+          monthOfDaysList.add(dayData);
+          when(adminOrderRepository.findTotalSalesMonthOfDayByDate(eachDay)).thenReturn(dayData);
+      }
     //when
     AdminSalesCalendarResponse response = adminOrderService.getSalesCalendar(date);
       //then
     assertThat(response.lastMonthOnMonth()).isEqualTo(900);
     assertThat(response.totalSalesOfMonth()).isEqualTo(100000);
     assertThat(response.totalRefundSalesOfMonth()).isEqualTo(3000);
-//    assertThat(response.total(TotalSalesMonthOfDay.of())).isEqualTo();
+    assertThat(response.total()).isEqualTo(monthOfDaysList);
   }
 }
