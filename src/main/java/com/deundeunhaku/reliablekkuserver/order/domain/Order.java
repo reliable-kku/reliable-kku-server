@@ -25,7 +25,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @Entity
-@Table(name = "order_tb")
+@Table(name = "order_tb", indexes = {@Index(name = "order_orderStatus_index", columnList = "orderStatus")})
 public class Order extends BaseEntity implements Serializable {
 
   @Id
