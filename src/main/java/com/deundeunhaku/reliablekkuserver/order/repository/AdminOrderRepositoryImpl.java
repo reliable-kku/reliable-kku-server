@@ -50,8 +50,8 @@ public class AdminOrderRepositoryImpl implements AdminOrderRepositoryCustom {
   @Override
   public Integer findCalendarMonthDataByStartDateAndLastDateBetween(LocalDate startDate, LocalDate lastDate) {
     return queryFactory.select(
-                            order.orderPrice.sum()
-                    )
+                    order.orderPrice.sum().coalesce(0).as("월별 실 매출")
+            )
             .from(order)
             .where(order.createdDate.between(startDate, lastDate))
             .where(order.orderStatus.ne(OrderStatus.CANCELED))
@@ -61,7 +61,7 @@ public class AdminOrderRepositoryImpl implements AdminOrderRepositoryCustom {
   @Override
   public Integer findTotalRefundSalesOfMonthByStartDateAndLastDateBetween(LocalDate startDate, LocalDate lastDate) {
     return queryFactory.select(
-                            order.orderPrice.sum()
+                            order.orderPrice.sum().coalesce(0).as("월별 총 환불액")
                     )
             .from(order)
             .where(order.createdDate.between(startDate, lastDate))
@@ -74,8 +74,8 @@ public class AdminOrderRepositoryImpl implements AdminOrderRepositoryCustom {
   public TotalSalesMonthOfDay findTotalSalesMonthOfDayByDate(LocalDate date) {
     return queryFactory.select(
             new QTotalSalesMonthOfDay(
-                    (queryFactory.select(order.orderPrice.sum()).from(order).where(order.orderStatus.ne(OrderStatus.CANCELED))),
-                    (queryFactory.select(order.orderPrice.sum()).from(order).where(order.orderStatus.eq(OrderStatus.CANCELED)))
+                    (queryFactory.select(order.orderPrice.sum().coalesce(0).as("일별 실 매출")).from(order).where(order.orderStatus.ne(OrderStatus.CANCELED))),
+                    (queryFactory.select(order.orderPrice.sum().coalesce(0).as("일별 실 환불액")).from(order).where(order.orderStatus.eq(OrderStatus.CANCELED)))
             )
           ).from(order).where(order.createdDate.eq(date))
             .fetchOne();
