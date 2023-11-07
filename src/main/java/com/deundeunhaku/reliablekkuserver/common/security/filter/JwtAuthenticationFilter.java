@@ -33,9 +33,30 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
   private final JwtTokenUtils jwtTokenUtils;
   private final MemberDetailsService memberDetailsService;
 
+  private final List<String> WHITELIST_URL =
+      List.of(
+          "/api/v1/auth/admin/login",
+          "/api/v1/auth/admin/logout",
+          "/api/v1/auth/login",
+          "/api/v1/find-password/phone-number/certification-number",
+          "/api/v1/find-password",
+          "/api/v1/register/phone-number/duplicate",
+          "/api/v1/register/phone-number/certification-number",
+          "/api/v1/register",
+          "/api/v1/order/sse/connect",
+          "/api/v1/admin/order/sse/connect"
+      );
+
   @Override
   protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
       FilterChain filterChain) throws ServletException, IOException {
+
+    String requestURI = request.getRequestURI();
+
+    if (WHITELIST_URL.contains(requestURI)) {
+      filterChain.doFilter(request, response);
+      return;
+    }
 
     Cookie[] cookies = request.getCookies();
 

@@ -142,46 +142,42 @@ public class OrderService {
       return null;
     }
 
-    Duration leftDuration = Duration.between(order.getExpectedWaitDatetime(),
-        order.getOrderDatetime());
+    if (isExists) {
 
-    try {
+      sseService.removeEmitter(orderId);
 
-      if (isExists) {
-        SseEmitter sseEmitter = sseService.getEmitter(orderId);
+      SseEmitter sseEmitter = sseService.getEmitter(orderId);
 
-        if (sseEmitter == null) {
-          return null;
-        }
-
-        sseEmitter.send(SseEmitter.event()
-            .name("connect")
-            .data("성공!"));
-
-        sseService.sendDataToUser(orderId, OrderStatus.WAIT, leftDuration.toMinutes());
-
-        return sseEmitter;
-      } else {
-        SseEmitter sseEmitter = new SseEmitter();
-        log.info("SseEmitter 생성 {}", sseEmitter);
-
-        sseService.saveEmitter(orderId, sseEmitter);
-
-        sseEmitter.onCompletion(() -> sseService.removeEmitter(orderId));
-        sseEmitter.onTimeout(() -> sseService.removeEmitter(orderId));
-
-        sseEmitter.send(SseEmitter.event()
-            .name("connect")
-            .data("성공!"));
-
-        sseService.sendDataToUser(orderId, OrderStatus.WAIT, leftDuration.toMinutes());
-
-        return sseEmitter;
+      if (sseEmitter == null) {
+        return null;
       }
-    } catch (IOException e) {
-      log.warn("SseEmitter 생성 실패");
-      return null;
-//      throw new IllegalArgumentException("잘못된 요청입니다.");
+
+//        sseEmitter.send(SseEmitter.event()
+//            .name("connect")
+//            .data("성공!"));
+
+
+      sseService.sendDataToUser(order);
+//        sseService.sendDataToUser(orderId, order.getOrderStatus(), leftDuration.toMinutes());
+
+      return sseEmitter;
+    } else {
+      SseEmitter sseEmitter = new SseEmitter();
+      log.info("SseEmitter 생성 {}", sseEmitter);
+
+      sseService.saveEmitter(orderId, sseEmitter);
+
+      sseEmitter.onCompletion(() -> sseService.removeEmitter(orderId));
+      sseEmitter.onTimeout(() -> sseService.removeEmitter(orderId));
+
+//        sseEmitter.send(SseEmitter.event()
+//            .name("connect")
+//            .data("성공!"));
+
+
+      sseService.sendDataToUser(order);
+
+      return sseEmitter;
     }
   }
 
