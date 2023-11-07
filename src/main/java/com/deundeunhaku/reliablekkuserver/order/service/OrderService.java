@@ -299,6 +299,7 @@ public class OrderService {
     return order.getMember().getId();
   }
 
+  @Transactional(readOnly = true)
   public LeftTimeResponse getLeftTime() {
     LocalDateTime nowDateTime = LocalDateTime.now();
 
