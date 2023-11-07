@@ -74,12 +74,12 @@ public class SseService {
 
   public void sendDataToUser(Order order) {
 
-    Duration leftDuration = Duration.between(order.getExpectedWaitDatetime(),
-        order.getOrderDatetime());
+    Duration leftDuration = Duration.between(order.getOrderDatetime(),
+        order.getExpectedWaitDatetime());
 
     SseDataResponse response = SseDataResponse.of(
         order.getOrderStatus(),
-        leftDuration.toMinutes() >= 0 ? leftDuration.toMinutes() : 0
+        leftDuration.toMinutes()
     );
 
     sseRepository.get(order.getId()).ifPresent(sseEmitter -> {

@@ -142,46 +142,42 @@ public class OrderService {
       return null;
     }
 
-    try {
+    if (isExists) {
 
-      if (isExists) {
-        SseEmitter sseEmitter = sseService.getEmitter(orderId);
+      sseService.removeEmitter(orderId);
 
-        if (sseEmitter == null) {
-          return null;
-        }
+      SseEmitter sseEmitter = sseService.getEmitter(orderId);
 
-        sseEmitter.send(SseEmitter.event()
-            .name("connect")
-            .data("성공!"));
+      if (sseEmitter == null) {
+        return null;
+      }
+
+//        sseEmitter.send(SseEmitter.event()
+//            .name("connect")
+//            .data("성공!"));
 
 
-        sseService.sendDataToUser(order);
+      sseService.sendDataToUser(order);
 //        sseService.sendDataToUser(orderId, order.getOrderStatus(), leftDuration.toMinutes());
 
-        return sseEmitter;
-      } else {
-        SseEmitter sseEmitter = new SseEmitter();
-        log.info("SseEmitter 생성 {}", sseEmitter);
+      return sseEmitter;
+    } else {
+      SseEmitter sseEmitter = new SseEmitter();
+      log.info("SseEmitter 생성 {}", sseEmitter);
 
-        sseService.saveEmitter(orderId, sseEmitter);
+      sseService.saveEmitter(orderId, sseEmitter);
 
-        sseEmitter.onCompletion(() -> sseService.removeEmitter(orderId));
-        sseEmitter.onTimeout(() -> sseService.removeEmitter(orderId));
+      sseEmitter.onCompletion(() -> sseService.removeEmitter(orderId));
+      sseEmitter.onTimeout(() -> sseService.removeEmitter(orderId));
 
-        sseEmitter.send(SseEmitter.event()
-            .name("connect")
-            .data("성공!"));
+//        sseEmitter.send(SseEmitter.event()
+//            .name("connect")
+//            .data("성공!"));
 
 
-        sseService.sendDataToUser(order);
+      sseService.sendDataToUser(order);
 
-        return sseEmitter;
-      }
-    } catch (IOException e) {
-      log.warn("SseEmitter 생성 실패");
-      return null;
-//      throw new IllegalArgumentException("잘못된 요청입니다.");
+      return sseEmitter;
     }
   }
 

@@ -64,7 +64,7 @@ public class Order extends BaseEntity implements Serializable {
 
 
   public void addMinutesToExpectedWaitDateTime(Integer addMinutes) {
-    this.expectedWaitDatetime = this.orderDatetime.plusMinutes(addMinutes);
+    this.expectedWaitDatetime = LocalDateTime.now().plusMinutes(addMinutes);
   }
 
   public void updateOrderStatus(OrderStatus orderStatus) {
