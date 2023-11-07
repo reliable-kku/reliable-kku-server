@@ -23,7 +23,7 @@ spring:
   datasource:
     hikari:
       maximum-pool-size: 50
-      leak-detection-threshold: 5000
+      leak-detection-threshold: 60000
       idle-timeout: 30000
       auto-commit: true
       connection-timeout: 30000
