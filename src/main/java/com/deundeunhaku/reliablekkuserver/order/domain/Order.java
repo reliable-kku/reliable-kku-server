@@ -25,7 +25,11 @@ import java.time.LocalDateTime;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @Entity
-@Table(name = "order_tb", indexes = {@Index(name = "order_orderStatus_index", columnList = "orderStatus")})
+@Table(name = "order_tb",
+    indexes = {
+        @Index(name = "order_orderStatus_index", columnList = "orderStatus"),
+        @Index(name = "order_createdDate_index", columnList = "createdDate")
+    })
 public class Order extends BaseEntity implements Serializable {
 
   @Id
@@ -87,9 +91,6 @@ public class Order extends BaseEntity implements Serializable {
     this.offlineMember = offlineMember;
     super.createdAt = createdAt;
   }
-
-
-
 
 
   public static Order createOnlineOrder(Long todayOrderCount, OrderRegisterRequest request,
