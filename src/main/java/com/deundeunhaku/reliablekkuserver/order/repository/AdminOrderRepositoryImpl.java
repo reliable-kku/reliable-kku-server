@@ -38,7 +38,7 @@ public class AdminOrderRepositoryImpl implements AdminOrderRepositoryCustom {
     return queryFactory.select(
             new QAdminSalesEachTimeResponse(
                 order.orderDatetime,
-                order.orderPrice.sum()
+                order.orderPrice.sum().coalesce(0).as("그래프 시간별 매출 합계")
             )
         )
         .from(order)
