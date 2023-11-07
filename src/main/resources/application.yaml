@@ -1,3 +1,4 @@
+
 server:
   tomcat:
     threads:
@@ -22,4 +23,7 @@ spring:
     hikari:
       maximum-pool-size: 50
 
-
+logging:
+  level:
+    com.zaxxer.hikari.HikariConfig: DEBUG
+    com.zaxxer.hikari: TRACE
