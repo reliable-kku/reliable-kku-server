@@ -45,7 +45,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
           "/api/v1/register/phone-number/certification-number",
           "/api/v1/register",
           "/api/v1/order/sse/connect",
-          "/api/v1/admin/order/sse/connect"
+          "/api/v1/admin/order/sse/connect",
+          "/docs/index.html"
       );
 
   @Override
