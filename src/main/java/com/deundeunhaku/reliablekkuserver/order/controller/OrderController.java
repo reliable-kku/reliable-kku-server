@@ -41,8 +41,8 @@ public class OrderController {
     }
 
     @GetMapping("/{orderId}")
-    public ResponseEntity<OrderResponse> getOrderId(@PathVariable Long orderId) {
-        return ResponseEntity.ok(orderService.getOrderMenuList(orderId));
+    public ResponseEntity<OrderResponse> getOrderId(@AuthenticationPrincipal Member member,@PathVariable Long orderId) {
+        return ResponseEntity.ok(orderService.getOrderMenuList(orderId , member));
     }
 
     @DeleteMapping("/{orderId}")

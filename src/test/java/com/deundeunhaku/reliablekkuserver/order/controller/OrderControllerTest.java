@@ -1,27 +1,24 @@
 package com.deundeunhaku.reliablekkuserver.order.controller;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
-import static org.springframework.restdocs.request.RequestDocumentation.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
+import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
+import static org.springframework.restdocs.request.RequestDocumentation.queryParameters;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.deundeunhaku.reliablekkuserver.BaseControllerTest;
-import com.deundeunhaku.reliablekkuserver.member.domain.Member;
-import com.deundeunhaku.reliablekkuserver.order.dto.*;
-import com.deundeunhaku.reliablekkuserver.order.service.OrderService;
-import com.deundeunhaku.reliablekkuserver.payment.service.PaymentService;
-import com.deundeunhaku.reliablekkuserver.sse.service.SseService;
-import java.util.Collections;
+import com.deundeunhaku.reliablekkuserver.order.dto.LeftTimeResponse;
+import com.deundeunhaku.reliablekkuserver.order.dto.OrderCalendarResponse;
 import com.deundeunhaku.reliablekkuserver.order.dto.OrderEachMenuResponse;
 import com.deundeunhaku.reliablekkuserver.order.dto.OrderIdResponse;
 import com.deundeunhaku.reliablekkuserver.order.dto.OrderRegisterRequest;
@@ -29,6 +26,8 @@ import com.deundeunhaku.reliablekkuserver.order.dto.OrderResponse;
 import com.deundeunhaku.reliablekkuserver.order.dto.PastOrderResponse;
 import com.deundeunhaku.reliablekkuserver.order.dto.RegisteredMenuRequest;
 import com.deundeunhaku.reliablekkuserver.order.service.OrderService;
+import com.deundeunhaku.reliablekkuserver.payment.service.PaymentService;
+import com.deundeunhaku.reliablekkuserver.sse.service.SseService;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -38,7 +37,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.test.web.servlet.ResultMatcher;
 
 class OrderControllerTest extends BaseControllerTest {
 
@@ -105,8 +103,8 @@ class OrderControllerTest extends BaseControllerTest {
     OrderEachMenuResponse 팥_붕어빵 = OrderEachMenuResponse.of("팥 붕어빵", 2);
     OrderEachMenuResponse 슈크림_붕어빵 = OrderEachMenuResponse.of("슈크림 붕어빵", 4);
 
-    when(orderService.getOrderMenuList(orderId))
-        .thenReturn(OrderResponse.of(15000, List.of(팥_붕어빵, 슈크림_붕어빵)));
+    when(orderService.getOrderMenuList(anyLong(), any()))
+        .thenReturn(OrderResponse.of("이름", 15000, List.of(팥_붕어빵, 슈크림_붕어빵)));
 
     //when
     ResultActions resultActions = mockMvc.perform(
@@ -120,6 +118,7 @@ class OrderControllerTest extends BaseControllerTest {
                 parameterWithName("orderId").description("주문 ID")
             ),
             responseFields(
+                fieldWithPath("username").description("유저의 이름"),
                 fieldWithPath("totalPrice").description("총 가격"),
                 fieldWithPath("orderMenuList[].name").description("메뉴 이름"),
                 fieldWithPath("orderMenuList[].count").description("메뉴 개수")
@@ -187,37 +186,40 @@ class OrderControllerTest extends BaseControllerTest {
 
   }
 
-    @Test
-    void 년도와_월을_받아_메뉴룰_주문한날에_도장이_달력에_찍혀있는지_확인한다() throws Exception{
+  @Test
+  void 년도와_월을_받아_메뉴룰_주문한날에_도장이_달력에_찍혀있는지_확인한다() throws Exception {
 
-      //given
-        OrderCalendarResponse response1 = OrderCalendarResponse.of(21, true);
-        OrderCalendarResponse response2 = OrderCalendarResponse.of(23, true);
-        OrderCalendarResponse response3 = OrderCalendarResponse.of(25, false);
+    //given
+    OrderCalendarResponse response1 = OrderCalendarResponse.of(21, true);
+    OrderCalendarResponse response2 = OrderCalendarResponse.of(23, true);
+    OrderCalendarResponse response3 = OrderCalendarResponse.of(25, false);
     Integer year = 2023;
     Integer month = 10;
 
-        when(orderService.getOrderListByMemberAndYearAndMonth(any(), any(Integer.class), any(Integer.class))).thenReturn(List.of(response1, response2, response3));
+    when(orderService.getOrderListByMemberAndYearAndMonth(any(), any(Integer.class),
+        any(Integer.class))).thenReturn(List.of(response1, response2, response3));
 
-      //when
-        ResultActions resultActions = mockMvc.perform(RestDocumentationRequestBuilders.get(API + "/order/calendar")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .param("year", String.valueOf(year))
-                        .param("month", String.valueOf(month)))
-                .andDo(print());
-      //then
-        resultActions.andExpect(status().isOk())
-                .andDo(document("order/calendar/success",
-                        queryParameters(
-                                parameterWithName("year").description("주문 년도"),
-                                parameterWithName("month").description("주문 월")
-                        ),
-                        responseFields(
-                                fieldWithPath("[].orderedDay").description("주문한 날짜"),
-                                fieldWithPath("[].isOrdered").description("주문여부")
-                        )
-                ));
-    }
+    //when
+    ResultActions resultActions = mockMvc.perform(
+            RestDocumentationRequestBuilders.get(API + "/order/calendar")
+                .contentType(MediaType.APPLICATION_JSON)
+                .param("year", String.valueOf(year))
+                .param("month", String.valueOf(month)))
+        .andDo(print());
+    //then
+    resultActions.andExpect(status().isOk())
+        .andDo(document("order/calendar/success",
+            queryParameters(
+                parameterWithName("year").description("주문 년도"),
+                parameterWithName("month").description("주문 월")
+            ),
+            responseFields(
+                fieldWithPath("[].orderedDay").description("주문한 날짜"),
+                fieldWithPath("[].isOrdered").description("주문여부")
+            )
+        ));
+  }
+
   @Test
   void 과거의_주문_리스트를_반환한다() throws Exception {
     //given
@@ -259,11 +261,11 @@ class OrderControllerTest extends BaseControllerTest {
 
   @Test
   void 현재_주문하면_걸리는시간을_반환한다() throws Exception {
-      //given
+    //given
 
     when(orderService.getLeftTime())
         .thenReturn(LeftTimeResponse.of(Duration.ofMinutes(30).toMinutes()));
-      //when
+    //when
     ResultActions resultActions = mockMvc.perform(get(API + "/order/left-time"))
         .andDo(print());
 

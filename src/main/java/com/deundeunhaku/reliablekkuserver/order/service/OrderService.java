@@ -173,7 +173,7 @@ public class OrderService {
   }
 
 
-  public OrderResponse getOrderMenuList(Long orderId) {
+  public OrderResponse getOrderMenuList(Long orderId , Member member) {
     Order order = orderRepository.findById(orderId)
         .orElseThrow(() -> new IllegalArgumentException("잘못된 요청입니다."));
 
@@ -186,7 +186,7 @@ public class OrderService {
         })
         .collect(Collectors.toList());
 
-    return OrderResponse.of(order.getOrderPrice(), menuResponseList);
+    return OrderResponse.of(member.getRealName(), order.getOrderPrice(), menuResponseList);
   }
 
   @Transactional

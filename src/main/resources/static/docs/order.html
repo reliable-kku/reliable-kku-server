@@ -682,9 +682,9 @@ Host: localhost:8080</code></pre>
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">HTTP/1.1 200 OK
 Content-Type: application/json
-Content-Length: 114
+Content-Length: 134
 
-{"totalPrice":15000,"orderMenuList":[{"name":"팥 붕어빵","count":2},{"name":"슈크림 붕어빵","count":4}]}</code></pre>
+{"username":"이름","totalPrice":15000,"orderMenuList":[{"name":"팥 붕어빵","count":2},{"name":"슈크림 붕어빵","count":4}]}</code></pre>
 </div>
 </div>
 <table class="tableblock frame-all grid-all stretch">
@@ -701,6 +701,11 @@ Content-Length: 114
 </tr>
 </thead>
 <tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>username</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">유저의 이름</p></td>
+</tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>totalPrice</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>

@@ -6,11 +6,10 @@ import lombok.Builder;
 public record CreateMenuRequest(
         String name,
         Integer price,
-        String description,
-        String menuImageUrl
+        String description
 
 ) {
-    public static CreateMenuRequest of(String name, Integer price, String description, String menuImageUrl) {
-        return new CreateMenuRequest(name, price, description, menuImageUrl);
+    public static CreateMenuRequest of(String name, Integer price, String description) {
+        return new CreateMenuRequest(name, price, description);
     }
 }

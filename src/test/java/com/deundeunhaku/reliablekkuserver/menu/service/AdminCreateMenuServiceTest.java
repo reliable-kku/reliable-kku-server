@@ -33,8 +33,7 @@ class AdminCreateMenuServiceTest extends BaseServiceTest {
         CreateMenuRequest request = CreateMenuRequest.of(
                 "사과잼 와플",
                 5000,
-                "맛있는 사과잼 와플이 왔어용~",
-                "imageUrl"
+                "맛있는 사과잼 와플이 왔어용~"
         );
         Long menuId = 1L;
         when(adminMenuRepository.save(any())).thenReturn(Menu.builder().id(menuId).build());

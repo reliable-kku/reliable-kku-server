@@ -34,8 +34,7 @@ class AdminCreateMenuControllerTest extends BaseControllerTest {
         final CreateMenuRequest request = CreateMenuRequest.of(
                 "사과잼와플",
                 4900,
-                "맛있는 사과잼 와플이 왔어용~",
-                "imageUrl"
+                "맛있는 사과잼 와플이 왔어용~"
         );
         MockMultipartFile menu = new MockMultipartFile("menu", null, MediaType.APPLICATION_JSON_VALUE, objectMapper.writeValueAsString(request).getBytes(UTF_8));
 
@@ -58,8 +57,7 @@ class AdminCreateMenuControllerTest extends BaseControllerTest {
                                         "menu",
                                         fieldWithPath("name").description("메뉴 이름"),
                                         fieldWithPath("price").description("메뉴 가격"),
-                                        fieldWithPath("description").description("메뉴 설명"),
-                                        fieldWithPath("menuImageUrl").description("메뉴 이미지 경로")
+                                        fieldWithPath("description").description("메뉴 설명")
                                 ),
                                 responseFields(
                                         fieldWithPath("menuId").description("메뉴 id")
