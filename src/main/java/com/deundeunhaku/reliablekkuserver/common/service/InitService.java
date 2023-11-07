@@ -74,7 +74,7 @@ public class InitService {
             .pricePerOne(700)
             .pricePerThree(2000)
             .isSale(true)
-            .menuImageUrl("https://deundeunhaku-bucket.s3.ap-northeast-2.amazonaws.com/%E1%84%91%E1%85%A1%E1%87%80%E1%84%87%E1%85%AE%E1%86%BC.png")
+            .menuImageUrl("https://deundeunhaku-bucket.s3.ap-northeast-2.amazonaws.com/redbean1.png")
             .build()
     );
     menuRepository.save(
@@ -84,7 +84,7 @@ public class InitService {
             .pricePerOne(700)
             .pricePerThree(2000)
             .isSale(true)
-            .menuImageUrl("https://deundeunhaku-bucket.s3.ap-northeast-2.amazonaws.com/%E1%84%89%E1%85%B2%E1%84%8F%E1%85%B3%E1%84%85%E1%85%B5%E1%86%B7%E1%84%87%E1%85%AE%E1%86%BC.png")
+            .menuImageUrl("https://deundeunhaku-bucket.s3.ap-northeast-2.amazonaws.com/cream1.png")
             .build()
     );
     menuRepository.save(
@@ -94,7 +94,7 @@ public class InitService {
             .pricePerOne(1000)
             .pricePerThree(3000)
             .isSale(true)
-            .menuImageUrl("https://deundeunhaku-bucket.s3.ap-northeast-2.amazonaws.com/%E1%84%82%E1%85%AE%E1%84%90%E1%85%A6%E1%86%AF%E1%84%85%E1%85%A1%E1%84%87%E1%85%AE%E1%86%BC.png")
+            .menuImageUrl("https://deundeunhaku-bucket.s3.ap-northeast-2.amazonaws.com/chocolate1.png")
             .build()
     );
 
