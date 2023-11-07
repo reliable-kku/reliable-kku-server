@@ -4,7 +4,10 @@ import com.deundeunhaku.reliablekkuserver.fcm.dto.FcmBaseRequest;
 import com.deundeunhaku.reliablekkuserver.fcm.service.FcmService;
 import com.deundeunhaku.reliablekkuserver.order.constant.OrderStatus;
 import com.deundeunhaku.reliablekkuserver.order.domain.Order;
-import com.deundeunhaku.reliablekkuserver.order.dto.*;
+import com.deundeunhaku.reliablekkuserver.order.dto.AdminOrderResponse;
+import com.deundeunhaku.reliablekkuserver.order.dto.AdminSalesEachTimeResponse;
+import com.deundeunhaku.reliablekkuserver.order.dto.AdminSalesResponse;
+import com.deundeunhaku.reliablekkuserver.order.dto.OrderEachMenuResponse;
 import com.deundeunhaku.reliablekkuserver.order.repository.AdminOrderRepository;
 import com.deundeunhaku.reliablekkuserver.order.repository.MenuOrderRepository;
 import com.deundeunhaku.reliablekkuserver.order.repository.OrderRepository;
@@ -12,28 +15,17 @@ import com.deundeunhaku.reliablekkuserver.payment.dto.PaymentCancelRequest;
 import com.deundeunhaku.reliablekkuserver.payment.service.PaymentService;
 import com.deundeunhaku.reliablekkuserver.sms.service.SmsService;
 import com.deundeunhaku.reliablekkuserver.sse.service.SseService;
-
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.time.temporal.TemporalAdjusters;
-
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
-import static java.time.temporal.TemporalAdjusters.firstDayOfMonth;
-import static java.time.temporal.TemporalAdjusters.lastDayOfMonth;
-
-@Slf4j
 @RequiredArgsConstructor
 @Service
 public class AdminOrderService {
@@ -273,76 +265,41 @@ public class AdminOrderService {
       responseList.add(
           adminOrderRepository.findByEachTimeSumOfOrderPriceByDateBetween(date, startTime,
               endTime));
+      }
+        return responseList;
     }
 
-    return responseList;
-  }
+    public AdminSalesCalendarResponse getSalesCalendar(LocalDate date) {
+        LocalDate lastMonth = date.minusMonths(1);
 
-  public AdminSalesCalendarResponse getSalesCalendar(LocalDate date) {
-    LocalDate lastMonth = date.minusMonths(1);
-
-    LocalDate lastMonthFirstDay = lastMonth.with(firstDayOfMonth());
-    LocalDate lastMonthLastDay = lastMonth.with(lastDayOfMonth());
+        LocalDate lastMonthFirstDay = lastMonth.with(firstDayOfMonth());
+        LocalDate lastMonthLastDay = lastMonth.with(lastDayOfMonth());
 
 //        전월 총 매출 query 구현  -> int or long
-    Integer lastMonthTotalSales = adminOrderRepository.findCalendarMonthDataByStartDateAndLastDateBetween(
-        lastMonthFirstDay, lastMonthLastDay);
+        Integer lastMonthTotalSales = adminOrderRepository.findCalendarMonthDataByStartDateAndLastDateBetween(lastMonthFirstDay, lastMonthLastDay);
 
-    LocalDate thisMonthFirstDay = date.with(firstDayOfMonth());
-    LocalDate thisMonthLastDay = date.with(lastDayOfMonth());
+        LocalDate thisMonthFirstDay = date.with(firstDayOfMonth());
+        LocalDate thisMonthLastDay = date.with(lastDayOfMonth());
 
 //       이번달 총 매출 query 구현
-    Integer thisMonthTotalSales = adminOrderRepository.findCalendarMonthDataByStartDateAndLastDateBetween(
-        thisMonthFirstDay, thisMonthLastDay);
+        Integer thisMonthTotalSales = adminOrderRepository.findCalendarMonthDataByStartDateAndLastDateBetween(thisMonthFirstDay, thisMonthLastDay);
 
 //       이번달 환불 금액 query 구현
-    Integer thisMonthRefundTotalSales = adminOrderRepository.findTotalRefundSalesOfMonthByStartDateAndLastDateBetween(
-        thisMonthFirstDay, thisMonthLastDay);
+        Integer thisMonthRefundTotalSales = adminOrderRepository.findTotalRefundSalesOfMonthByStartDateAndLastDateBetween(thisMonthFirstDay, thisMonthLastDay);
 
 //       전월대비 %
-    int lastMonthOnMonth =
-        ((thisMonthTotalSales - lastMonthTotalSales) / lastMonthTotalSales) * 100;
+        int lastMonthOnMonth = ((thisMonthTotalSales - lastMonthTotalSales) / lastMonthTotalSales) * 100;
 
-    List<TotalSalesMonthOfDay> monthOfDaysList = new ArrayList<>();
-    for (int day = 1; day >= date.with(lastDayOfMonth()).getDayOfMonth(); day++) {
-      LocalDate eachDay = LocalDate.of(date.getYear(), date.getMonth(), day);
-      // 쿼리에서 createdDate에 위의 값이랑 비교해서 들고온거 리스트로 만들깅
-      monthOfDaysList.add(adminOrderRepository.findTotalSalesMonthOfDayByDate(eachDay));
+        List<TotalSalesMonthOfDay> monthOfDaysList = new ArrayList<>();
+        for (int day = 1; day >= date.with(lastDayOfMonth()).getDayOfMonth(); day++ ){
+            LocalDate eachDay = LocalDate.of(date.getYear(), date.getMonth(), day);
+            // 쿼리에서 createdDate에 위의 값이랑 비교해서 들고온거 리스트로 만들깅
+            monthOfDaysList.add(adminOrderRepository.findTotalSalesMonthOfDayByDate(eachDay));
+        }
+
+        return AdminSalesCalendarResponse.of(
+                lastMonthOnMonth, thisMonthTotalSales, thisMonthRefundTotalSales, monthOfDaysList
+        );
     }
-
-    return AdminSalesCalendarResponse.of(
-        lastMonthOnMonth, thisMonthTotalSales, thisMonthRefundTotalSales, monthOfDaysList
-    );
-  }
-
-  public SseEmitter connectSse() {
-
-    boolean isEmitterExists = sseService.existsEmitterById(0L);
-
-    if (isEmitterExists) {
-      SseEmitter sseEmitter = sseService.getEmitter(0L);
-
-      //        sseEmitter.send(SseEmitter.event()
-//            .name("connect")
-//            .data("성공!"));
-
-    } else {
-      SseEmitter sseEmitter = new SseEmitter();
-      log.info("SseEmitter 생성 {}", sseEmitter);
-
-      sseService.saveEmitter(0L, sseEmitter);
-
-      sseEmitter.onCompletion(() -> sseService.removeEmitter(0L));
-      sseEmitter.onTimeout(() -> sseService.removeEmitter(0L));
-
-      //        sseEmitter.send(SseEmitter.event()
-//            .name("connect")
-//            .data("성공!"));
-      return sseEmitter;
-    }
-
-    return null;
-  }
 }
-
 
