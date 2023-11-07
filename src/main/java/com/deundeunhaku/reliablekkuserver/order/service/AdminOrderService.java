@@ -52,22 +52,6 @@ public class AdminOrderService {
                 .orElseThrow(() -> new IllegalArgumentException("잘못된 주문입니다."));
     }
 
-public class AdminOrderService {
-
-    private final OrderRepository orderRepository;
-    private final AdminOrderRepository adminOrderRepository;
-    private final MenuOrderRepository menuOrderRepository;
-    private final SseService sseService;
-    private final FcmService fcmService;
-    private final SmsService smsService;
-    private final PaymentService paymentService;
-
-
-    public Order findByOrderId(Long orderId) {
-        return orderRepository.findById(orderId)
-                .orElseThrow(() -> new IllegalArgumentException("잘못된 주문입니다."));
-    }
-
     public List<AdminOrderResponse> getOrderList(OrderStatus orderStatus) {
 
         List<Order> orderList = new ArrayList<>();
@@ -327,7 +311,6 @@ public class AdminOrderService {
                 lastMonthOnMonth, thisMonthTotalSales, thisMonthRefundTotalSales, monthOfDaysList
         );
     }
-}
 
   public SseEmitter connectSse() {
 
