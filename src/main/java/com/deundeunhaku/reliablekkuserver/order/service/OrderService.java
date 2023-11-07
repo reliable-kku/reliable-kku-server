@@ -149,16 +149,11 @@ public class OrderService {
       SseEmitter sseEmitter = sseService.getEmitter(orderId);
 
       if (sseEmitter == null) {
+        log.warn("sse Emitter 전달 실패 orderId: {}", orderId);
         return null;
       }
 
-//        sseEmitter.send(SseEmitter.event()
-//            .name("connect")
-//            .data("성공!"));
-
-
       sseService.sendDataToUser(order);
-//        sseService.sendDataToUser(orderId, order.getOrderStatus(), leftDuration.toMinutes());
 
       return sseEmitter;
     } else {
