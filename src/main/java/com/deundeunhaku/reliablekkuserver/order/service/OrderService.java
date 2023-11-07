@@ -142,9 +142,6 @@ public class OrderService {
       return null;
     }
 
-    Duration leftDuration = Duration.between(order.getExpectedWaitDatetime(),
-        order.getOrderDatetime());
-
     try {
 
       if (isExists) {
@@ -158,7 +155,9 @@ public class OrderService {
             .name("connect")
             .data("성공!"));
 
-        sseService.sendDataToUser(orderId, OrderStatus.WAIT, leftDuration.toMinutes());
+
+        sseService.sendDataToUser(order);
+//        sseService.sendDataToUser(orderId, order.getOrderStatus(), leftDuration.toMinutes());
 
         return sseEmitter;
       } else {
@@ -174,7 +173,8 @@ public class OrderService {
             .name("connect")
             .data("성공!"));
 
-        sseService.sendDataToUser(orderId, OrderStatus.WAIT, leftDuration.toMinutes());
+
+        sseService.sendDataToUser(order);
 
         return sseEmitter;
       }

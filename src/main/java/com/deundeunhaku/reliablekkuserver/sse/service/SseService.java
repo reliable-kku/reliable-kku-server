@@ -3,10 +3,12 @@ package com.deundeunhaku.reliablekkuserver.sse.service;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 
 import com.deundeunhaku.reliablekkuserver.order.constant.OrderStatus;
+import com.deundeunhaku.reliablekkuserver.order.domain.Order;
 import com.deundeunhaku.reliablekkuserver.order.dto.AdminOrderResponse;
 import com.deundeunhaku.reliablekkuserver.sse.dto.SseDataResponse;
 import com.deundeunhaku.reliablekkuserver.sse.repository.SseInMemoryRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.time.Duration;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -68,6 +70,29 @@ public class SseService {
     }catch (Exception e){
       throw new IllegalArgumentException("잘못된 요청입니다.");
     }
+  }
+
+  public void sendDataToUser(Order order) {
+
+    Duration leftDuration = Duration.between(order.getExpectedWaitDatetime(),
+        order.getOrderDatetime());
+
+    SseDataResponse response = SseDataResponse.of(
+        order.getOrderStatus(),
+        leftDuration.toMinutes() >= 0 ? leftDuration.toMinutes() : 0
+    );
+
+    sseRepository.get(order.getId()).ifPresent(sseEmitter -> {
+      try {
+        sseEmitter.send(SseEmitter.event()
+            .name("message")
+            .data(objectMapper.writeValueAsString(response), APPLICATION_JSON)
+        );
+
+      } catch (Exception e) {
+        sseEmitter.complete();
+      }
+    });
   }
 
   public void sendDataToUser(Long orderId, OrderStatus orderStatus, Long leftMinutes) {
