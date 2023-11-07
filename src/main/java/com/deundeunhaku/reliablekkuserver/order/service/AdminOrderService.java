@@ -298,14 +298,17 @@ public class AdminOrderService {
         thisMonthFirstDay, thisMonthLastDay);
 
 //       전월대비 %
-    int lastMonthOnMonth =
-        ((thisMonthTotalSales - lastMonthTotalSales) / lastMonthTotalSales) * 100;
+    int lastMonthOnMonth = 0;
+    if (lastMonthTotalSales != 0 && thisMonthTotalSales != 0){
+      lastMonthOnMonth = ((thisMonthTotalSales - lastMonthTotalSales) / lastMonthTotalSales) * 100;
+    }
+
 
     List<TotalSalesMonthOfDay> monthOfDaysList = new ArrayList<>();
-    for (int day = 1; day >= date.with(lastDayOfMonth()).getDayOfMonth(); day++) {
+    for (int day = 1; day <= date.with(lastDayOfMonth()).getDayOfMonth(); day++) {
       LocalDate eachDay = LocalDate.of(date.getYear(), date.getMonth(), day);
-      // 쿼리에서 createdDate에 위의 값이랑 비교해서 들고온거 리스트로 만들깅
-      monthOfDaysList.add(adminOrderRepository.findTotalSalesMonthOfDayByDate(eachDay));
+      TotalSalesMonthOfDay totalSalesOfDay = adminOrderRepository.findTotalSalesMonthOfDayByDate(eachDay);
+      monthOfDaysList.add(TotalSalesMonthOfDay.of(totalSalesOfDay.totalSales(), totalSalesOfDay.refundTotalSales()));
     }
 
     return AdminSalesCalendarResponse.of(

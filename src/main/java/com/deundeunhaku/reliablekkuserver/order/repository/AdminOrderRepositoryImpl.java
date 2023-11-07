@@ -6,6 +6,7 @@ import com.deundeunhaku.reliablekkuserver.order.constant.OrderStatus;
 import com.deundeunhaku.reliablekkuserver.order.domain.Order;
 import com.deundeunhaku.reliablekkuserver.order.dto.*;
 import com.querydsl.core.types.dsl.Expressions;
+import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -54,8 +55,8 @@ public class AdminOrderRepositoryImpl implements AdminOrderRepositoryCustom {
                     order.orderPrice.sum().coalesce(0).as("sumOfPriceOfMonth")
             )
             .from(order)
-            .where(order.createdDate.between(startDate, lastDate))
             .where(order.orderStatus.ne(OrderStatus.CANCELED))
+            .where(order.createdDate.between(startDate, lastDate))
             .fetchOne();
   }
 
@@ -65,20 +66,34 @@ public class AdminOrderRepositoryImpl implements AdminOrderRepositoryCustom {
                             order.orderPrice.sum().coalesce(0).as("sumOfRefundPriceOfMonth")
                     )
             .from(order)
-            .where(order.createdDate.between(startDate, lastDate))
             .where(order.orderStatus.eq(OrderStatus.CANCELED))
+            .where(order.createdDate.between(startDate, lastDate))
             .fetchOne();
 
   }
 
   @Override
   public TotalSalesMonthOfDay findTotalSalesMonthOfDayByDate(LocalDate date) {
-    return queryFactory.select(
-            new QTotalSalesMonthOfDay(
-                    (queryFactory.select(order.orderPrice.sum().coalesce(0).as("sumOfPriceOfDay")).from(order).where(order.orderStatus.ne(OrderStatus.CANCELED))),
-                    (queryFactory.select(order.orderPrice.sum().coalesce(0).as("sumOfRefundPriceOfDay")).from(order).where(order.orderStatus.eq(OrderStatus.CANCELED)))
-            )
-          ).from(order).where(order.createdDate.eq(date))
-            .fetchOne();
+    Integer sumOfPriceOfDay = queryFactory.select(order.orderPrice.sum().coalesce(0))
+            .from(order)
+            .where(order.createdDate.eq(date))
+            .where(order.orderStatus.ne(OrderStatus.CANCELED))
+            .fetchFirst();
+
+    Integer sumOfRefundPriceOfDay = queryFactory.select(order.orderPrice.sum().coalesce(0))
+            .from(order)
+            .where(order.createdDate.eq(date))
+            .where(order.orderStatus.eq(OrderStatus.CANCELED))
+            .fetchFirst();
+
+    if (sumOfPriceOfDay == null) {
+      sumOfPriceOfDay = 0;
+    }
+
+    if (sumOfRefundPriceOfDay == null) {
+      sumOfRefundPriceOfDay = 0;
+    }
+
+    return new TotalSalesMonthOfDay(sumOfPriceOfDay, sumOfRefundPriceOfDay);
   }
 }
