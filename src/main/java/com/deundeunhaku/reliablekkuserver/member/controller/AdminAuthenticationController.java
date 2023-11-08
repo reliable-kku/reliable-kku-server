@@ -1,5 +1,6 @@
 package com.deundeunhaku.reliablekkuserver.member.controller;
 
+import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.HttpHeaders.SET_COOKIE;
 
 import com.deundeunhaku.reliablekkuserver.jwt.constants.TokenDuration;
@@ -35,14 +36,8 @@ public class AdminAuthenticationController {
     String accessToken = jwtTokenUtils.generateJwtToken(loginRequest.username(),
         TokenDuration.ACCESS_TOKEN_DURATION_ADMIN.getDuration());
 
-    ResponseCookie accessTokenCookie = ResponseCookie.from("accessToken", accessToken)
-        .maxAge(TokenDuration.ACCESS_TOKEN_DURATION.getDurationInSecond())
-        .path("/")
-        .httpOnly(true)
-        .build();
-
     return ResponseEntity.ok()
-        .header(SET_COOKIE, accessTokenCookie.toString())
+        .header(AUTHORIZATION, "Bearer " + accessToken)
         .build();
   }
 

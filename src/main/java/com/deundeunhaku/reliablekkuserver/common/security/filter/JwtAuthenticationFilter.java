@@ -58,19 +58,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
       filterChain.doFilter(request, response);
       return;
     }
-
     log.info("requestURI: {}", requestURI);
-
-//    Cookie[] cookies = request.getCookies();
-//    String accessToken = null;
-//
-//    if (cookies != null) {
-//      for (Cookie cookie : cookies) {
-//        if (cookie.getName().equals("accessToken")) {
-//          accessToken = cookie.getValue();
-//        }
-//      }
-//    }
 
     if (request.getHeader(AUTHORIZATION) == null || request.getHeader(AUTHORIZATION).isEmpty()) {
       filterChain.doFilter(request, response);
@@ -80,17 +68,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     String accessToken = parseBearerToken(request);
 
     String phoneNumber = jwtTokenUtils.getPhoneNumber(accessToken);
-    log.info("phoneNumber: {}", phoneNumber);
 
     Boolean isTokenValid = jwtTokenUtils.validate(accessToken, phoneNumber);
-    log.info("isTokenValid: {}", isTokenValid);
 
     if (!isTokenValid) {
       throw new NotAuthorizedException("유효하지 않은 토큰입니다.");
     }
 
     Boolean isTokenExpired = jwtTokenUtils.isTokenExpired(accessToken);
-    log.info("isTokenExpired: {}", isTokenExpired);
     if (isTokenExpired) {
       throw new NotAuthorizedException("만료된 토큰입니다.");
     }
