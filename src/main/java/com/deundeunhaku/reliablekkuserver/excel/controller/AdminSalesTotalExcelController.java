@@ -6,6 +6,8 @@ import com.deundeunhaku.reliablekkuserver.order.dto.ExcelSalesStatisticsResponse
 import com.deundeunhaku.reliablekkuserver.order.repository.MenuOrderRepository;
 import com.deundeunhaku.reliablekkuserver.order.repository.OrderRepository;
 import jakarta.servlet.http.HttpServletResponse;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.Cell;
@@ -34,13 +36,14 @@ public class AdminSalesTotalExcelController {
 
     private final OrderRepository orderRepository;
     private final MenuOrderRepository menuOrderRepository;
-    private final MenuRepository menuRepository;
-
 
     @GetMapping("/excel")
-    public ResponseEntity<InputStreamResource> downloadExcel(HttpServletResponse response, @RequestParam LocalDate startDate, @RequestParam LocalDate endDate) throws IOException {
+    public ResponseEntity<InputStreamResource> downloadExcel( @RequestParam LocalDate startDate, @RequestParam(required = false) LocalDate endDate) throws IOException {
 
-//        List<Order> orderList = orderRepository.findAll();
+        if (endDate == null) {
+            endDate = LocalDate.now();
+        }
+
         List<Order> orderList = orderRepository.findOrderListByCreatedDateBetween(startDate, endDate);
 
 
@@ -51,21 +54,10 @@ public class AdminSalesTotalExcelController {
 
         Row timeRow = sheet.createRow(rowNo++);
 
-        /*LocalDate firstOrderDate = orderList.stream()
-                .map(Order::getCreatedDate)
-                .min(LocalDate::compareTo)
-                .orElse(LocalDate.now());
-        LocalDate lastOrderDate = orderList.stream()
-                .map(Order::getCreatedDate)
-                .max(LocalDate::compareTo)
-                .orElse(LocalDate.now());*/
-
         timeRow.createCell(0).setCellValue("기간: " + startDate + " ~ " + endDate);
-
         Row nameRow = sheet.createRow(rowNo++);
         nameRow.createCell(0).setCellValue("든붕이");
 
-        //빈값
         rowNo++;
 
         Row mainRow = sheet.createRow(rowNo++);
@@ -78,28 +70,25 @@ public class AdminSalesTotalExcelController {
         Row mainDataRow = sheet.createRow(rowNo++);
 
         ExcelSalesStatisticsResponse total = orderRepository.findOrderListAllSalesDataByCreateDateBetween(startDate, endDate);
-        Integer totalAvg = (int) ((total.orderSales() - total.refundTotalSales()) / (total.totalCount() - total.refundTotalCount()));
 
-        mainDataRow.createCell(0).setCellValue(total.orderSales());
-        mainDataRow.createCell(1).setCellValue(total.totalCount());
-        mainDataRow.createCell(2).setCellValue(totalAvg);
-        mainDataRow.createCell(3).setCellValue(total.refundTotalSales());
-        mainDataRow.createCell(4).setCellValue(total.refundTotalCount());
-        /*double totalSales = 0.0;
-        int totalOrders = 0;
-        double totalRefund = 0.0;
-        int totalRefundOrders = 0;
-        for(Order order : orderList){
-            totalSales += order.getOrderPrice();
-            totalOrders++;
-            if(order.getOrderStatus() == OrderStatus.CANCELED){
-                totalRefund +=
-            }
+        int onlineTotalSales = total.onlineTotalSales() == null ? 0 : total.onlineTotalSales();
+        int offlineTotalSales = total.offlineTotalSales() == null ? 0 : total.offlineTotalSales();
+        int refundTotalSales = total.refundTotalSales() == null ? 0 : total.refundTotalSales();
+        long totalCount = total.totalCount() == null ? 0 : total.totalCount();
+        long refundTotalCount = total.refundTotalCount() == null ? 0 : total.refundTotalCount();
+        int orderedSales = total.orderSales() == null ? 0 : total.orderSales();
+
+        int totalAvg = 0;
+        if (totalCount - refundTotalCount != 0 || orderedSales - refundTotalSales != 0) {
+            totalAvg = (int) ((orderedSales - refundTotalSales) / (totalCount - refundTotalCount));
         }
 
-        mainDataRow.createCell(0).setCellValue();*/
+        mainDataRow.createCell(0).setCellValue(orderedSales);
+        mainDataRow.createCell(1).setCellValue(totalCount);
+        mainDataRow.createCell(2).setCellValue(totalAvg);
+        mainDataRow.createCell(3).setCellValue(refundTotalSales);
+        mainDataRow.createCell(4).setCellValue(refundTotalCount);
 
-        //빈값
         rowNo++;
 
         Row headerRow = sheet.createRow(rowNo++);
@@ -117,9 +106,10 @@ public class AdminSalesTotalExcelController {
         sheet.addMergedRegion(mergedRegion);
         Cell totalCell = totalRow.createCell(startCell);
         totalCell.setCellValue("전체 합계");
-        totalRow.createCell(3).setCellValue(total.orderSales());
-        totalRow.createCell(4).setCellValue(total.onlineTotalSales());
-        totalRow.createCell(5).setCellValue(total.offlineTotalSales());
+        totalRow.createCell(3).setCellValue(orderedSales);
+        totalRow.createCell(4).setCellValue(onlineTotalSales);
+
+        totalRow.createCell(5).setCellValue(offlineTotalSales);
 
 
         for (Order order : orderList) {
@@ -131,12 +121,11 @@ public class AdminSalesTotalExcelController {
             row.createCell(1).setCellValue(formattedTime);
 
             List<String> menuNameList = menuOrderRepository.findMenuNameByEachMenuOrder(order);
-            String menuName = "";
+            StringBuilder menuName = new StringBuilder();
             for (String name : menuNameList) {
-                menuName += name + ",";
-                ;
+                menuName.append(name).append(",");
             }
-            row.createCell(2).setCellValue(menuName);
+            row.createCell(2).setCellValue(menuName.toString());
             row.createCell(3).setCellValue(order.getOrderPrice());
             if (order.getIsOfflineOrder()) {
                 row.createCell(4).setCellValue("-");
@@ -164,10 +153,13 @@ public class AdminSalesTotalExcelController {
             }
         };
 
+        String fileName = URLEncoder.encode("관리자매출현황" + startDate + endDate + ".xlsx",
+            StandardCharsets.UTF_8);
+
         return ResponseEntity.ok()
                 .contentLength(tmpFile.length())
                 .contentType(MediaType.APPLICATION_OCTET_STREAM)
-                .header("Content-Disposition", "attachment;filename=adminSalesTotalList.xlsx") //
+                .header("Content-Disposition", "attachment;filename="+fileName) //
                 .body(new InputStreamResource(res));
 
     }
