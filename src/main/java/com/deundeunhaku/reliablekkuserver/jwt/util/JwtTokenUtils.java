@@ -7,9 +7,11 @@ import io.jsonwebtoken.security.Keys;
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.util.Date;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+@Slf4j
 @Component
 public class JwtTokenUtils {
 
@@ -40,6 +42,8 @@ public class JwtTokenUtils {
 
     public Boolean isTokenExpired(String token) {
         Date expiration = extractAllClaims(token).getExpiration();
+        log.info("토큰 만료 시간: {}", expiration);
+        log.info("현재 시간: {}", new Date());
         return expiration.before(new Date());
     }
 
