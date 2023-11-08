@@ -51,7 +51,7 @@ public class JwtController {
   }
 
   @GetMapping("/update")
-  public ResponseEntity<Void> updateAccessToken(
+  public ResponseEntity<String> updateAccessToken(
       @CookieValue(name = "refreshToken") Cookie refreshTokenCookie
   ) {
     String refreshToken = refreshTokenCookie.getValue();
@@ -78,10 +78,9 @@ public class JwtController {
           .httpOnly(true)
           .build();
 
-      return ResponseEntity.ok()
-          .header(SET_COOKIE, accessTokenCookie.toString())
-          .build();
-
+    return ResponseEntity.ok()
+        .header(SET_COOKIE, accessTokenCookie.toString())
+        .body(newAccessToken);
   }
 
   private void setAccessTokenInCookie(String accessToken, HttpServletResponse response) {
