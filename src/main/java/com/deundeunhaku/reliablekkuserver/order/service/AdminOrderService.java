@@ -102,13 +102,16 @@ public class AdminOrderService {
 
 
   @Transactional
-  public void setOrderToCooking(Order order, Integer orderMinutes) {
+  public void setOrderToCooking(Long orderId, Integer orderMinutes) {
+    Order order = findByOrderId(orderId);
 
     order.updateOrderStatus(OrderStatus.COOKING);
     order.addMinutesToExpectedWaitDateTime(orderMinutes);
   }
 
-  public void sendOrderSetCookingMessageToUser(Order order) {
+  @Transactional(readOnly = true)
+  public void sendOrderSetCookingMessageToUser(Long orderId) {
+    Order order = findByOrderId(orderId);
 
     Duration leftDuration = Duration.between(
         order.getOrderDatetime(),
@@ -130,7 +133,8 @@ public class AdminOrderService {
     }
   }
 
-  public void sendOrderCancelMessageToUser(Order order) {
+  public void sendOrderCancelMessageToUser(Long orderId) {
+    Order order = findByOrderId(orderId);
 
     if (order.getIsOfflineOrder()) {
       smsService.sendOrderCancelMessage(order.getOfflineMember().getPhoneNumber());
@@ -143,7 +147,8 @@ public class AdminOrderService {
     }
   }
 
-  public void sendOrderPickUpMessageToUser(Order order) {
+  public void sendOrderPickUpMessageToUser(Long orderId) {
+    Order order = findByOrderId(orderId);
 
     if (order.getIsOfflineOrder()) {
       smsService.sendOrderPickupMessage(order.getOfflineMember().getPhoneNumber());
@@ -156,7 +161,8 @@ public class AdminOrderService {
     }
   }
 
-  public void sendOrderFinishMessageToUser(Order order) {
+  public void sendOrderFinishMessageToUser(Long orderId) {
+    Order order = findByOrderId(orderId);
 
     if (order.getIsOfflineOrder()) {
       smsService.sendOrderFinishMessage(order.getOfflineMember().getPhoneNumber());
@@ -169,7 +175,8 @@ public class AdminOrderService {
     }
   }
 
-  public void sendOrderNotTakeMessageToUser(Order order) {
+  public void sendOrderNotTakeMessageToUser(Long orderId) {
+    Order order = findByOrderId(orderId);
 
     if (order.getIsOfflineOrder()) {
       smsService.sendOrderNotTakeMessage(order.getOfflineMember().getPhoneNumber());
@@ -183,7 +190,8 @@ public class AdminOrderService {
   }
 
   @Transactional
-  public void deleteOrder(Order order) {
+  public void deleteOrder(Long orderId) {
+    Order order = findByOrderId(orderId);
 
     if (order.getMember() != null) {
       paymentService.cancelPayment(order.getId(), PaymentCancelRequest.of("관리자가 취소"));
@@ -194,7 +202,9 @@ public class AdminOrderService {
   }
 
   @Transactional
-  public void pickUpOrder(Order order) {
+  public void pickUpOrder(Long orderId) {
+    Order order = findByOrderId(orderId);
+
     if (order.getOfflineMember() == null) {
       sseService.sendDataToUser(order.getId(), OrderStatus.PICKUP, 0L);
     }
@@ -203,7 +213,8 @@ public class AdminOrderService {
   }
 
   @Transactional
-  public void finishOrder(Order order) {
+  public void finishOrder(Long orderId) {
+    Order order = findByOrderId(orderId);
 
     if (order.getOfflineMember() == null) {
       sseService.sendDataToUser(order.getId(), OrderStatus.FINISH, 0L);
@@ -213,7 +224,8 @@ public class AdminOrderService {
   }
 
   @Transactional
-  public void notTakeOrder(Order order) {
+  public void notTakeOrder(Long orderId) {
+    Order order = findByOrderId(orderId);
 
     if (order.getOfflineMember() == null) {
       sseService.sendDataToUser(order.getId(), OrderStatus.NOT_TAKE, 0L);
@@ -223,7 +235,9 @@ public class AdminOrderService {
   }
 
   @Transactional
-  public void setOrderCooking(Order order) {
+  public void setOrderCooking(Long orderId) {
+    Order order = findByOrderId(orderId);
+
     order.updateOrderStatus(OrderStatus.COOKING);
   }
 

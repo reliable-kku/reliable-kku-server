@@ -188,7 +188,7 @@ public class AdminSalesTotalExcelController {
             }
         };
 
-        String fileName = URLEncoder.encode("관리자매출현황" + startDate + endDate + ".xlsx",
+        String fileName = URLEncoder.encode("관리자매출현황" + startDate +"~"+ endDate + ".xlsx",
             StandardCharsets.UTF_8);
 
         return ResponseEntity.ok()

@@ -22,9 +22,8 @@ spring:
       - submodule/reliable-kku-server-submodule/application-sms.yaml
   datasource:
     hikari:
-      maximum-pool-size: 50
+      maximum-pool-size: 500
       leak-detection-threshold: 60000
-      connection-timeout: 30000
 
 
 #logging:

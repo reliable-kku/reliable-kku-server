@@ -90,7 +90,7 @@ public class SseService {
             .name("message")
             .data(objectMapper.writeValueAsString(response), APPLICATION_JSON)
         );
-
+    log.info("전달 성공 orderId: {}", order.getId());
       } catch (Exception e) {
         log.warn("SseEmitter 메시지 전송 실패 orderId: {}", order.getId());
 //        sseEmitter.complete();
