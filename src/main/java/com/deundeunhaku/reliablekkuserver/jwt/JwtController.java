@@ -59,7 +59,17 @@ public class JwtController {
     String phoneNumber = jwtTokenUtils.getPhoneNumber(refreshToken);
     Boolean validate = jwtTokenUtils.validate(refreshToken, phoneNumber);
 
-    if (validate) {
+    if (!validate) {
+      log.warn("토큰 검증 실패 {}", phoneNumber);
+      return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+    }
+
+    if (jwtTokenUtils.isTokenExpired(refreshToken)) {
+      log.warn("토큰 만료 {}", jwtTokenUtils.getPhoneNumber(phoneNumber));
+
+      return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+    }
+
       String newAccessToken = jwtTokenUtils.generateJwtToken(phoneNumber,
           ACCESS_TOKEN_DURATION.getDuration());
 
@@ -71,9 +81,7 @@ public class JwtController {
       return ResponseEntity.ok()
           .header(SET_COOKIE, accessTokenCookie.toString())
           .build();
-    } else {
-      return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-    }
+
   }
 
   private void setAccessTokenInCookie(String accessToken, HttpServletResponse response) {
