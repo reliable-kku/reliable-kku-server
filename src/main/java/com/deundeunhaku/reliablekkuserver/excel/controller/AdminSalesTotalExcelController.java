@@ -1,20 +1,18 @@
 package com.deundeunhaku.reliablekkuserver.excel.controller;
 
-import com.deundeunhaku.reliablekkuserver.menu.repository.MenuRepository;
 import com.deundeunhaku.reliablekkuserver.order.domain.Order;
 import com.deundeunhaku.reliablekkuserver.order.dto.ExcelSalesStatisticsResponse;
 import com.deundeunhaku.reliablekkuserver.order.repository.MenuOrderRepository;
 import com.deundeunhaku.reliablekkuserver.order.repository.OrderRepository;
-import jakarta.servlet.http.HttpServletResponse;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.xssf.streaming.SXSSFSheet;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
+import org.apache.poi.xssf.usermodel.DefaultIndexedColorMap;
+import org.apache.poi.xssf.usermodel.XSSFCellStyle;
+import org.apache.poi.xssf.usermodel.XSSFColor;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -23,7 +21,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.awt.Color;
 import java.io.*;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -38,7 +39,7 @@ public class AdminSalesTotalExcelController {
     private final MenuOrderRepository menuOrderRepository;
 
     @GetMapping("/excel")
-    public ResponseEntity<InputStreamResource> downloadExcel( @RequestParam LocalDate startDate, @RequestParam(required = false) LocalDate endDate) throws IOException {
+    public ResponseEntity<InputStreamResource> downloadExcel(@RequestParam LocalDate startDate, @RequestParam(required = false) LocalDate endDate) throws IOException {
 
         if (endDate == null) {
             endDate = LocalDate.now();
@@ -48,6 +49,18 @@ public class AdminSalesTotalExcelController {
 
 
         SXSSFWorkbook workbook = new SXSSFWorkbook();
+
+
+        // 데이터를 가져오고 Workbook, Sheet를 만듭니다
+        CellStyle greyCellStyle = workbook.createCellStyle();
+        applyCellStyle(greyCellStyle, new Color(183, 185, 187));
+
+        CellStyle blueCellStyle = workbook.createCellStyle();
+        applyCellStyle(blueCellStyle, new Color(106, 148, 191));
+
+        CellStyle bodyCellStyle = workbook.createCellStyle();
+        applyCellStyle(bodyCellStyle, new Color(255, 255, 255));
+
         Sheet sheet = workbook.createSheet("매출 내역");
 
         int rowNo = 0;
@@ -66,7 +79,9 @@ public class AdminSalesTotalExcelController {
         mainRow.createCell(2).setCellValue("건 단가");
         mainRow.createCell(3).setCellValue("총 환불");
         mainRow.createCell(4).setCellValue("환불 건수");
-
+        for(int i=0; i<=4; i++){
+            mainRow.getCell(i).setCellStyle(blueCellStyle);
+        }
         Row mainDataRow = sheet.createRow(rowNo++);
 
         ExcelSalesStatisticsResponse total = orderRepository.findOrderListAllSalesDataByCreateDateBetween(startDate, endDate);
@@ -88,6 +103,9 @@ public class AdminSalesTotalExcelController {
         mainDataRow.createCell(2).setCellValue(totalAvg);
         mainDataRow.createCell(3).setCellValue(refundTotalSales);
         mainDataRow.createCell(4).setCellValue(refundTotalCount);
+        for(int i=0; i<=4; i++){
+            mainDataRow.getCell(i).setCellStyle(greyCellStyle);
+        }
 
         rowNo++;
 
@@ -99,6 +117,10 @@ public class AdminSalesTotalExcelController {
         headerRow.createCell(4).setCellValue("온라인 결제");
         headerRow.createCell(5).setCellValue("오프라인 결제");
 
+        for(int i=0; i<=5; i++){
+            headerRow.getCell(i).setCellStyle(blueCellStyle);
+        }
+
         Row totalRow = sheet.createRow(rowNo++);
         int startCell = 0;
         int endCell = 2;
@@ -106,15 +128,21 @@ public class AdminSalesTotalExcelController {
         sheet.addMergedRegion(mergedRegion);
         Cell totalCell = totalRow.createCell(startCell);
         totalCell.setCellValue("전체 합계");
+        totalCell.setCellStyle(greyCellStyle);
         totalRow.createCell(3).setCellValue(orderedSales);
         totalRow.createCell(4).setCellValue(onlineTotalSales);
 
         totalRow.createCell(5).setCellValue(offlineTotalSales);
 
+        for(int i=3; i<=5; i++){
+            totalRow.getCell(i).setCellStyle(greyCellStyle);
+        }
 
         for (Order order : orderList) {
             Row row = sheet.createRow(rowNo++);
-            row.createCell(0).setCellValue(order.getCreatedDate());
+
+
+            row.createCell(0).setCellValue(order.getCreatedDate().toString());
 
             DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss");
             String formattedTime = order.getCreatedAt().toLocalTime().format(timeFormatter);
@@ -134,10 +162,17 @@ public class AdminSalesTotalExcelController {
                 row.createCell(4).setCellValue(order.getOrderPrice());
                 row.createCell(5).setCellValue("-");
             }
-
-
+            for(int i=0; i<=5; i++){
+                row.getCell(i).setCellStyle(bodyCellStyle);
+            }
         }
 
+
+            for(int k = 0 ; k < rowNo ; k++) {
+                ((SXSSFSheet) sheet).trackAllColumnsForAutoSizing();
+                sheet.autoSizeColumn(k);
+                sheet.setColumnWidth(k, (sheet.getColumnWidth(k))+512);
+            }
 
         File tmpFile = File.createTempFile("TMP~", ".xlsx");
         try (OutputStream fos = new FileOutputStream(tmpFile);) {
@@ -162,5 +197,17 @@ public class AdminSalesTotalExcelController {
                 .header("Content-Disposition", "attachment;filename="+fileName) //
                 .body(new InputStreamResource(res));
 
+    }
+
+    private void applyCellStyle(CellStyle cellStyle, Color color) {
+        XSSFCellStyle xssfCellStyle = (XSSFCellStyle) cellStyle;
+        xssfCellStyle.setFillForegroundColor(new XSSFColor(color, new DefaultIndexedColorMap()));
+        cellStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+        cellStyle.setAlignment(HorizontalAlignment.CENTER);
+        cellStyle.setVerticalAlignment(VerticalAlignment.CENTER);
+        cellStyle.setBorderLeft(BorderStyle.THIN);
+        cellStyle.setBorderTop(BorderStyle.THIN);
+        cellStyle.setBorderRight(BorderStyle.THIN);
+        cellStyle.setBorderBottom(BorderStyle.THIN);
     }
 }

@@ -36,13 +36,13 @@ public class OrderRepositoryImpl implements OrderRepositoryCustom {
             new QExcelSalesStatisticsResponse(
                 order.orderPrice.sum().coalesce(0),
                 order.orderPrice.count().coalesce(0L),
-                JPAExpressions.select(sum(order.orderPrice.coalesce(0))).from(order)
+                JPAExpressions.select(order.orderPrice.sum().coalesce(0)).from(order)
                     .where(order.orderStatus.eq(OrderStatus.CANCELED)),
-                JPAExpressions.select(count(order.orderPrice.coalesce(0))).from(order)
+                JPAExpressions.select(order.orderPrice.count().coalesce(0L)).from(order)
                     .where(order.orderStatus.eq(OrderStatus.CANCELED)),
-                JPAExpressions.select(sum(order.orderPrice.coalesce(0))).from(order)
+                JPAExpressions.select(order.orderPrice.sum().coalesce(0)).from(order)
                     .where(order.isOfflineOrder.eq(false)),
-                JPAExpressions.select(sum(order.orderPrice.coalesce(0))).from(order)
+                JPAExpressions.select(order.orderPrice.sum().coalesce(0)).from(order)
                     .where(order.isOfflineOrder.eq(true)
                     )
             ))
