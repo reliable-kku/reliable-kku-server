@@ -9,6 +9,7 @@ import com.deundeunhaku.reliablekkuserver.sse.dto.SseDataResponse;
 import com.deundeunhaku.reliablekkuserver.sse.repository.SseInMemoryRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -76,7 +77,7 @@ public class SseService {
 
   public void sendCookingDataToUser(Order order) {
 
-    Duration leftDuration = Duration.between(order.getOrderDatetime(),
+    Duration leftDuration = Duration.between(LocalDateTime.now(),
         order.getExpectedWaitDatetime());
 
     SseDataResponse response = SseDataResponse.of(
