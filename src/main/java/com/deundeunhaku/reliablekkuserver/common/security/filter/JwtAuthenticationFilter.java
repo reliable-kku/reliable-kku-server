@@ -1,23 +1,20 @@
 package com.deundeunhaku.reliablekkuserver.common.security.filter;
 
+import static org.springframework.http.HttpHeaders.AUTHORIZATION;
+
 import com.deundeunhaku.reliablekkuserver.common.exception.NotAuthorizedException;
 import com.deundeunhaku.reliablekkuserver.jwt.util.JwtTokenUtils;
-import com.deundeunhaku.reliablekkuserver.member.domain.Member;
-import com.deundeunhaku.reliablekkuserver.member.repository.MemberRepository;
 import com.deundeunhaku.reliablekkuserver.member.service.MemberDetailsService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -64,25 +61,18 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     log.info("requestURI: {}", requestURI);
 
-    Cookie[] cookies = request.getCookies();
+//    Cookie[] cookies = request.getCookies();
+//    String accessToken = null;
+//
+//    if (cookies != null) {
+//      for (Cookie cookie : cookies) {
+//        if (cookie.getName().equals("accessToken")) {
+//          accessToken = cookie.getValue();
+//        }
+//      }
+//    }
 
-    String accessToken = null;
-
-    if (cookies != null) {
-      for (Cookie cookie : cookies) {
-        if (cookie.getName().equals("accessToken")) {
-          accessToken = cookie.getValue();
-        }
-      }
-    }
-
-    if (accessToken == null) {
-      filterChain.doFilter(request, response);
-      return;
-    }
-
-//    String accessToken = parseBearerToken(request);
-    log.info("accessToken: {}", accessToken);
+    String accessToken = parseBearerToken(request);
 
     String phoneNumber = jwtTokenUtils.getPhoneNumber(accessToken);
     log.info("phoneNumber: {}", phoneNumber);
@@ -119,7 +109,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
   private String parseBearerToken(HttpServletRequest request) {
 
-    String accessToken = request.getHeader(HttpHeaders.AUTHORIZATION);
+    String accessToken = request.getHeader(AUTHORIZATION);
 
     if (StringUtils.hasText(accessToken) && accessToken.startsWith("Bearer ")) {
       return accessToken.substring(7);

@@ -1,5 +1,6 @@
 package com.deundeunhaku.reliablekkuserver.member.controller;
 
+import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.HttpHeaders.SET_COOKIE;
 
 import com.deundeunhaku.reliablekkuserver.jwt.constants.TokenDuration;
@@ -34,12 +35,12 @@ public class MemberAuthenticationController {
     String refreshToken = jwtTokenUtils.generateJwtToken(loginRequest.phoneNumber(),
         TokenDuration.REFRESH_TOKEN_DURATION.getDuration());
 
-    ResponseCookie accessTokenCookie = ResponseCookie.from("accessToken", accessToken)
-        .maxAge(TokenDuration.ACCESS_TOKEN_DURATION.getDurationInSecond())
-        .path("/")
-        .httpOnly(true)
-        .build();
-
+//    ResponseCookie accessTokenCookie = ResponseCookie.from("accessToken", accessToken)
+//        .maxAge(TokenDuration.ACCESS_TOKEN_DURATION.getDurationInSecond())
+//        .path("/")
+//        .httpOnly(true)
+//        .build();
+//
     ResponseCookie refreshTokenCookie = ResponseCookie.from("refreshToken",
         refreshToken)
         .maxAge(TokenDuration.REFRESH_TOKEN_DURATION.getDurationInSecond())
@@ -48,7 +49,7 @@ public class MemberAuthenticationController {
         .build();
 
     return ResponseEntity.ok()
-        .header(SET_COOKIE, accessTokenCookie.toString())
+        .header(AUTHORIZATION, "Bearer " + accessToken)
         .header(SET_COOKIE, refreshTokenCookie.toString())
         .build();
   }

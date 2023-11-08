@@ -4,6 +4,7 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 import static org.springframework.restdocs.cookies.CookieDocumentation.cookieWithName;
 import static org.springframework.restdocs.cookies.CookieDocumentation.responseCookies;
+import static org.springframework.restdocs.headers.HeaderDocumentation.*;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
@@ -20,7 +21,10 @@ import com.deundeunhaku.reliablekkuserver.member.dto.LoginRequest;
 import com.deundeunhaku.reliablekkuserver.member.service.MemberService;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.restdocs.headers.HeaderDocumentation;
 import org.springframework.test.web.servlet.ResultActions;
 
 class MemberAuthenticationControllerTest extends BaseControllerTest {
@@ -67,8 +71,10 @@ class MemberAuthenticationControllerTest extends BaseControllerTest {
                 fieldWithPath("phoneNumber").description("휴대폰 번호"),
                 fieldWithPath("password").description("비밀번호")
             ),
+            responseHeaders(
+                headerWithName(HttpHeaders.AUTHORIZATION).description("accessToken")
+            ),
             responseCookies(
-                cookieWithName("accessToken").description("accessToken"),
                 cookieWithName("refreshToken").description("refreshToken")
             )
         ));
