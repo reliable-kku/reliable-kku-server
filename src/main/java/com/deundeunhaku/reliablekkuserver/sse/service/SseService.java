@@ -9,6 +9,7 @@ import com.deundeunhaku.reliablekkuserver.sse.dto.SseDataResponse;
 import com.deundeunhaku.reliablekkuserver.sse.repository.SseInMemoryRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.Duration;
+import java.util.Map;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -73,7 +74,7 @@ public class SseService {
     }
   }
 
-  public void sendDataToUser(Order order) {
+  public void sendCookingDataToUser(Order order) {
 
     Duration leftDuration = Duration.between(order.getOrderDatetime(),
         order.getExpectedWaitDatetime());
@@ -132,5 +133,9 @@ public class SseService {
     } catch (Exception e) {
       emitter.complete();
     }
+  }
+
+  public Map<Long, SseEmitter> getAllEmitter() {
+     return sseRepository.getAll();
   }
 }

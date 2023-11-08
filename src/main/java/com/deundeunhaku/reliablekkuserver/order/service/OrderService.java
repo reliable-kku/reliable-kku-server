@@ -30,6 +30,7 @@ import java.time.Month;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -149,7 +150,7 @@ public class OrderService {
         return null;
       }
 
-      sseService.sendDataToUser(order);
+      sseService.sendCookingDataToUser(order);
 
       return sseEmitter;
     } else {
@@ -165,7 +166,7 @@ public class OrderService {
 //            .name("connect")
 //            .data("성공!"));
 
-      sseService.sendDataToUser(order);
+      sseService.sendCookingDataToUser(order);
 
       return sseEmitter;
     }
@@ -315,5 +316,9 @@ public class OrderService {
   public void updateOrderStatusToCancel(Long orderId) {
     orderRepository.findById(orderId)
         .ifPresent(order -> order.updateOrderStatus(OrderStatus.CANCELED));
+  }
+
+  public Optional<Order> findOptionalByOrderId(Long orderId) {
+    return orderRepository.findById(orderId);
   }
 }
