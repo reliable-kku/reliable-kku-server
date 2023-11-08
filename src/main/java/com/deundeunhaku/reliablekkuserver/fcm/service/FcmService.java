@@ -16,38 +16,38 @@ import org.springframework.stereotype.Service;
 @Service
 public class FcmService {
 
-    private final FirebaseMessaging firebaseMessaging;
+  private final FirebaseMessaging firebaseMessaging;
   private final MemberService memberService;
 
-    public void sendNotificationByOrderId(FcmBaseRequest request) {
+  public void sendNotificationByOrderId(FcmBaseRequest request) {
 
-      Member member = memberService.findMemberById(request.targetUserId());
+    Member member = memberService.findMemberById(request.targetUserId());
 
-      if (member.getFirebaseToken() != null) {
-                Notification notification = Notification.builder()
-                        .setTitle(request.title())
-                        .setBody(request.body())
-                         .setImage(request.imageUrl())
-                        .build();
+    if (member.getFirebaseToken() != null) {
+      Notification notification = Notification.builder()
+          .setTitle(request.title())
+          .setBody(request.body())
+          .setImage(request.imageUrl())
+          .build();
 
-                Message message = Message.builder()
-                        .setToken(member.getFirebaseToken())
-                        .setNotification(notification)
+      Message message = Message.builder()
+          .setToken(member.getFirebaseToken())
+          .setNotification(notification)
 //                         .putAllData(requestDto.getData())
-                        .build();
+          .build();
 
-                try {
-                    firebaseMessaging.send(message);
-                } catch (FirebaseMessagingException e) {
-                    log.warn("알림 보내기를 실패하였습니다. targetUserId={}", request.targetUserId());
+      try {
+        firebaseMessaging.send(message);
+      } catch (FirebaseMessagingException e) {
+        log.warn("알림 보내기를 실패하였습니다. targetUserId={}", request.targetUserId());
 //                    e.printStackTrace();
 //                    throw new RuntimeException("알림 보내기를 실패하였습니다. targetUserId=" + request.targetUserId());
-                }
-            } else {
-        log.warn("서버에 저장된 해당 유저의 FirebaseToken이 존재하지 않습니다. targetUserId={}", request.targetUserId());
+      }
+    } else {
+      log.warn("서버에 저장된 해당 유저의 FirebaseToken이 존재하지 않습니다. targetUserId={}", request.targetUserId());
 //                throw new RuntimeException("서버에 저장된 해당 유저의 FirebaseToken이 존재하지 않습니다. targetUserId="
 //                    + request.targetUserId());
-            }
     }
+  }
 
 }

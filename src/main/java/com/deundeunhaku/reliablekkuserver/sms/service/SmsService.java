@@ -106,7 +106,7 @@ public class SmsService {
                     .getBody();
 
         } catch (Exception e) {
-            log.error(e.getMessage());
+            log.warn("메시지 전송 실패",e.getMessage());
         }
     }
 
