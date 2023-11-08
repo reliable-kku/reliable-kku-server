@@ -35,14 +35,8 @@ public class MemberAuthenticationController {
     String refreshToken = jwtTokenUtils.generateJwtToken(loginRequest.phoneNumber(),
         TokenDuration.REFRESH_TOKEN_DURATION.getDuration());
 
-//    ResponseCookie accessTokenCookie = ResponseCookie.from("accessToken", accessToken)
-//        .maxAge(TokenDuration.ACCESS_TOKEN_DURATION.getDurationInSecond())
-//        .path("/")
-//        .httpOnly(true)
-//        .build();
-//
     ResponseCookie refreshTokenCookie = ResponseCookie.from("refreshToken",
-        refreshToken)
+            refreshToken)
         .maxAge(TokenDuration.REFRESH_TOKEN_DURATION.getDurationInSecond())
         .path("/")
         .httpOnly(true)

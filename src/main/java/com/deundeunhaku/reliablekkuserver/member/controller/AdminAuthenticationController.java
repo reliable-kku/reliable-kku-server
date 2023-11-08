@@ -28,8 +28,7 @@ public class AdminAuthenticationController {
   private final AdminMemberService adminMemberService;
 
   @PostMapping("/login")
-  public ResponseEntity<Void> login(@Valid @RequestBody AdminLoginRequest loginRequest,
-      HttpServletResponse response) {
+  public ResponseEntity<Void> login(@Valid @RequestBody AdminLoginRequest loginRequest) {
 
     adminMemberService.login(loginRequest.username(), loginRequest.password());
 
@@ -58,15 +57,6 @@ public class AdminAuthenticationController {
     cookie.setValue("");
     cookie.setMaxAge(0);
     response.addCookie(cookie);
-  }
-
-
-  private void setAccessTokenInCookie(String accessToken, HttpServletResponse response) {
-    Cookie accessTokenCookie = new Cookie("accessToken", accessToken);
-    accessTokenCookie.setMaxAge(TokenDuration.ACCESS_TOKEN_DURATION_ADMIN.getDurationInSecond());
-    accessTokenCookie.setPath("/");
-    accessTokenCookie.setHttpOnly(true);
-    response.addCookie(accessTokenCookie);
   }
 
 }
