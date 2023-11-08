@@ -18,7 +18,7 @@ public class SchedulerService {
   private final SseService sseService;
   private final OrderService orderService;
 
-  @Scheduled(fixedDelay = 30000)
+  @Scheduled(fixedDelay = 10000)
   public void sendLeftTimeWithSseToClient() {
     Map<Long, SseEmitter> allEmitter = sseService.getAllEmitter();
 

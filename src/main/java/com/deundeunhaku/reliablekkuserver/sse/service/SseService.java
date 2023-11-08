@@ -93,7 +93,7 @@ public class SseService {
 
       } catch (Exception e) {
         log.warn("SseEmitter 메시지 전송 실패 orderId: {}", order.getId());
-        sseEmitter.complete();
+//        sseEmitter.complete();
       }
     });
   }
