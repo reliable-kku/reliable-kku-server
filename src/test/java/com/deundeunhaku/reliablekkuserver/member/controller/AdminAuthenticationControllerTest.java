@@ -4,6 +4,8 @@ import static org.mockito.Mockito.when;
 import static org.springframework.restdocs.cookies.CookieDocumentation.cookieWithName;
 import static org.springframework.restdocs.cookies.CookieDocumentation.requestCookies;
 import static org.springframework.restdocs.cookies.CookieDocumentation.responseCookies;
+import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
+import static org.springframework.restdocs.headers.HeaderDocumentation.responseHeaders;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
@@ -22,6 +24,7 @@ import jakarta.servlet.http.Cookie;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.restdocs.headers.HeaderDocumentation;
 import org.springframework.test.web.servlet.ResultActions;
 
 class AdminAuthenticationControllerTest extends BaseControllerTest {
@@ -64,8 +67,8 @@ class AdminAuthenticationControllerTest extends BaseControllerTest {
                 fieldWithPath("username").description("관리자 아이디"),
                 fieldWithPath("password").description("비밀번호")
             ),
-            responseCookies(
-                cookieWithName("accessToken").description("accessToken")
+            responseHeaders(
+                headerWithName("Authorization").description("accessToken")
             )
         ));
   }
