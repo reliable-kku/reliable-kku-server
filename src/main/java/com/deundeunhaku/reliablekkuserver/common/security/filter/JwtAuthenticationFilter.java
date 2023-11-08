@@ -72,6 +72,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 //      }
 //    }
 
+    if (request.getHeader(AUTHORIZATION) == null || request.getHeader(AUTHORIZATION).isEmpty()) {
+      filterChain.doFilter(request, response);
+      return;
+    }
+
     String accessToken = parseBearerToken(request);
 
     String phoneNumber = jwtTokenUtils.getPhoneNumber(accessToken);
