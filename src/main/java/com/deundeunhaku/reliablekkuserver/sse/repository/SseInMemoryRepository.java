@@ -10,7 +10,7 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 @Slf4j
 @Component
 public class SseInMemoryRepository implements SSERepository{
-  private final Map<Long, SseEmitter> sseEmitterMap = new ConcurrentHashMap<>();
+  private static final Map<Long, SseEmitter> sseEmitterMap = new ConcurrentHashMap<>();
 
   @Override
   public void put(Long key, SseEmitter sseEmitter) {

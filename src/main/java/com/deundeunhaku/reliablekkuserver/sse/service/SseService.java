@@ -14,7 +14,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 @Slf4j
@@ -43,17 +42,14 @@ public class SseService {
     return sseEmitter.isPresent();
   }
 
-  @Transactional
   public void saveEmitter(Long orderId, SseEmitter sseEmitter) {
     sseRepository.put(orderId, sseEmitter);
   }
 
-  @Transactional
   public void removeEmitter(Long orderId) {
     sseRepository.remove(orderId);
   }
 
-  @Transactional
   public void disconnect(Long orderId) {
     SseEmitter sseEmitter = sseRepository.get(orderId)
         .orElse(null);
