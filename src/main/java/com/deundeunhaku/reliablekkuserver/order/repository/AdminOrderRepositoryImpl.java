@@ -40,7 +40,7 @@ public class AdminOrderRepositoryImpl implements AdminOrderRepositoryCustom {
     return queryFactory.select(
             new QAdminSalesEachTimeResponse(
                 Expressions.asDateTime(startTime),
-                order.orderPrice.sum().coalesce(0).as("sumOfPriceOfDay")
+                order.orderPrice.sum().coalesce(0)
             )
         )
         .from(order)

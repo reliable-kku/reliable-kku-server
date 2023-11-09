@@ -1,10 +1,10 @@
 server:
   tomcat:
     threads:
-      max: 200 # 생성할 수 있는 thread의 총 개수
+      max: 350
       min-spare: 10
-    max-connections: 1024
-    accept-count: 200
+    max-connections: 300
+    accept-count: 50
 spring:
   jpa:
     open-in-view: false

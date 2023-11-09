@@ -21,7 +21,7 @@ public class FcmController {
   @PostMapping
   public ResponseEntity<Void> updateFcmToken(@AuthenticationPrincipal Member member,
       @RequestBody FcmTokenRequest request) {
-    memberService.updateFcmToken(member, request.token());
+    memberService.updateFcmToken(member.getId(), request.token());
 
     return ResponseEntity.ok().build();
   }
