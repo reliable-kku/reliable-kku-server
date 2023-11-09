@@ -1,5 +1,7 @@
 package com.deundeunhaku.reliablekkuserver.fcm.controller;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
@@ -13,7 +15,6 @@ import com.deundeunhaku.reliablekkuserver.fcm.dto.FcmTokenRequest;
 import com.deundeunhaku.reliablekkuserver.member.service.MemberService;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation;
 import org.springframework.test.web.servlet.ResultActions;
 
 class FcmControllerTest extends BaseControllerTest {
@@ -23,8 +24,10 @@ class FcmControllerTest extends BaseControllerTest {
 
   @Test
   void 멤버의_firebaseToken을_저장한다() throws Exception {
-      //given
+    //given
     FcmTokenRequest request = FcmTokenRequest.of("firebaseToken");
+
+    doNothing().when(memberService).updateFcmToken(any(), any());
 
     //when
     ResultActions resultActions = mockMvc.perform(post(API + "/fcm")
