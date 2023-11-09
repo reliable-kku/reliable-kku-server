@@ -192,6 +192,8 @@ public class MemberService {
 
     @Transactional
     public void updateFcmToken(Member findMember, String token) {
+        entityManager.clear();
+
         Member member = memberRepository.findById(findMember.getId())
                 .orElseThrow( () -> new IllegalArgumentException("존재하지 않는 유저입니다."));
         member.setFirebaseToken(token);
