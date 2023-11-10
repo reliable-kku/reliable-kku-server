@@ -35,6 +35,18 @@ include::{snippets}/admin/order-list/success/query-parameters.adoc[]
 include::{snippets}/admin/order-list/success/http-response.adoc[]
 include::{snippets}/admin/order-list/success/response-fields.adoc[]
 
+=== 관리자 주문 상태별 개수 조회
+
+==== Request
+include::{snippets}/admin/orders/orderCount/http-request.adoc[]
+
+Query Parameters::
+include::{snippets}/admin/orders/orderCount/query-parameters.adoc[]
+
+==== Response
+include::{snippets}/admin/orders/orderCount/response-body.adoc[]
+include::{snippets}/admin/orders/orderCount/response-fields.adoc[]
+
 === 관리자 주문 접수 (조리시간 선택후 주문 접수)
 
 ==== Request

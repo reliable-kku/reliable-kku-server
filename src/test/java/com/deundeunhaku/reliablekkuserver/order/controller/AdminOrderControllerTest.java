@@ -6,8 +6,7 @@ import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuild
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.patch;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
-import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
-import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
+import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
 import static org.springframework.restdocs.request.RequestDocumentation.queryParameters;
@@ -17,8 +16,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.deundeunhaku.reliablekkuserver.BaseControllerTest;
 import com.deundeunhaku.reliablekkuserver.order.constant.OrderStatus;
 import com.deundeunhaku.reliablekkuserver.order.dto.AdminOrderResponse;
+import com.deundeunhaku.reliablekkuserver.order.dto.OrderEachCountResponse;
 import com.deundeunhaku.reliablekkuserver.order.dto.OrderEachMenuResponse;
 import com.deundeunhaku.reliablekkuserver.order.service.AdminOrderService;
+
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 import org.junit.jupiter.api.Test;
@@ -29,6 +31,8 @@ class AdminOrderControllerTest extends BaseControllerTest {
 
   @MockBean
   private AdminOrderService adminOrderService;
+
+
 
   @Test
   void 관리자가_볼_주문리스트를_반환한다() throws Exception {
@@ -195,6 +199,33 @@ class AdminOrderControllerTest extends BaseControllerTest {
             pathParameters(
                 parameterWithName("orderId").description("주문 번호")
             )));
+  }
+
+  @Test
+  void order_상태별_주문개수를_반환한다() throws Exception {
+      //given
+    LocalDate currentDate = LocalDate.of(2023, 11, 1);
+    OrderEachCountResponse response = OrderEachCountResponse.of(1, 2, 3);
+    when(adminOrderService.getOrderCount(currentDate)).thenReturn(response);
+      //when
+    ResultActions resultActions = mockMvc.perform(
+            get(API + "/admin/orders/orderCount")
+                    .param("currentDate", String.valueOf(currentDate)))
+                    .andDo(print());
+
+      //then
+    resultActions.andExpect(status().isOk()).andDo(
+            document("admin/orders/orderCount",
+                    queryParameters(
+                            parameterWithName("currentDate").description("당일 주문 날짜")
+                    ),
+                    responseFields(
+                            fieldWithPath("waitOrderCount").description("대기 상태의 주문 개수"),
+                            fieldWithPath("cookingOrderCount").description("접수 상태의 주문 개수"),
+                            fieldWithPath("finishOrderCount").description("완료 상태의 주문 개수")
+                            )
+                    )
+    );
   }
 
 }

@@ -7,12 +7,7 @@ import com.deundeunhaku.reliablekkuserver.fcm.dto.FcmBaseRequest;
 import com.deundeunhaku.reliablekkuserver.fcm.service.FcmService;
 import com.deundeunhaku.reliablekkuserver.order.constant.OrderStatus;
 import com.deundeunhaku.reliablekkuserver.order.domain.Order;
-import com.deundeunhaku.reliablekkuserver.order.dto.AdminOrderResponse;
-import com.deundeunhaku.reliablekkuserver.order.dto.AdminSalesCalendarResponse;
-import com.deundeunhaku.reliablekkuserver.order.dto.AdminSalesEachTimeResponse;
-import com.deundeunhaku.reliablekkuserver.order.dto.AdminSalesResponse;
-import com.deundeunhaku.reliablekkuserver.order.dto.OrderEachMenuResponse;
-import com.deundeunhaku.reliablekkuserver.order.dto.TotalSalesMonthOfDay;
+import com.deundeunhaku.reliablekkuserver.order.dto.*;
 import com.deundeunhaku.reliablekkuserver.order.repository.AdminOrderRepository;
 import com.deundeunhaku.reliablekkuserver.order.repository.MenuOrderRepository;
 import com.deundeunhaku.reliablekkuserver.order.repository.OrderRepository;
@@ -28,6 +23,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
@@ -56,12 +52,20 @@ public class AdminOrderService {
     List<Order> orderList = new ArrayList<>();
 
     switch (orderStatus) {
-      case WAIT -> orderList = orderRepository.findByOrderStatusInOrderByOrderDatetimeAsc(
-          List.of(OrderStatus.WAIT));
-      case COOKING -> orderList = orderRepository.findByOrderStatusInOrderByOrderDatetimeAsc(
-          List.of(OrderStatus.COOKING, OrderStatus.PICKUP));
-      case FINISH -> orderList = orderRepository.findByOrderStatusInOrderByOrderDatetimeAsc(
-          List.of(OrderStatus.FINISH, OrderStatus.CANCELED, OrderStatus.NOT_TAKE));
+      case WAIT -> {
+        orderList = orderRepository.findByOrderStatusInOrderByOrderDatetimeAsc(
+            List.of(OrderStatus.WAIT));
+      }
+
+      case COOKING -> {
+        orderList = orderRepository.findByOrderStatusInOrderByOrderDatetimeAsc(
+            List.of(OrderStatus.COOKING, OrderStatus.PICKUP));
+      }
+
+      case FINISH -> {
+        orderList = orderRepository.findByOrderStatusInOrderByOrderDatetimeAsc(
+            List.of(OrderStatus.FINISH, OrderStatus.CANCELED, OrderStatus.NOT_TAKE));
+      }
     }
 
     List<AdminOrderResponse> collect = orderList.stream()
@@ -100,6 +104,20 @@ public class AdminOrderService {
     return collect;
   }
 
+  public OrderEachCountResponse getOrderCount(LocalDate currentDate) {
+
+
+    Integer waitOrderCount = (int) orderRepository.findOrderCountByOrderStatusAndDate(
+            List.of(OrderStatus.WAIT), currentDate);
+
+    Integer cookingOrderCount = (int) orderRepository.findOrderCountByOrderStatusAndDate(
+            List.of(OrderStatus.COOKING, OrderStatus.PICKUP), currentDate);
+
+    Integer finishOrderCount = (int) orderRepository.findOrderCountByOrderStatusAndDate(
+            List.of(OrderStatus.FINISH, OrderStatus.CANCELED, OrderStatus.NOT_TAKE), currentDate);
+
+      return OrderEachCountResponse.of(waitOrderCount, cookingOrderCount, finishOrderCount);
+  }
 
   @Transactional
   public void setOrderToCooking(Long orderId, Integer orderMinutes) {

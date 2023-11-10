@@ -7,11 +7,12 @@ import static com.querydsl.core.types.ExpressionUtils.count;
 import com.deundeunhaku.reliablekkuserver.member.domain.Member;
 import com.deundeunhaku.reliablekkuserver.order.constant.OrderStatus;
 import com.deundeunhaku.reliablekkuserver.order.domain.Order;
-import com.deundeunhaku.reliablekkuserver.order.dto.ExcelSalesStatisticsResponse;
-import com.deundeunhaku.reliablekkuserver.order.dto.QExcelSalesStatisticsResponse;
+import com.deundeunhaku.reliablekkuserver.order.domain.QOrder;
+import com.deundeunhaku.reliablekkuserver.order.dto.*;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 
@@ -50,4 +51,21 @@ public class OrderRepositoryImpl implements OrderRepositoryCustom {
         .where(order.createdDate.between(startDate, endDate))
         .fetchOne();
   }
+
+  @Override
+  public long findOrderCountByOrderStatusAndDate(List<OrderStatus> orderStatus, LocalDate currentDate) {
+      LocalDateTime startOfDay = currentDate.atStartOfDay();
+      LocalDateTime endOfDay = currentDate.atTime(23, 59, 59);
+
+      return queryFactory.select(
+                      order.id.count()
+              ).from(order)
+              .where(
+                      order.orderStatus.in(orderStatus)
+                              .and(order.orderDatetime.between(startOfDay, endOfDay))
+              )
+              .fetchOne();
+  }
+
+
 }

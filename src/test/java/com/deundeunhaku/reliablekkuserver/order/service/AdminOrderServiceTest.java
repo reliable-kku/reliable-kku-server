@@ -11,10 +11,7 @@ import com.deundeunhaku.reliablekkuserver.BaseServiceTest;
 import com.deundeunhaku.reliablekkuserver.fcm.service.FcmService;
 import com.deundeunhaku.reliablekkuserver.order.constant.OrderStatus;
 import com.deundeunhaku.reliablekkuserver.order.domain.Order;
-import com.deundeunhaku.reliablekkuserver.order.dto.AdminSalesCalendarResponse;
-import com.deundeunhaku.reliablekkuserver.order.dto.AdminSalesEachTimeResponse;
-import com.deundeunhaku.reliablekkuserver.order.dto.AdminSalesResponse;
-import com.deundeunhaku.reliablekkuserver.order.dto.TotalSalesMonthOfDay;
+import com.deundeunhaku.reliablekkuserver.order.dto.*;
 import com.deundeunhaku.reliablekkuserver.order.repository.AdminOrderRepository;
 import com.deundeunhaku.reliablekkuserver.order.repository.MenuOrderRepository;
 import com.deundeunhaku.reliablekkuserver.order.repository.OrderRepository;
@@ -171,5 +168,26 @@ class AdminOrderServiceTest extends BaseServiceTest {
     assertThat(response.totalSalesOfMonth()).isEqualTo(100000);
     assertThat(response.totalRefundSalesOfMonth()).isEqualTo(3000);
     assertThat(response.total()).isEqualTo(monthOfDaysList);
+  }
+  
+  @Test
+  void 대기_접수_완료의_주문_개수를_반환한다(){
+      //given
+      Order.builder().createdDate(LocalDate.of(2023, 11, 11)).orderStatus(OrderStatus.WAIT).build();
+      Order.builder().createdDate(LocalDate.of(2023, 11, 11)).orderStatus(OrderStatus.COOKING).build();
+      Order.builder().createdDate(LocalDate.of(2023, 11, 11)).orderStatus(OrderStatus.PICKUP).build();
+      Order.builder().createdDate(LocalDate.of(2023, 11, 11)).orderStatus(OrderStatus.CANCELED).build();
+      Order.builder().createdDate(LocalDate.of(2023, 11, 11)).orderStatus(OrderStatus.FINISH).build();
+      Order.builder().createdDate(LocalDate.of(2023, 11, 11)).orderStatus(OrderStatus.NOT_TAKE).build();
+      LocalDate currentDate = LocalDate.of(2023, 11, 11);
+      when(orderRepository.findOrderCountByOrderStatusAndDate(List.of(OrderStatus.WAIT), currentDate)).thenReturn(1L);
+      when(orderRepository.findOrderCountByOrderStatusAndDate(List.of(OrderStatus.COOKING, OrderStatus.PICKUP), currentDate)).thenReturn(2L);
+      when(orderRepository.findOrderCountByOrderStatusAndDate(List.of(OrderStatus.FINISH, OrderStatus.CANCELED, OrderStatus.NOT_TAKE), currentDate)).thenReturn(3L);
+      //when
+      OrderEachCountResponse response = adminOrderService.getOrderCount(currentDate);
+      //then
+      assertThat(response.waitOrderCount()).isEqualTo(1);
+      assertThat(response.cookingOrderCount()).isEqualTo(2);
+      assertThat(response.finishOrderCount()).isEqualTo(3);
   }
 }
