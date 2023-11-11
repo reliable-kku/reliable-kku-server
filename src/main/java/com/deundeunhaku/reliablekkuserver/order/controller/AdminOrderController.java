@@ -3,8 +3,11 @@ package com.deundeunhaku.reliablekkuserver.order.controller;
 import com.deundeunhaku.reliablekkuserver.order.constant.OrderStatus;
 import com.deundeunhaku.reliablekkuserver.order.domain.Order;
 import com.deundeunhaku.reliablekkuserver.order.dto.AdminOrderResponse;
+import com.deundeunhaku.reliablekkuserver.order.dto.OrderEachCountResponse;
 import com.deundeunhaku.reliablekkuserver.order.service.AdminOrderService;
 import com.deundeunhaku.reliablekkuserver.sse.service.SseService;
+
+import java.time.LocalDate;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -21,13 +24,18 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/v1/admin/orders")
-public class AdminOrderController {
+public class  AdminOrderController {
 
   private final AdminOrderService adminOrderService;
 
   @GetMapping
   public List<AdminOrderResponse> getOrderList(@RequestParam OrderStatus orderStatus) {
     return adminOrderService.getOrderList(orderStatus);
+  }
+
+  @GetMapping("/orderCount")
+  public OrderEachCountResponse getOrderCount(@RequestParam LocalDate currentDate){
+    return adminOrderService.getOrderCount(currentDate);
   }
 
   @PostMapping("/{orderId}/minutes/{orderMinutes}")

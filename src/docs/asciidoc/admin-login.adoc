@@ -20,7 +20,7 @@ include::{snippets}/admin/login/success/request-fields.adoc[]
 include::{snippets}/admin/login/success/http-response.adoc[]
 
 ResponseCookie::
-include::{snippets}/admin/login/success/response-cookies.adoc[]
+include::{snippets}/admin/login/success/response-headers.adoc[]
 
 === 관리자 로그아웃 성공
 
