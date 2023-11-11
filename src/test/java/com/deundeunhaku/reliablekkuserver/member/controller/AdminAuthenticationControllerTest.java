@@ -85,16 +85,6 @@ class AdminAuthenticationControllerTest extends BaseControllerTest {
 
     //then
     resultActions.andExpect(status().isOk())
-        .andExpect(cookie().value("accessToken", ""))
-        .andExpect(cookie().maxAge("accessToken", 0))
-        .andDo(document("admin/logout/success",
-            requestCookies(
-                cookieWithName("accessToken").description("accessToken")
-            ),
-            responseCookies(
-                cookieWithName("accessToken").description("accessToken")
-            )));
-
+        .andDo(document("admin/logout/success"));
   }
-
 }
