@@ -7,7 +7,13 @@ import com.deundeunhaku.reliablekkuserver.fcm.dto.FcmBaseRequest;
 import com.deundeunhaku.reliablekkuserver.fcm.service.FcmService;
 import com.deundeunhaku.reliablekkuserver.order.constant.OrderStatus;
 import com.deundeunhaku.reliablekkuserver.order.domain.Order;
-import com.deundeunhaku.reliablekkuserver.order.dto.*;
+import com.deundeunhaku.reliablekkuserver.order.dto.AdminOrderResponse;
+import com.deundeunhaku.reliablekkuserver.order.dto.AdminSalesCalendarResponse;
+import com.deundeunhaku.reliablekkuserver.order.dto.AdminSalesEachTimeResponse;
+import com.deundeunhaku.reliablekkuserver.order.dto.AdminSalesResponse;
+import com.deundeunhaku.reliablekkuserver.order.dto.OrderEachCountResponse;
+import com.deundeunhaku.reliablekkuserver.order.dto.OrderEachMenuResponse;
+import com.deundeunhaku.reliablekkuserver.order.dto.TotalSalesMonthOfDay;
 import com.deundeunhaku.reliablekkuserver.order.repository.AdminOrderRepository;
 import com.deundeunhaku.reliablekkuserver.order.repository.MenuOrderRepository;
 import com.deundeunhaku.reliablekkuserver.order.repository.OrderRepository;
@@ -23,7 +29,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
@@ -106,17 +111,16 @@ public class AdminOrderService {
 
   public OrderEachCountResponse getOrderCount(LocalDate currentDate) {
 
-
     Integer waitOrderCount = (int) orderRepository.findOrderCountByOrderStatusAndDate(
-            List.of(OrderStatus.WAIT), currentDate);
+        List.of(OrderStatus.WAIT), currentDate);
 
     Integer cookingOrderCount = (int) orderRepository.findOrderCountByOrderStatusAndDate(
-            List.of(OrderStatus.COOKING, OrderStatus.PICKUP), currentDate);
+        List.of(OrderStatus.COOKING, OrderStatus.PICKUP), currentDate);
 
     Integer finishOrderCount = (int) orderRepository.findOrderCountByOrderStatusAndDate(
-            List.of(OrderStatus.FINISH, OrderStatus.CANCELED, OrderStatus.NOT_TAKE), currentDate);
+        List.of(OrderStatus.FINISH, OrderStatus.CANCELED, OrderStatus.NOT_TAKE), currentDate);
 
-      return OrderEachCountResponse.of(waitOrderCount, cookingOrderCount, finishOrderCount);
+    return OrderEachCountResponse.of(waitOrderCount, cookingOrderCount, finishOrderCount);
   }
 
   @Transactional
@@ -144,7 +148,7 @@ public class AdminOrderService {
 
       sseService.sendDataToUser(order.getId(), order.getOrderStatus(), leftDuration.toMinutes());
       fcmService.sendNotificationByOrderId(FcmBaseRequest.of(
-          order.getId(),
+          order.getMember().getId(),
           "접수 완료",
           "안녕하세요! 든붕이 입니다. \n주문이 완료되었습니다. \n" + leftDuration.toMinutes() + "분 후에 완료될 예정입니다."
       ));
@@ -158,7 +162,7 @@ public class AdminOrderService {
       smsService.sendOrderCancelMessage(order.getOfflineMember().getPhoneNumber());
     } else {
       fcmService.sendNotificationByOrderId(FcmBaseRequest.of(
-          order.getId(),
+          order.getMember().getId(),
           "주문 취소",
           "안녕하세요! 든붕이 입니다. \n 가게의 사정으로 인해 주문이 취소되었습니다. \n다음에 이용해주세요."
       ));
@@ -172,7 +176,7 @@ public class AdminOrderService {
       smsService.sendOrderPickupMessage(order.getOfflineMember().getPhoneNumber());
     } else {
       fcmService.sendNotificationByOrderId(FcmBaseRequest.of(
-          order.getId(),
+          order.getMember().getId(),
           "주문 완성",
           "안녕하세요! 든붕이 입니다.\n붕어빵이 완성되었습니다!\n30분 내로 매장에서 붕어빵을 수령해주세요."
       ));
@@ -186,7 +190,7 @@ public class AdminOrderService {
       smsService.sendOrderFinishMessage(order.getOfflineMember().getPhoneNumber());
     } else {
       fcmService.sendNotificationByOrderId(FcmBaseRequest.of(
-          order.getId(),
+          order.getMember().getId(),
           "주문 완료",
           "안녕하세요! 든붕이 입니다.\n붕어빵 맛있게 드세요! :>"
       ));
@@ -200,7 +204,7 @@ public class AdminOrderService {
       smsService.sendOrderNotTakeMessage(order.getOfflineMember().getPhoneNumber());
     } else {
       fcmService.sendNotificationByOrderId(FcmBaseRequest.of(
-          order.getId(),
+          order.getMember().getId(),
           "주문 미수령",
           "안녕하세요! 든붕이 입니다.\n붕어빵을 시간내에 수령하지 않아 미수령 처리하였습니다."
       ));
@@ -331,16 +335,17 @@ public class AdminOrderService {
 
 //       전월대비 %
     int lastMonthOnMonth = 0;
-    if (lastMonthTotalSales != 0 && thisMonthTotalSales != 0){
+    if (lastMonthTotalSales != 0 && thisMonthTotalSales != 0) {
       lastMonthOnMonth = ((thisMonthTotalSales - lastMonthTotalSales) / lastMonthTotalSales) * 100;
     }
-
 
     List<TotalSalesMonthOfDay> monthOfDaysList = new ArrayList<>();
     for (int day = 1; day <= date.with(lastDayOfMonth()).getDayOfMonth(); day++) {
       LocalDate eachDay = LocalDate.of(date.getYear(), date.getMonth(), day);
-      TotalSalesMonthOfDay totalSalesOfDay = adminOrderRepository.findTotalSalesMonthOfDayByDate(eachDay);
-      monthOfDaysList.add(TotalSalesMonthOfDay.of(totalSalesOfDay.totalSales(), totalSalesOfDay.refundTotalSales()));
+      TotalSalesMonthOfDay totalSalesOfDay = adminOrderRepository.findTotalSalesMonthOfDayByDate(
+          eachDay);
+      monthOfDaysList.add(TotalSalesMonthOfDay.of(totalSalesOfDay.totalSales(),
+          totalSalesOfDay.refundTotalSales()));
     }
 
     return AdminSalesCalendarResponse.of(

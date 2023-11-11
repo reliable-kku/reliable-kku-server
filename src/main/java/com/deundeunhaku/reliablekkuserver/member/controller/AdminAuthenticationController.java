@@ -5,6 +5,7 @@ import static org.springframework.http.HttpHeaders.SET_COOKIE;
 
 import com.deundeunhaku.reliablekkuserver.jwt.constants.TokenDuration;
 import com.deundeunhaku.reliablekkuserver.jwt.util.JwtTokenUtils;
+import com.deundeunhaku.reliablekkuserver.member.domain.Member;
 import com.deundeunhaku.reliablekkuserver.member.dto.AdminLoginRequest;
 import com.deundeunhaku.reliablekkuserver.member.service.AdminMemberService;
 import jakarta.servlet.http.Cookie;
@@ -13,6 +14,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -42,9 +44,10 @@ public class AdminAuthenticationController {
   }
 
   @GetMapping("/logout")
-  public ResponseEntity<Void> logout(@CookieValue(name = "accessToken") Cookie cookie,
+  public ResponseEntity<Void> logout(@AuthenticationPrincipal Member member,
       HttpServletResponse response) {
-    setTokenMaxAgeZero(cookie, response);
+    adminMemberService.deleteRefreshToken(member);
+
     return ResponseEntity.ok().build();
   }
 

@@ -17,7 +17,7 @@ import org.springframework.core.io.ClassPathResource;
 public class FCMConfig {
   @Bean
   FirebaseMessaging firebaseMessaging() throws IOException {
-    ClassPathResource resource = new ClassPathResource("/submodule/reliable-kku-server-submodule/deundeunhaku-43d86-firebase-adminsdk-9gnn1-757df95b46.json");
+    ClassPathResource resource = new ClassPathResource("/submodule/reliable-kku-server-submodule/deundeunhaku-43d86-firebase-adminsdk-9gnn1-22375fb537.json");
 
     InputStream refreshToken = resource.getInputStream();
 
