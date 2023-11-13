@@ -5,6 +5,8 @@ import static java.time.temporal.TemporalAdjusters.lastDayOfMonth;
 
 import com.deundeunhaku.reliablekkuserver.fcm.dto.FcmBaseRequest;
 import com.deundeunhaku.reliablekkuserver.fcm.service.FcmService;
+import com.deundeunhaku.reliablekkuserver.member.domain.Member;
+import com.deundeunhaku.reliablekkuserver.member.service.MemberService;
 import com.deundeunhaku.reliablekkuserver.order.constant.OrderStatus;
 import com.deundeunhaku.reliablekkuserver.order.domain.Order;
 import com.deundeunhaku.reliablekkuserver.order.dto.AdminOrderResponse;
@@ -46,6 +48,7 @@ public class AdminOrderService {
   private final FcmService fcmService;
   private final SmsService smsService;
   private final PaymentService paymentService;
+  private final MemberService memberService;
 
 
   public Order findByOrderId(Long orderId) {
@@ -244,6 +247,10 @@ public class AdminOrderService {
     }
 
     order.updateOrderStatus(OrderStatus.FINISH);
+
+    Member member = order.getMember();
+    List<Order> orderListByMember = orderRepository.findOrderByMember(member);
+    member.setLevel(orderListByMember.size() / 5 + 1);
   }
 
   @Transactional

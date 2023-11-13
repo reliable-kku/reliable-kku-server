@@ -38,6 +38,7 @@ public class Member extends BaseEntity implements UserDetails{
     @NotNull
     private String realName;
 
+    @Setter
     @ColumnDefault("1")
     private Integer level;
 
