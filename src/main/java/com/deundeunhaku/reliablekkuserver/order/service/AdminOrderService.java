@@ -368,7 +368,7 @@ public class AdminOrderService {
       } catch (IOException e) {
         log.warn("SseEmitter 메시지 전송 실패 관리자");
       }
-
+      return sseEmitter;
     } else {
       SseEmitter sseEmitter = new SseEmitter();
       log.info("SseEmitter 생성 {}", sseEmitter);
@@ -387,8 +387,6 @@ public class AdminOrderService {
       }
       return sseEmitter;
     }
-
-    return null;
   }
 }
 
