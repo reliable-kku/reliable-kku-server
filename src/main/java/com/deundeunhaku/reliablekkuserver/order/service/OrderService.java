@@ -140,15 +140,8 @@ public class OrderService {
     }
 
     if (isExists) {
-
       sseService.removeEmitter(orderId);
-
-      SseEmitter sseEmitter = sseService.getEmitter(orderId);
-
-      sseService.sendCookingDataToUser(order);
-
-      return sseEmitter;
-    } else {
+    }
       SseEmitter sseEmitter = new SseEmitter();
       log.info("SseEmitter 생성 {}", sseEmitter);
 
@@ -164,7 +157,6 @@ public class OrderService {
       sseService.sendCookingDataToUser(order);
 
       return sseEmitter;
-    }
   }
 
 

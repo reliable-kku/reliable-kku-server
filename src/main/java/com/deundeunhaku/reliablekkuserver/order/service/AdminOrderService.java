@@ -359,25 +359,17 @@ public class AdminOrderService {
     boolean isEmitterExists = sseService.existsEmitterById(0L);
 
     if (isEmitterExists) {
-      SseEmitter sseEmitter = sseService.getEmitter(0L);
+      sseService.removeEmitter(0L);
+    }
 
-      try {
-        sseEmitter.send(SseEmitter.event()
-            .name("connect")
-            .data("성공!"));
-      } catch (IOException e) {
-        log.warn("SseEmitter 메시지 전송 실패 관리자");
-      }
-      return sseEmitter;
-    } else {
       SseEmitter sseEmitter = new SseEmitter();
-      sseEmitter.onCompletion(() -> sseService.removeEmitter(0L));
-      sseEmitter.onTimeout(() -> sseService.removeEmitter(0L));
-
       log.info("SseEmitter 생성 {}", sseEmitter);
 
       sseService.saveEmitter(0L, sseEmitter);
 
+      sseEmitter.onCompletion(() -> sseService.removeEmitter(0L));
+      sseEmitter.onTimeout(() -> sseService.removeEmitter(0L));
+
       try {
         sseEmitter.send(SseEmitter.event()
             .name("connect")
@@ -386,7 +378,6 @@ public class AdminOrderService {
         log.warn("SseEmitter 메시지 전송 실패 관리자");
       }
       return sseEmitter;
-    }
   }
 }
 
