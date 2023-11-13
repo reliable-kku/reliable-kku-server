@@ -71,7 +71,7 @@ public class SseService {
 
       sseRepository.remove(orderId);
     } catch (Exception e) {
-      log.warn("주문 취소, SseEmitter 메시지 전송 실패, orderId: {}", orderId);
+      log.warn("주문 취소, SseEmitter 메시지 전송 실패, orderId: {} ,{}", orderId, e.getMessage());
     }
   }
 
@@ -93,8 +93,8 @@ public class SseService {
         );
     log.info("전달 성공 orderId: {}", order.getId());
       } catch (Exception e) {
-        log.warn("SseEmitter 메시지 전송 실패 orderId: {}", order.getId());
-        sseEmitter.complete();
+        log.warn("SseEmitter 메시지 전송 실패 orderId: {},  {}", order.getId(), e.getMessage());
+//        sseEmitter.complete();
       }
     });
   }
@@ -123,7 +123,7 @@ public class SseService {
     SseEmitter emitter = getEmitter(0L);
 
     if (emitter == null) {
-      log.warn("관리자 SSEEmitter가 존재하지 않습니다.");
+      log.warn("관리자 SseEmitter가 존재하지 않습니다.");
       return;
     }
 
@@ -133,8 +133,8 @@ public class SseService {
           .data(objectMapper.writeValueAsString(adminOrderResponse), APPLICATION_JSON)
       );
     } catch (Exception e) {
-      log.warn("관리자 SSEEmitter 메시지 전송 실패");
-      emitter.complete();
+      log.warn("관리자 SSEEmitter 메시지 전송 실패 {}", e.getMessage());
+//      emitter.complete();
     }
   }
 

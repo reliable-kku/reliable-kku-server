@@ -23,6 +23,7 @@ import com.deundeunhaku.reliablekkuserver.order.repository.OrderRepository;
 import com.deundeunhaku.reliablekkuserver.payment.domain.Payment;
 import com.deundeunhaku.reliablekkuserver.payment.repository.PaymentRepository;
 import com.deundeunhaku.reliablekkuserver.sse.service.SseService;
+import java.io.IOException;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -140,21 +141,69 @@ public class OrderService {
     }
 
     if (isExists) {
-      sseService.removeEmitter(orderId);
+//      sseService.removeEmitter(orderId);
+      SseEmitter emitter = sseService.getEmitter(orderId);
+      try {
+        emitter.send(SseEmitter.event()
+            .name("open")
+            .data("이미 연결되어 있습니다."));
+      } catch (IOException e) {
+        log.warn("SseEmitter open event 전송 실패 {}", e.getMessage());
+      }
+
+      sseService.sendCookingDataToUser(order);
+      return emitter;
     }
       SseEmitter sseEmitter = new SseEmitter();
       log.info("SseEmitter 생성 {}", sseEmitter);
 
       sseService.saveEmitter(orderId, sseEmitter);
 
-      sseEmitter.onCompletion(() -> sseService.removeEmitter(orderId));
-      sseEmitter.onTimeout(() -> sseService.removeEmitter(orderId));
+      sseEmitter.onError(e -> {
+        log.warn("SseEmitter 에러 발생", e);
+        try {
+          sseEmitter.send(SseEmitter.event()
+              .name("error")
+              .data("에러가 발생하였습니다."));
+        } catch (IOException ex) {
+          log.warn("SseEmitter 에러 발생, 메시지 전송 실패");
+        }finally {
+        sseService.removeEmitter(orderId);
+        }
+      });
+      sseEmitter.onCompletion(() -> {
+        try {
+          sseEmitter.send(SseEmitter.event()
+              .name("timeout")
+              .data("연결이 종료되었습니다."));
+        } catch (IOException e) {
+          log.warn("SseEmitter 연결 종료 실패");
+        } finally {
+          sseService.removeEmitter(orderId);
+        }
+      });
+      sseEmitter.onTimeout(() -> {
+        try {
+          sseEmitter.send(SseEmitter.event()
+              .name("timeout")
+              .data("연결이 종료되었습니다."));
+        } catch (IOException e) {
+          log.warn("SseEmitter 연결 종료 실패");
+        } finally {
+          sseService.removeEmitter(orderId);
+        }
+      });
 
-//        sseEmitter.send(SseEmitter.event()
-//            .name("connect")
-//            .data("성공!"));
+    try {
+      sseEmitter.send(SseEmitter.event()
+          .name("open")
+          .data("성공!"));
+    } catch (IOException e) {
+      log.warn("SseEmitter open event 전송 실패");
+      sseService.removeEmitter(orderId);
+    }
 
-      sseService.sendCookingDataToUser(order);
+    sseService.sendCookingDataToUser(order);
 
       return sseEmitter;
   }

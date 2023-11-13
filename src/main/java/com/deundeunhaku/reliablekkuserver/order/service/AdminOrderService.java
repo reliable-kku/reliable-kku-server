@@ -361,7 +361,6 @@ public class AdminOrderService {
     if (isEmitterExists) {
       sseService.removeEmitter(0L);
     }
-
       SseEmitter sseEmitter = new SseEmitter();
       log.info("SseEmitter 생성 {}", sseEmitter);
 
@@ -376,6 +375,7 @@ public class AdminOrderService {
             .data("성공!"));
       } catch (IOException e) {
         log.warn("SseEmitter 메시지 전송 실패 관리자");
+        sseService.removeEmitter(0L);
       }
       return sseEmitter;
   }
