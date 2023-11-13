@@ -27,6 +27,10 @@ public class SchedulerService {
     log.info("sse 남은시간 전달 scheduler 실행 orderId 리스트 : {}", allEmitter.keySet());
 
     for (Long id : allEmitter.keySet()) {
+      if (id.equals(0L)){
+        return;
+      }
+
       Optional<Order> optionalOrder = orderService.findOptionalByOrderId(id);
       if (optionalOrder.isEmpty()) {
         return;

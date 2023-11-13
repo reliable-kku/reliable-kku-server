@@ -145,11 +145,6 @@ public class OrderService {
 
       SseEmitter sseEmitter = sseService.getEmitter(orderId);
 
-      if (sseEmitter == null) {
-        log.warn("sse Emitter 전달 실패 orderId: {}", orderId);
-        return null;
-      }
-
       sseService.sendCookingDataToUser(order);
 
       return sseEmitter;

@@ -371,12 +371,12 @@ public class AdminOrderService {
       return sseEmitter;
     } else {
       SseEmitter sseEmitter = new SseEmitter();
+      sseEmitter.onCompletion(() -> sseService.removeEmitter(0L));
+      sseEmitter.onTimeout(() -> sseService.removeEmitter(0L));
+
       log.info("SseEmitter 생성 {}", sseEmitter);
 
       sseService.saveEmitter(0L, sseEmitter);
-
-      sseEmitter.onCompletion(() -> sseService.removeEmitter(0L));
-      sseEmitter.onTimeout(() -> sseService.removeEmitter(0L));
 
       try {
         sseEmitter.send(SseEmitter.event()
