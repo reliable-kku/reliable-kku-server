@@ -123,6 +123,7 @@ public class SseService {
     SseEmitter emitter = getEmitter(0L);
 
     if (emitter == null) {
+      log.warn("관리자 SSEEmitter가 존재하지 않습니다.");
       return;
     }
 
@@ -132,6 +133,7 @@ public class SseService {
           .data(objectMapper.writeValueAsString(adminOrderResponse), APPLICATION_JSON)
       );
     } catch (Exception e) {
+      log.warn("관리자 SSEEmitter 메시지 전송 실패");
       emitter.complete();
     }
   }

@@ -21,6 +21,7 @@ import com.deundeunhaku.reliablekkuserver.payment.dto.PaymentCancelRequest;
 import com.deundeunhaku.reliablekkuserver.payment.service.PaymentService;
 import com.deundeunhaku.reliablekkuserver.sms.service.SmsService;
 import com.deundeunhaku.reliablekkuserver.sse.service.SseService;
+import java.io.IOException;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -360,9 +361,13 @@ public class AdminOrderService {
     if (isEmitterExists) {
       SseEmitter sseEmitter = sseService.getEmitter(0L);
 
-      //        sseEmitter.send(SseEmitter.event()
-//            .name("connect")
-//            .data("성공!"));
+      try {
+        sseEmitter.send(SseEmitter.event()
+            .name("connect")
+            .data("성공!"));
+      } catch (IOException e) {
+        log.warn("SseEmitter 메시지 전송 실패 관리자");
+      }
 
     } else {
       SseEmitter sseEmitter = new SseEmitter();
@@ -373,9 +378,13 @@ public class AdminOrderService {
       sseEmitter.onCompletion(() -> sseService.removeEmitter(0L));
       sseEmitter.onTimeout(() -> sseService.removeEmitter(0L));
 
-      //        sseEmitter.send(SseEmitter.event()
-//            .name("connect")
-//            .data("성공!"));
+      try {
+        sseEmitter.send(SseEmitter.event()
+            .name("connect")
+            .data("성공!"));
+      } catch (IOException e) {
+        log.warn("SseEmitter 메시지 전송 실패 관리자");
+      }
       return sseEmitter;
     }
 
