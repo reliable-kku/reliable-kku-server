@@ -335,12 +335,12 @@ public class OrderService {
   public LeftTimeResponse getLeftTime() {
     LocalDateTime nowDateTime = LocalDateTime.now();
 
-    Order todayLastOrder = orderRepository.findFirstByCreatedDateOrderByCreatedDateDesc(
-            nowDateTime.toLocalDate())
+    Order todayLastOrder = orderRepository.findFirstByCreatedDateAndOrderStatusNotInOrderByCreatedDateDesc(
+            nowDateTime.toLocalDate(), List.of(OrderStatus.CANCELED, OrderStatus.PICKUP))
         .orElse(Order.builder().expectedWaitDatetime(nowDateTime).build());
 
     Duration between = Duration.between(nowDateTime, todayLastOrder.getExpectedWaitDatetime());
-
+  log.info("between : {}", between.toMinutes());
 //   현재 날짜가 주문 마감 시간보다 늦거나 같으면 0분으로 반환
     if (nowDateTime.isBefore(todayLastOrder.getExpectedWaitDatetime())) {
       return LeftTimeResponse.of(between.toMinutes() + 10L);

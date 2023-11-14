@@ -18,7 +18,7 @@ public interface OrderRepository extends JpaRepository<Order, Long> , OrderRepos
 
   List<Order> findOrderListByMemberAndCreatedDateBetween(Member member, LocalDate firstDate, LocalDate lastDate);
 
-  Optional<Order> findFirstByCreatedDateOrderByCreatedDateDesc(LocalDate createdAt);
+  Optional<Order> findFirstByCreatedDateAndOrderStatusNotInOrderByCreatedDateDesc(LocalDate createdAt, List<OrderStatus> orderStatus);
 
   List<Order> findOrderListByCreatedDateBetween(LocalDate startDate, LocalDate endDate);
 }
