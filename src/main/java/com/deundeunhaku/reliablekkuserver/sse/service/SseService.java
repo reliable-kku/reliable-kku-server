@@ -72,6 +72,7 @@ public class SseService {
       sseRepository.remove(orderId);
     } catch (Exception e) {
       log.warn("주문 취소, SseEmitter 메시지 전송 실패, orderId: {} ,{}", orderId, e.getMessage());
+      sseEmitter.complete();
     }
   }
 
@@ -94,7 +95,7 @@ public class SseService {
     log.info("전달 성공 orderId: {}", order.getId());
       } catch (Exception e) {
         log.warn("SseEmitter 메시지 전송 실패 orderId: {},  {}", order.getId(), e.getMessage());
-//        sseEmitter.complete();
+        sseEmitter.complete();
       }
     });
   }
@@ -134,7 +135,7 @@ public class SseService {
       );
     } catch (Exception e) {
       log.warn("관리자 SSEEmitter 메시지 전송 실패 {}", e.getMessage());
-//      emitter.complete();
+      emitter.complete();
     }
   }
 

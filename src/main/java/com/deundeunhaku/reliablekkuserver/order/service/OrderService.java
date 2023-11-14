@@ -142,17 +142,18 @@ public class OrderService {
 
     if (isExists) {
 //      sseService.removeEmitter(orderId);
-      SseEmitter emitter = sseService.getEmitter(orderId);
+      SseEmitter sseEmitter = sseService.getEmitter(orderId);
       try {
-        emitter.send(SseEmitter.event()
+        sseEmitter.send(SseEmitter.event()
             .name("open")
             .data("이미 연결되어 있습니다."));
       } catch (IOException e) {
         log.warn("SseEmitter open event 전송 실패 {}", e.getMessage());
+        sseEmitter.complete();
       }
 
       sseService.sendCookingDataToUser(order);
-      return emitter;
+      return sseEmitter;
     }
       SseEmitter sseEmitter = new SseEmitter();
       log.info("SseEmitter 생성 {}", sseEmitter);
@@ -166,7 +167,8 @@ public class OrderService {
               .name("error")
               .data("에러가 발생하였습니다."));
         } catch (IOException ex) {
-          log.warn("SseEmitter 에러 발생, 메시지 전송 실패");
+          log.warn("SseEmitter 에러 발생, 메시지 전송 실패 : orderId : {}", orderId);
+          sseEmitter.complete();
         }finally {
         sseService.removeEmitter(orderId);
         }
@@ -177,7 +179,8 @@ public class OrderService {
               .name("timeout")
               .data("연결이 종료되었습니다."));
         } catch (IOException e) {
-          log.warn("SseEmitter 연결 종료 실패");
+          log.warn("SseEmitter 연결 종료 실패 orderId : {}", orderId);
+          sseEmitter.complete();
         } finally {
           sseService.removeEmitter(orderId);
         }
@@ -188,7 +191,9 @@ public class OrderService {
               .name("timeout")
               .data("연결이 종료되었습니다."));
         } catch (IOException e) {
-          log.warn("SseEmitter 연결 종료 실패");
+          log.warn("SseEmitter 연결 종료 실패 : orderId : {}", orderId);
+          sseEmitter.complete();
+
         } finally {
           sseService.removeEmitter(orderId);
         }
@@ -199,8 +204,8 @@ public class OrderService {
           .name("open")
           .data("성공!"));
     } catch (IOException e) {
-      log.warn("SseEmitter open event 전송 실패");
-      sseService.removeEmitter(orderId);
+      log.warn("SseEmitter open event 전송 실패 : orderId : {}", orderId);
+      sseEmitter.complete();
     }
 
     sseService.sendCookingDataToUser(order);
