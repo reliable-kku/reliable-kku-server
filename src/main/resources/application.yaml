@@ -26,7 +26,7 @@ spring:
       max-lifetime: 58000
 
 
-#logging:
-#  level:
-#    com.zaxxer.hikari.HikariConfig: DEBUG
-#    com.zaxxer.hikari: TRACE
+logging:
+  level:
+    com.zaxxer.hikari.HikariConfig: DEBUG
+    com.zaxxer.hikari: TRACE
