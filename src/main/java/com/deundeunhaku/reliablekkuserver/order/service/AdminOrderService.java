@@ -244,6 +244,7 @@ public class AdminOrderService {
 
     if (order.getOfflineMember() == null) {
       sseService.sendDataToUser(order.getId(), OrderStatus.FINISH, 0L);
+      sseService.removeEmitter(order.getId());
     }
 
     order.updateOrderStatus(OrderStatus.FINISH);
