@@ -1,9 +1,9 @@
 server:
   tomcat:
     threads:
-      max: 350
+      max: 200
       min-spare: 10
-    max-connections: 300
+    max-connections: 150
     accept-count: 50
 spring:
   jpa:
@@ -21,7 +21,7 @@ spring:
       - submodule/reliable-kku-server-submodule/application-sms.yaml
   datasource:
     hikari:
-      maximum-pool-size: 500
+      maximum-pool-size: 150
 #      leak-detection-threshold: 60000
 #      max-lifetime: 58000
 
