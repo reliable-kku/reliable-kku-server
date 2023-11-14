@@ -22,7 +22,6 @@ public class SchedulerService {
 
   @Scheduled(fixedDelay = 50000)
   public void sendLeftTimeWithSseToClient() {
-
     Map<Long, SseEmitter> allEmitter = sseService.getAllEmitter();
     log.info("sse 남은시간 전달 scheduler 실행 orderId 리스트 : {}", allEmitter.keySet());
 

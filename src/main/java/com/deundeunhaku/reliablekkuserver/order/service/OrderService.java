@@ -141,7 +141,6 @@ public class OrderService {
     }
 
     if (isExists) {
-//      sseService.removeEmitter(orderId);
       SseEmitter sseEmitter = sseService.getEmitter(orderId);
       try {
         sseEmitter.send(SseEmitter.event()
@@ -150,6 +149,7 @@ public class OrderService {
       } catch (IOException e) {
         log.warn("SseEmitter open event 전송 실패 {}", e.getMessage());
         sseEmitter.complete();
+        sseService.removeEmitter(orderId);
       }
 
       sseService.sendCookingDataToUser(order);
@@ -206,6 +206,7 @@ public class OrderService {
     } catch (IOException e) {
       log.warn("SseEmitter open event 전송 실패 : orderId : {}", orderId);
       sseEmitter.complete();
+      sseService.removeEmitter(orderId);
     }
 
     sseService.sendCookingDataToUser(order);

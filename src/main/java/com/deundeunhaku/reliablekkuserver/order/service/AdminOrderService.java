@@ -6,7 +6,6 @@ import static java.time.temporal.TemporalAdjusters.lastDayOfMonth;
 import com.deundeunhaku.reliablekkuserver.fcm.dto.FcmBaseRequest;
 import com.deundeunhaku.reliablekkuserver.fcm.service.FcmService;
 import com.deundeunhaku.reliablekkuserver.member.domain.Member;
-import com.deundeunhaku.reliablekkuserver.member.service.MemberService;
 import com.deundeunhaku.reliablekkuserver.order.constant.OrderStatus;
 import com.deundeunhaku.reliablekkuserver.order.domain.Order;
 import com.deundeunhaku.reliablekkuserver.order.dto.AdminOrderResponse;
@@ -243,6 +242,7 @@ public class AdminOrderService {
 
     if (order.getOfflineMember() == null) {
       sseService.sendDataToUser(order.getId(), OrderStatus.FINISH, 0L);
+      sseService.getEmitter(order.getId()).complete();
       sseService.removeEmitter(order.getId());
     }
 
@@ -364,6 +364,7 @@ public class AdminOrderService {
     boolean isEmitterExists = sseService.existsEmitterById(0L);
 
     if (isEmitterExists) {
+      sseService.getEmitter(0L).complete();
       sseService.removeEmitter(0L);
     }
     SseEmitter sseEmitter = new SseEmitter();
@@ -371,8 +372,14 @@ public class AdminOrderService {
 
     sseService.saveEmitter(0L, sseEmitter);
 
-    sseEmitter.onCompletion(() -> sseService.removeEmitter(0L));
-    sseEmitter.onTimeout(() -> sseService.removeEmitter(0L));
+    sseEmitter.onCompletion(() -> {
+      log.info("SseEmitter completion {}", sseEmitter);
+      sseService.removeEmitter(0L);
+    });
+    sseEmitter.onTimeout(() -> {
+      log.info("SseEmitter timeout {}", sseEmitter);
+      sseService.removeEmitter(0L);
+    });
 
     try {
       sseEmitter.send(SseEmitter.event()
@@ -380,6 +387,7 @@ public class AdminOrderService {
           .data("성공!"));
     } catch (IOException e) {
       log.warn("SseEmitter 메시지 전송 실패 관리자");
+      sseEmitter.complete();
       sseService.removeEmitter(0L);
     }
     return sseEmitter;
