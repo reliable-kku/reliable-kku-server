@@ -48,7 +48,6 @@ public class AdminOrderService {
   private final FcmService fcmService;
   private final CoolSmsService smsService;
   private final PaymentService paymentService;
-  private final MemberService memberService;
 
 
   public Order findByOrderId(Long orderId) {
@@ -249,9 +248,7 @@ public class AdminOrderService {
 
     order.updateOrderStatus(OrderStatus.FINISH);
 
-    Member member = order.getMember();
-    List<Order> orderListByMember = orderRepository.findOrderByMember(member);
-    member.setLevel(orderListByMember.size() / 5 + 1);
+    isOnlineOrderSetLevelToMember(order);
   }
 
   @Transactional
@@ -387,5 +384,15 @@ public class AdminOrderService {
     }
     return sseEmitter;
   }
+
+
+  private void isOnlineOrderSetLevelToMember(Order order) {
+    if (!order.getIsOfflineOrder()) {
+      Member member = order.getMember();
+      List<Order> orderListByMember = orderRepository.findOrderByMember(member);
+      member.setLevel(orderListByMember.size() / 5 + 1);
+    }
+  }
+
 }
 
