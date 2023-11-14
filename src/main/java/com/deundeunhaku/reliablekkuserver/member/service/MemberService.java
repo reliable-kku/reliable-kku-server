@@ -10,19 +10,16 @@ import com.deundeunhaku.reliablekkuserver.member.dto.MemberRegisterRequest;
 import com.deundeunhaku.reliablekkuserver.member.repository.CertificationNumberRepository;
 import com.deundeunhaku.reliablekkuserver.member.repository.MemberRepository;
 import com.deundeunhaku.reliablekkuserver.sms.dto.SmsCertificationNumber;
-import com.deundeunhaku.reliablekkuserver.sms.service.SmsService;
-
+import com.deundeunhaku.reliablekkuserver.sms.service.CoolSmsService;
+import jakarta.persistence.EntityManager;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-
-import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,171 +28,173 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 @Service
 public class MemberService {
-    // private final BCryptPasswordEncoder
-    private final MemberRepository memberRepository;
-    private final PasswordEncoder passwordEncoder;
-    private final CertificationNumberRepository certificationNumberRepository;
-    private final SmsService smsService;
-    private final AuthenticationManager authenticationManager;
 
-    private final EntityManager entityManager;
+  // private final BCryptPasswordEncoder
+  private final MemberRepository memberRepository;
+  private final PasswordEncoder passwordEncoder;
+  private final CertificationNumberRepository certificationNumberRepository;
+  private final CoolSmsService smsService;
+  private final AuthenticationManager authenticationManager;
 
-    public Member findMemberById(Long id) {
-        return memberRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저입니다."));
+  private final EntityManager entityManager;
+
+  public Member findMemberById(Long id) {
+    return memberRepository.findById(id)
+        .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저입니다."));
+  }
+
+  public void login(String phoneNumber, String password) {
+
+    Member findMember = memberRepository.findByPhoneNumber(phoneNumber)
+        .orElseThrow(LoginFailedException::new);
+
+    if (findMember.isWithdraw()) {
+      throw new IllegalArgumentException("이미 회원 탈퇴한 유저입니다.");
     }
 
-    public void login(String phoneNumber, String password) {
+    boolean isPasswordMatch = passwordEncoder.matches(password, findMember.getPassword());
 
-        Member findMember = memberRepository.findByPhoneNumber(phoneNumber)
-                .orElseThrow(LoginFailedException::new);
-
-        if(findMember.isWithdraw()){
-            throw new IllegalArgumentException("이미 회원 탈퇴한 유저입니다.");
-        }
-        
-        boolean isPasswordMatch = passwordEncoder.matches(password, findMember.getPassword());
-
-        if (!isPasswordMatch) {
-            throw new LoginFailedException();
-        } else {
-            authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(phoneNumber, password));
-
-        }
-    }
-
-    public boolean isPhoneNumberDuplicate(String phoneNumber) {
-        Optional<Member> phoneNumberDuplicate = memberRepository.findByPhoneNumber(phoneNumber);
-
-        return phoneNumberDuplicate.isPresent();
-    }
-
-    @Transactional
-    public void sendCertificationNumber(String phoneNumber, LocalDateTime today) {
-        List<CertificationNumber> todayCertificationNumberList = certificationNumberRepository.findAllByPhoneNumberAndCreatedAt(
-                phoneNumber, today);
-
-        if (todayCertificationNumberList.size() >= 10) {
-            throw new IllegalArgumentException("하루에 10번 이상 인증번호를 요청할 수 없습니다.");
-        }
-
-        SmsCertificationNumber smsResponse = smsService.sendCertificationNumberToPhoneNumber(
-                phoneNumber);
-        log.info("인증번호 : {}", smsResponse.certificationNumber());
-        certificationNumberRepository.save(
-                CertificationNumber.builder()
-                        .certificationNumber(smsResponse.certificationNumber())
-                        .phoneNumber(phoneNumber)
-                        .build()
-        );
+    if (!isPasswordMatch) {
+      throw new LoginFailedException();
+    } else {
+      authenticationManager.authenticate(
+          new UsernamePasswordAuthenticationToken(phoneNumber, password));
 
     }
+  }
 
-    @Transactional
-    public boolean isCertificationNumberCorrect(String phoneNumber, Integer certificationNumber) {
+  public boolean isPhoneNumberDuplicate(String phoneNumber) {
+    Optional<Member> phoneNumberDuplicate = memberRepository.findByPhoneNumber(phoneNumber);
 
-        Optional<CertificationNumber> findCertificationNumber = certificationNumberRepository.findFirstByPhoneNumberOrderByCreatedAtDesc(
-                phoneNumber);
+    return phoneNumberDuplicate.isPresent();
+  }
 
-        if (findCertificationNumber.isPresent()) {
-            if (findCertificationNumber.get().getCertificationNumber().equals(certificationNumber)) {
-                log.info("인증번호 일치 : {} {}", phoneNumber, certificationNumber);
-                findCertificationNumber.get().certify();
-                return true;
-            }
-            return false;
-        }
+  @Transactional
+  public void sendCertificationNumber(String phoneNumber, LocalDateTime today) {
+    List<CertificationNumber> todayCertificationNumberList = certificationNumberRepository.findAllByPhoneNumberAndCreatedAt(
+        phoneNumber, today);
 
-        return false;
+    if (todayCertificationNumberList.size() >= 10) {
+      throw new IllegalArgumentException("하루에 10번 이상 인증번호를 요청할 수 없습니다.");
     }
 
-    @Transactional
-    public void register(MemberRegisterRequest request) {
+    SmsCertificationNumber smsResponse = smsService.sendCertificationNumberToPhoneNumber(
+        phoneNumber);
+    log.info("인증번호 : {}", smsResponse.certificationNumber());
+    certificationNumberRepository.save(
+        CertificationNumber.builder()
+            .certificationNumber(smsResponse.certificationNumber())
+            .phoneNumber(phoneNumber)
+            .build()
+    );
 
-        CertificationNumber certificationNumber = certificationNumberRepository.findFirstByPhoneNumberOrderByCreatedAtDesc(
-                        request.phoneNumber())
-                .orElseThrow(() -> new IllegalArgumentException("인증번호가 일치하지 않습니다."));
+  }
 
-        if (certificationNumber.getIsCertified().equals(false)) {
-            throw new IllegalArgumentException("잘못된 요청입니다.");
-        }
+  @Transactional
+  public boolean isCertificationNumberCorrect(String phoneNumber, Integer certificationNumber) {
 
-        memberRepository.save(
-                Member.builder()
-                        .realName(request.realName())
-                        .phoneNumber(request.phoneNumber())
-                        .password(passwordEncoder.encode(request.password()))
-                        .role(Role.USER)
-                        .build()
-        );
+    Optional<CertificationNumber> findCertificationNumber = certificationNumberRepository.findFirstByPhoneNumberOrderByCreatedAtDesc(
+        phoneNumber);
 
-    }
-
-    @Transactional
-    public void changePasswordWithRandomNumber(String phoneNumber, int certificationNumber) {
-
-        CertificationNumber findCertificationNumber = certificationNumberRepository.findFirstByPhoneNumberOrderByCreatedAtDesc(
-                        phoneNumber)
-                .orElseThrow(() -> new IllegalArgumentException("잘못된 요청입니다."));
-
-        if (findCertificationNumber.getIsCertified().equals(false) || findCertificationNumber.getCertificationNumber() != (certificationNumber)) {
-            throw new IllegalArgumentException("잘못된 요청입니다.");
-        }
-
-        Member findMember = memberRepository.findByPhoneNumber(phoneNumber)
-                .orElseThrow(() -> new IllegalArgumentException("잘못된 요청입니다."));
-
-        String newPassword = UUID.randomUUID().toString().substring(0, 6);
-        findMember.changePassword(passwordEncoder.encode(newPassword));
-
-        smsService.sendNewPasswordToPhoneNumber(phoneNumber, newPassword);
-
-    }
-
-    @Transactional
-    public boolean isMemberPasswordMatch(String password, Member member) {
-
-        return passwordEncoder.matches(password, member.getPassword());
-    }
-
-    @Transactional
-    public boolean changeMemberPassword(Member member, MemberPasswordChangeRequest request) {
-        entityManager.clear();
-
-        Member findMember = memberRepository.findById(member.getId())
-                .orElseThrow(() -> new IllegalArgumentException("잘못된 요청입니다."));
-
-        String encodedPassword = passwordEncoder.encode(request.password());
-        findMember.changePassword(encodedPassword);
+    if (findCertificationNumber.isPresent()) {
+      if (findCertificationNumber.get().getCertificationNumber().equals(certificationNumber)) {
+        log.info("인증번호 일치 : {} {}", phoneNumber, certificationNumber);
+        findCertificationNumber.get().certify();
         return true;
+      }
+      return false;
     }
 
+    return false;
+  }
 
-    public boolean checkMemberIsWithdraw(Member member) {
-        return member.isWithdraw();
+  @Transactional
+  public void register(MemberRegisterRequest request) {
+
+    CertificationNumber certificationNumber = certificationNumberRepository.findFirstByPhoneNumberOrderByCreatedAtDesc(
+            request.phoneNumber())
+        .orElseThrow(() -> new IllegalArgumentException("인증번호가 일치하지 않습니다."));
+
+    if (certificationNumber.getIsCertified().equals(false)) {
+      throw new IllegalArgumentException("잘못된 요청입니다.");
     }
 
-    @Transactional
-    public void setMemberWithdraw(Member member) {
-        entityManager.clear();
+    memberRepository.save(
+        Member.builder()
+            .realName(request.realName())
+            .phoneNumber(request.phoneNumber())
+            .password(passwordEncoder.encode(request.password()))
+            .role(Role.USER)
+            .build()
+    );
 
-        Member findMember = memberRepository.findById(member.getId())
-                .orElseThrow(() -> new IllegalArgumentException("잘못된 요청입니다."));
+  }
 
-        findMember.withdraw();
+  @Transactional
+  public void changePasswordWithRandomNumber(String phoneNumber, int certificationNumber) {
+
+    CertificationNumber findCertificationNumber = certificationNumberRepository.findFirstByPhoneNumberOrderByCreatedAtDesc(
+            phoneNumber)
+        .orElseThrow(() -> new IllegalArgumentException("잘못된 요청입니다."));
+
+    if (findCertificationNumber.getIsCertified().equals(false)
+        || findCertificationNumber.getCertificationNumber() != (certificationNumber)) {
+      throw new IllegalArgumentException("잘못된 요청입니다.");
     }
 
-    public MemberMyPageResponse getMyPageInfo(Member member) {
-        return member.toMemberMyPageResponse();
-    }
+    Member findMember = memberRepository.findByPhoneNumber(phoneNumber)
+        .orElseThrow(() -> new IllegalArgumentException("잘못된 요청입니다."));
 
-    @Transactional
-    public void updateFcmToken(Member findMember, String token) {
-        entityManager.clear();
+    String newPassword = UUID.randomUUID().toString().substring(0, 6);
+    findMember.changePassword(passwordEncoder.encode(newPassword));
 
-        Member member = memberRepository.findById(findMember.getId())
-                .orElseThrow( () -> new IllegalArgumentException("존재하지 않는 유저입니다."));
-        member.setFirebaseToken(token);
-    }
+    smsService.sendNewPasswordToPhoneNumber(phoneNumber, newPassword);
+
+  }
+
+  @Transactional
+  public boolean isMemberPasswordMatch(String password, Member member) {
+
+    return passwordEncoder.matches(password, member.getPassword());
+  }
+
+  @Transactional
+  public boolean changeMemberPassword(Member member, MemberPasswordChangeRequest request) {
+    entityManager.clear();
+
+    Member findMember = memberRepository.findById(member.getId())
+        .orElseThrow(() -> new IllegalArgumentException("잘못된 요청입니다."));
+
+    String encodedPassword = passwordEncoder.encode(request.password());
+    findMember.changePassword(encodedPassword);
+    return true;
+  }
+
+
+  public boolean checkMemberIsWithdraw(Member member) {
+    return member.isWithdraw();
+  }
+
+  @Transactional
+  public void setMemberWithdraw(Member member) {
+    entityManager.clear();
+
+    Member findMember = memberRepository.findById(member.getId())
+        .orElseThrow(() -> new IllegalArgumentException("잘못된 요청입니다."));
+
+    findMember.withdraw();
+  }
+
+  public MemberMyPageResponse getMyPageInfo(Member member) {
+    return member.toMemberMyPageResponse();
+  }
+
+  @Transactional
+  public void updateFcmToken(Member findMember, String token) {
+    entityManager.clear();
+
+    Member member = memberRepository.findById(findMember.getId())
+        .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저입니다."));
+    member.setFirebaseToken(token);
+  }
 }

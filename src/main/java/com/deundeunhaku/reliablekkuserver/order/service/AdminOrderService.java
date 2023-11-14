@@ -21,7 +21,7 @@ import com.deundeunhaku.reliablekkuserver.order.repository.MenuOrderRepository;
 import com.deundeunhaku.reliablekkuserver.order.repository.OrderRepository;
 import com.deundeunhaku.reliablekkuserver.payment.dto.PaymentCancelRequest;
 import com.deundeunhaku.reliablekkuserver.payment.service.PaymentService;
-import com.deundeunhaku.reliablekkuserver.sms.service.SmsService;
+import com.deundeunhaku.reliablekkuserver.sms.service.CoolSmsService;
 import com.deundeunhaku.reliablekkuserver.sse.service.SseService;
 import java.io.IOException;
 import java.time.Duration;
@@ -46,7 +46,7 @@ public class AdminOrderService {
   private final MenuOrderRepository menuOrderRepository;
   private final SseService sseService;
   private final FcmService fcmService;
-  private final SmsService smsService;
+  private final CoolSmsService smsService;
   private final PaymentService paymentService;
   private final MemberService memberService;
 
@@ -368,23 +368,23 @@ public class AdminOrderService {
     if (isEmitterExists) {
       sseService.removeEmitter(0L);
     }
-      SseEmitter sseEmitter = new SseEmitter();
-      log.info("SseEmitter 생성 {}", sseEmitter);
+    SseEmitter sseEmitter = new SseEmitter();
+    log.info("SseEmitter 생성 {}", sseEmitter);
 
-      sseService.saveEmitter(0L, sseEmitter);
+    sseService.saveEmitter(0L, sseEmitter);
 
-      sseEmitter.onCompletion(() -> sseService.removeEmitter(0L));
-      sseEmitter.onTimeout(() -> sseService.removeEmitter(0L));
+    sseEmitter.onCompletion(() -> sseService.removeEmitter(0L));
+    sseEmitter.onTimeout(() -> sseService.removeEmitter(0L));
 
-      try {
-        sseEmitter.send(SseEmitter.event()
-            .name("connect")
-            .data("성공!"));
-      } catch (IOException e) {
-        log.warn("SseEmitter 메시지 전송 실패 관리자");
-        sseService.removeEmitter(0L);
-      }
-      return sseEmitter;
+    try {
+      sseEmitter.send(SseEmitter.event()
+          .name("connect")
+          .data("성공!"));
+    } catch (IOException e) {
+      log.warn("SseEmitter 메시지 전송 실패 관리자");
+      sseService.removeEmitter(0L);
+    }
+    return sseEmitter;
   }
 }
 
