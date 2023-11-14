@@ -22,11 +22,11 @@ spring:
   datasource:
     hikari:
       maximum-pool-size: 500
-      leak-detection-threshold: 60000
-      max-lifetime: 58000
+#      leak-detection-threshold: 60000
+#      max-lifetime: 58000
 
 
 logging:
   level:
     com.zaxxer.hikari.HikariConfig: DEBUG
-    com.zaxxer.hikari: TRACE
+    com.zaxxer.hikari: DEBUG
