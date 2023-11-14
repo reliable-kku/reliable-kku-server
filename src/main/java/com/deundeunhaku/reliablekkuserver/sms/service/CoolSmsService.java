@@ -32,14 +32,14 @@ public class CoolSmsService {
         "https://api.coolsms.co.kr");
   }
 
-  public SingleMessageSentResponse sendMessage(String to, String content) {
+  public void sendMessage(String to, String content) {
     Message message = new Message();
 
     message.setFrom(senderPhone);
     message.setTo(to);
     message.setText(content);
 
-    return this.messageService.sendOne(new SingleMessageSendingRequest(message));
+    this.messageService.sendOne(new SingleMessageSendingRequest(message));
   }
 
 
