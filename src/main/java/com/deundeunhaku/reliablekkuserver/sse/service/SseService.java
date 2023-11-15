@@ -49,12 +49,10 @@ public class SseService {
     sseRepository.put(orderId, sseEmitter);
   }
 
-  @Async
   public void removeEmitter(Long orderId) {
     sseRepository.remove(orderId);
   }
 
-  @Async
   public void disconnect(Long orderId) {
     SseEmitter sseEmitter = sseRepository.get(orderId)
         .orElse(null);
@@ -80,7 +78,6 @@ public class SseService {
     }
   }
 
-  @Async
   public void sendCookingDataToUser(Order order) {
 
     Duration leftDuration = Duration.between(LocalDateTime.now(),
@@ -106,7 +103,6 @@ public class SseService {
     });
   }
 
-  @Async
   public void sendDataToUser(Long orderId, OrderStatus orderStatus, Long leftMinutes) {
 
     SseDataResponse response = SseDataResponse.of(orderStatus,
@@ -127,7 +123,6 @@ public class SseService {
 
   }
 
-  @Async
   public void sendDataToAdmin(AdminOrderResponse adminOrderResponse) {
 
     SseEmitter emitter = getEmitter(0L);
