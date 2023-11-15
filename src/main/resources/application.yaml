@@ -8,6 +8,9 @@ server:
 spring:
   jpa:
     open-in-view: false
+  mvc:
+    async:
+      request-timeout: -1
   profiles:
     default: local
   config:
