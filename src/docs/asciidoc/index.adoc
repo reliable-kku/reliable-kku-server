@@ -1,0 +1,65 @@
+# API 문서
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 3
+
+== GitHub 주소
+
+* link:https://github.com/reliable-kku/reliable-kku-server[GitHub 주소]
+
+== Member 문서
+
+=== 로그인, 회원가입, 비밀번호 찾기 관련 문서
+
+* link:member-login-register.html[로그인,회원가입,비밀번호 찾기 문서]
+
+=== 마이페이지 관련 문서
+
+* link:mypage.html[마이페이지 문서]
+
+=== Menu 문서 ( 메뉴 리스트 ...)
+
+* link:menu.html[메뉴 문서]
+
+=== Order 문서 ( 주문 관련 문서 )
+
+* link:order.html[주문 관련 문서]
+
+=== 가게 문서
+* link:store.html[가게 문서]
+
+=== Payment 문서 ( 결제 관련 문서 )
+
+* link:payment.html[결제 관련 문서]
+
+=== Sse 문서
+
+* link:sse.html[Sse 문서]
+
+== 관리자
+
+=== 로그인 문서 ( 관리자 로그인 )
+
+* link:admin-login.html[관리자 로그인 문서]
+
+=== 주문 문서
+
+* link:admin-order.html[관리자 주문 문서]
+
+=== 가게 문서
+
+* link:admin-store.html[가게 문서]
+
+=== 멤버 문서
+
+* link:admin-member.html[멤버 문서]
+
+=== 메뉴 문서
+
+* link:admin-menu.html[메뉴 문서]
+
+=== 매출관리 excel 문서
+
+* link:excel.html[매출관리 엑셀 문서]

@@ -1,0 +1,84 @@
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 2
+
+== 메인 문서
+
+link:index.html[메인 문서]
+
+=== 비밀번호 변경(현재 비밀번호 일치하면 true 반환)
+
+==== Request
+
+include::{snippets}/my-pages/change-password/verify-current-password/success/http-request.adoc[]
+include::{snippets}/my-pages/change-password/verify-current-password/success/request-fields.adoc[]
+
+==== Response
+
+include::{snippets}/my-pages/change-password/verify-current-password/success/http-response.adoc[]
+include::{snippets}/my-pages/change-password/verify-current-password/success/response-fields.adoc[]
+
+=== 비밀번호 변경(성공)
+
+==== Request
+
+include::{snippets}/my-pages/change-password/success/http-request.adoc[]
+include::{snippets}/my-pages/change-password/success/request-fields.adoc[]
+
+=== 로그아웃
+
+==== Request
+
+include::{snippets}/my-pages/logout/success/http-request.adoc[]
+
+==== RequestCookies
+include::{snippets}/my-pages/logout/success/request-cookies.adoc[]
+
+==== Response
+include::{snippets}/my-pages/logout/success/http-response.adoc[]
+
+=== 회원탈퇴
+
+==== Request
+
+include::{snippets}/my-pages/member-withdraw/success/http-request.adoc[]
+
+==== RequestCookies
+include::{snippets}/my-pages/member-withdraw/success/request-cookies.adoc[]
+
+==== Response
+include::{snippets}/my-pages/member-withdraw/success/http-response.adoc[]
+
+=== 회원탈퇴(이미 탈퇴한 회원인 경우)
+
+==== Request
+include::{snippets}/my-pages/member-withdraw/fail/http-request.adoc[]
+
+==== RequestCookies
+include::{snippets}/my-pages/member-withdraw/fail/request-cookies.adoc[]
+
+==== Response
+include::{snippets}/my-pages/member-withdraw/fail/http-response.adoc[]
+
+=== 마이페이지 정보(이름, 레벨)
+
+==== Request
+include::{snippets}/my-pages/member/information/http-request.adoc[]
+
+==== Response
+include::{snippets}/my-pages/member/information/response-body.adoc[]
+include::{snippets}/my-pages/member/information/response-fields.adoc[]
+
+=== 마이페이지 캘린더
+
+==== Request
+include::{snippets}/order/calendar/success/http-request.adoc[]
+
+==== QueryParameter
+include::{snippets}/order/calendar/success/query-parameters.adoc[]
+
+==== Response
+include::{snippets}/order/calendar/success/http-response.adoc[]
+include::{snippets}/order/calendar/success/response-fields.adoc[]

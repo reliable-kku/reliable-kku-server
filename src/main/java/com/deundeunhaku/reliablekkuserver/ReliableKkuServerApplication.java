@@ -6,8 +6,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class ReliableKkuServerApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(ReliableKkuServerApplication.class, args);
-	}
+  public static void main(String[] args) {
+    SpringApplication.run(ReliableKkuServerApplication.class, args);
+  }
 
 }

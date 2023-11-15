@@ -6,7 +6,7 @@ plugins {
 }
 
 group = 'com.deundeunhaku'
-version = '0.0.1-SNAPSHOT'
+version = '1.0.0'
 
 java {
 	sourceCompatibility = '17'
@@ -23,13 +23,8 @@ configurations {
 	}
 }
 
-
 repositories {
 	mavenCentral()
-}
-
-ext {
-	set('snippetsDir', file("build/generated-snippets"))
 }
 
 dependencies {
@@ -45,6 +40,11 @@ dependencies {
 	runtimeOnly 'com.mysql:mysql-connector-j'
 	annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
 	annotationProcessor 'org.projectlombok:lombok'
+
+	//    Spring Rest Docs
+	asciidoctorExt 'org.springframework.restdocs:spring-restdocs-asciidoctor'
+	testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
+
 	//    QueryDSL
 	implementation 'com.querydsl:querydsl-jpa:5.0.0:jakarta'
 	annotationProcessor "com.querydsl:querydsl-apt:5.0.0:jakarta"
@@ -64,8 +64,19 @@ dependencies {
 
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'io.projectreactor:reactor-test'
-	testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
+
 	testImplementation 'org.springframework.security:spring-security-test'
+//excel download : poi
+	implementation 'org.apache.poi:poi:5.2.2'                // .xls 확장자
+	implementation 'org.apache.poi:poi-ooxml:5.2.2'          // .xlsx 확장자
+
+//    Cool SMS
+	implementation 'net.nurigo:sdk:4.3.0'
+}
+
+
+ext {
+	snippetsDir = file('build/generated-snippets')
 }
 
 task copyDocument(type: Copy) {

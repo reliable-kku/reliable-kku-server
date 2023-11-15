@@ -1,4 +1,29 @@
+server:
+  tomcat:
+    threads:
+      max: 250
+      min-spare: 10
+    max-connections: 200
+    accept-count: 50
 spring:
+  jpa:
+    open-in-view: false
+  profiles:
+    default: local
   config:
     import:
       - submodule/reliable-kku-server-submodule/application-s3.yaml
+      - submodule/reliable-kku-server-submodule/application-jwt.yaml
+      - submodule/reliable-kku-server-submodule/application-payment.yaml
+      - submodule/reliable-kku-server-submodule/application-sms.yaml
+  datasource:
+    hikari:
+      maximum-pool-size: 150
+      leak-detection-threshold: 60000
+      max-lifetime: 58000
+
+
+#logging:
+#  level:
+#    com.zaxxer.hikari.HikariConfig: DEBUG
+#    com.zaxxer.hikari: DEBUG

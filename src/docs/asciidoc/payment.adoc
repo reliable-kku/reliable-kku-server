@@ -1,0 +1,78 @@
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 2
+
+== 메인 문서
+
+link:index.html[메인 문서]
+
+=== 결제를 승인한다
+
+==== Request
+include::{snippets}/payments/confirm/success/http-request.adoc[]
+include::{snippets}/payments/confirm/success/request-fields.adoc[]
+
+==== Response
+include::{snippets}/payments/confirm/success/http-response.adoc[]
+
+=== 결제를 실패한다
+
+==== Request
+include::{snippets}/payments/confirm/fail/http-request.adoc[]
+include::{snippets}/payments/confirm/fail/request-fields.adoc[]
+
+==== Response
+include::{snippets}/payments/confirm/fail/http-response.adoc[]
+include::{snippets}/payments/confirm/fail/response-fields.adoc[]
+
+
+=== 토스 서버 에러
+
+==== Request
+include::{snippets}/payments/confirm/tossErrors/http-request.adoc[]
+include::{snippets}/payments/confirm/tossErrors/request-fields.adoc[]
+
+==== Response
+include::{snippets}/payments/confirm/tossErrors/http-response.adoc[]
+include::{snippets}/payments/confirm/tossErrors/response-fields.adoc[]
+
+=== 결제를 취소한다
+
+==== Request
+include::{snippets}/payments/cancel/success/http-request.adoc[]
+include::{snippets}/payments/cancel/success/request-fields.adoc[]
+
+Path Variable::
+include::{snippets}/payments/cancel/success/path-parameters.adoc[]
+
+==== Response
+include::{snippets}/payments/cancel/success/http-response.adoc[]
+
+=== 취소 사유가 없을시 주문 취소를 실패한다
+
+==== Request
+include::{snippets}/payments/cancel/fail/http-request.adoc[]
+include::{snippets}/payments/cancel/fail/request-fields.adoc[]
+
+Path Variable::
+include::{snippets}/payments/cancel/fail/path-parameters.adoc[]
+
+==== Response
+include::{snippets}/payments/cancel/fail/http-response.adoc[]
+include::{snippets}/payments/cancel/fail/response-fields.adoc[]
+
+=== 결제 취소중 토스 에러 발생
+
+==== Request
+include::{snippets}/payments/cancel/tossErrors/http-request.adoc[]
+include::{snippets}/payments/cancel/tossErrors/request-fields.adoc[]
+
+Path Variable::
+include::{snippets}/payments/cancel/tossErrors/path-parameters.adoc[]
+
+==== Response
+include::{snippets}/payments/cancel/tossErrors/http-response.adoc[]
+include::{snippets}/payments/cancel/tossErrors/response-fields.adoc[]
+
