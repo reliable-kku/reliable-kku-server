@@ -4,14 +4,15 @@ import com.deundeunhaku.reliablekkuserver.sms.dto.SmsCertificationNumber;
 import java.util.concurrent.ThreadLocalRandom;
 import javax.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import net.nurigo.sdk.NurigoApp;
 import net.nurigo.sdk.message.model.Message;
 import net.nurigo.sdk.message.request.SingleMessageSendingRequest;
-import net.nurigo.sdk.message.response.SingleMessageSentResponse;
 import net.nurigo.sdk.message.service.DefaultMessageService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @RequiredArgsConstructor
 @Service
 public class CoolSmsService {
@@ -33,13 +34,17 @@ public class CoolSmsService {
   }
 
   public void sendMessage(String to, String content) {
-    Message message = new Message();
+    try {
+      Message message = new Message();
 
-    message.setFrom(senderPhone);
-    message.setTo(to);
-    message.setText(content);
+      message.setFrom(senderPhone);
+      message.setTo(to);
+      message.setText(content);
 
-    this.messageService.sendOne(new SingleMessageSendingRequest(message));
+      this.messageService.sendOne(new SingleMessageSendingRequest(message));
+    } catch (Exception e) {
+      log.warn("SMS 전송 실패 번호 {}", to);
+    }
   }
 
 
