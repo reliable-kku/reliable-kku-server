@@ -5,8 +5,6 @@ import com.deundeunhaku.reliablekkuserver.order.domain.Order;
 import com.deundeunhaku.reliablekkuserver.order.dto.AdminOrderResponse;
 import com.deundeunhaku.reliablekkuserver.order.dto.OrderEachCountResponse;
 import com.deundeunhaku.reliablekkuserver.order.service.AdminOrderService;
-import com.deundeunhaku.reliablekkuserver.sse.service.SseService;
-
 import java.time.LocalDate;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -24,7 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/v1/admin/orders")
-public class  AdminOrderController {
+public class AdminOrderController {
 
   private final AdminOrderService adminOrderService;
 
@@ -34,7 +32,7 @@ public class  AdminOrderController {
   }
 
   @GetMapping("/orderCount")
-  public OrderEachCountResponse getOrderCount(@RequestParam LocalDate currentDate){
+  public OrderEachCountResponse getOrderCount(@RequestParam LocalDate currentDate) {
     return adminOrderService.getOrderCount(currentDate);
   }
 
@@ -42,6 +40,11 @@ public class  AdminOrderController {
   public ResponseEntity<Void> changeOrderStatus(
       @PathVariable Long orderId,
       @PathVariable Integer orderMinutes) {
+
+    Order order = adminOrderService.findByOrderId(orderId);
+    if (order.getOrderStatus().equals(OrderStatus.CANCELED)) {
+      return ResponseEntity.badRequest().build();
+    }
 
     adminOrderService.setOrderToCooking(orderId, orderMinutes);
     adminOrderService.sendOrderSetCookingMessageToUser(orderId);
