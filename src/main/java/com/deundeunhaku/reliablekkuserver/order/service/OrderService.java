@@ -225,6 +225,10 @@ public class OrderService {
     Order order = orderRepository.findById(orderId)
         .orElseThrow(() -> new IllegalArgumentException("잘못된 요청입니다."));
 
+    if (order.getOrderStatus().equals(OrderStatus.COOKING)) {
+      throw new IllegalArgumentException("이미 접수된 주문입니다.");
+    }
+
     order.updateOrderStatus(OrderStatus.CANCELED);
   }
 

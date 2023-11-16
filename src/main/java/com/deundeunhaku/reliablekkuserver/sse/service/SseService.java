@@ -144,6 +144,25 @@ public class SseService {
     }
   }
 
+  public void sendCancelDataToAdmin(Long orderId) {
+    SseEmitter emitter = getEmitter(0L);
+
+    if (emitter == null) {
+      log.warn("관리자 SseEmitter가 존재하지 않습니다.");
+      return;
+    }
+    try {
+      emitter.send(SseEmitter.event()
+          .name("open")
+          .data("{\"orderId\" : \"" + orderId + "\"}", APPLICATION_JSON)
+      );
+    } catch (Exception e) {
+      log.warn("관리자 SSEEmitter 메시지 전송 실패 {}", e.getMessage());
+      emitter.complete();
+      sseRepository.remove(0L);
+    }
+  }
+
   public Map<Long, SseEmitter> getAllEmitter() {
      return sseRepository.getAll();
   }
