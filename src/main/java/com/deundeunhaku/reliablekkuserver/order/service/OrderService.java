@@ -141,19 +141,8 @@ public class OrderService {
     }
 
     if (isExists) {
-      SseEmitter sseEmitter = sseService.getEmitter(orderId);
-      try {
-        sseEmitter.send(SseEmitter.event()
-            .name("open")
-            .data("이미 연결되어 있습니다."));
-      } catch (IOException e) {
-        log.warn("SseEmitter open event 전송 실패 {}", e.getMessage());
-        sseEmitter.complete();
-        sseService.removeEmitter(orderId);
-      }
-
-      sseService.sendCookingDataToUser(order);
-      return sseEmitter;
+      sseService.getEmitter(orderId).complete();
+      sseService.removeEmitter(orderId);
     }
       SseEmitter sseEmitter = new SseEmitter();
       log.info("SseEmitter 생성 {}", sseEmitter);
