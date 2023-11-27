@@ -37,7 +37,7 @@ public class PaymentService {
   private final PaymentRepository paymentRepository;
   private final ObjectMapper objectMapper;
 
-  @Value("${payment.toss.test_secrete_api_key}")
+  @Value("${payment.toss.live_secrete_api_key}")
   private String secretKey;
 
   @Value("${payment.toss.success_url}")

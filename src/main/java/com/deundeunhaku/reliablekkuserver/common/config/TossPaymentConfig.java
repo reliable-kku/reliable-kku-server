@@ -14,6 +14,9 @@ public class TossPaymentConfig {
     @Value("${payment.toss.test_secrete_api_key}")
     private String testSecretKey;
 
+    @Value("${payment.toss.live_secrete_api_key}")
+    private String liveSecretKey;
+
     @Value("${payment.toss.success_url}")
     private String successUrl;
 
