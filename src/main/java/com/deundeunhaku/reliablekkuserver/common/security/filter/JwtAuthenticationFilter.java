@@ -31,6 +31,22 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
   private final JwtTokenUtils jwtTokenUtils;
   private final MemberDetailsService memberDetailsService;
 
+  private static final List<String> EXCLUDE_URLS = List.of(
+      "/docs",
+      "/api/v1/login",
+      "/api/v1/fcm",
+      "/api/v1/token",
+      "/api/v1/auth",
+      "/api/v1/find-password",
+      "/api/v1/register",
+      "/api/v1/register",
+      "/api/v1/auth/admin",
+      "/api/v1/order/sse",
+      "/api/v1/admin/order/sse/connect",
+      "/api/v1/admin/order/sse"
+  );
+
+
   @Override
   protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
       FilterChain filterChain) throws ServletException, IOException {
@@ -38,6 +54,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     String requestURI = request.getRequestURI();
 
     log.info("requestURI: {}", requestURI);
+
+    if (EXCLUDE_URLS.stream().anyMatch(requestURI::startsWith)) {
+      filterChain.doFilter(request, response);
+      return;
+    }
 
     if (request.getHeader(AUTHORIZATION) == null || request.getHeader(AUTHORIZATION).isEmpty()) {
       filterChain.doFilter(request, response);
