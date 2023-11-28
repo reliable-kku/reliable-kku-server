@@ -20,7 +20,7 @@ public class ProductionInitService {
   private final PasswordEncoder passwordEncoder;
   private final MenuRepository menuRepository;
 
-  @PostConstruct
+//  @PostConstruct
   public void init() {
     memberRepository.save(
 //        FIXME : 관리자 비밀번호, 아이디 변경 필요
