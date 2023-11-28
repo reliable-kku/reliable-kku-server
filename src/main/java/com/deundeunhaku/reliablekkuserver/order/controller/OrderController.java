@@ -47,9 +47,11 @@ public class OrderController {
 
     @DeleteMapping("/{orderId}")
     public ResponseEntity<Void> deleteOrder(@PathVariable Long orderId) {
-        paymentService.cancelPayment(orderId, PaymentCancelRequest.of("고객이 주문 전 취소하였습니다"));
         orderService.deleteOrder(orderId);
+        paymentService.cancelPayment(orderId, PaymentCancelRequest.of("고객이 주문 전 취소하였습니다"));
         sseService.disconnect(orderId);
+        sseService.sendCancelDataToAdmin(orderId);
+
         return ResponseEntity.noContent().build();
     }
 

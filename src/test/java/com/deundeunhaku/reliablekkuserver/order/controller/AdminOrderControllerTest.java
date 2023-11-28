@@ -15,6 +15,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.deundeunhaku.reliablekkuserver.BaseControllerTest;
 import com.deundeunhaku.reliablekkuserver.order.constant.OrderStatus;
+import com.deundeunhaku.reliablekkuserver.order.domain.Order;
 import com.deundeunhaku.reliablekkuserver.order.dto.AdminOrderResponse;
 import com.deundeunhaku.reliablekkuserver.order.dto.OrderEachCountResponse;
 import com.deundeunhaku.reliablekkuserver.order.dto.OrderEachMenuResponse;
@@ -112,6 +113,9 @@ class AdminOrderControllerTest extends BaseControllerTest {
     //given
     Long orderId = 1L;
     Integer orderMinutes = 10;
+
+    when(adminOrderService.findByOrderId(orderId))
+        .thenReturn(Order.builder().orderStatus(OrderStatus.WAIT).build());
 
     //when
     ResultActions resultActions = mockMvc.perform(

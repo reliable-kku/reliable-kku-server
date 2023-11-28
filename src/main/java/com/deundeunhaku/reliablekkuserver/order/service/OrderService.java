@@ -141,19 +141,8 @@ public class OrderService {
     }
 
     if (isExists) {
-      SseEmitter sseEmitter = sseService.getEmitter(orderId);
-      try {
-        sseEmitter.send(SseEmitter.event()
-            .name("open")
-            .data("이미 연결되어 있습니다."));
-      } catch (IOException e) {
-        log.warn("SseEmitter open event 전송 실패 {}", e.getMessage());
-        sseEmitter.complete();
-        sseService.removeEmitter(orderId);
-      }
-
-      sseService.sendCookingDataToUser(order);
-      return sseEmitter;
+      sseService.getEmitter(orderId).complete();
+      sseService.removeEmitter(orderId);
     }
       SseEmitter sseEmitter = new SseEmitter();
       log.info("SseEmitter 생성 {}", sseEmitter);
@@ -235,6 +224,10 @@ public class OrderService {
   public void deleteOrder(Long orderId) {
     Order order = orderRepository.findById(orderId)
         .orElseThrow(() -> new IllegalArgumentException("잘못된 요청입니다."));
+
+    if (order.getOrderStatus().equals(OrderStatus.COOKING)) {
+      throw new IllegalArgumentException("이미 접수된 주문입니다.");
+    }
 
     order.updateOrderStatus(OrderStatus.CANCELED);
   }

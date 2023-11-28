@@ -49,12 +49,10 @@ public class SseService {
     sseRepository.put(orderId, sseEmitter);
   }
 
-  @Async
   public void removeEmitter(Long orderId) {
     sseRepository.remove(orderId);
   }
 
-  @Async
   public void disconnect(Long orderId) {
     SseEmitter sseEmitter = sseRepository.get(orderId)
         .orElse(null);
@@ -80,7 +78,6 @@ public class SseService {
     }
   }
 
-  @Async
   public void sendCookingDataToUser(Order order) {
 
     Duration leftDuration = Duration.between(LocalDateTime.now(),
@@ -106,7 +103,6 @@ public class SseService {
     });
   }
 
-  @Async
   public void sendDataToUser(Long orderId, OrderStatus orderStatus, Long leftMinutes) {
 
     SseDataResponse response = SseDataResponse.of(orderStatus,
@@ -127,7 +123,6 @@ public class SseService {
 
   }
 
-  @Async
   public void sendDataToAdmin(AdminOrderResponse adminOrderResponse) {
 
     SseEmitter emitter = getEmitter(0L);
@@ -141,6 +136,25 @@ public class SseService {
       emitter.send(SseEmitter.event()
           .name("message")
           .data(objectMapper.writeValueAsString(adminOrderResponse), APPLICATION_JSON)
+      );
+    } catch (Exception e) {
+      log.warn("관리자 SSEEmitter 메시지 전송 실패 {}", e.getMessage());
+      emitter.complete();
+      sseRepository.remove(0L);
+    }
+  }
+
+  public void sendCancelDataToAdmin(Long orderId) {
+    SseEmitter emitter = getEmitter(0L);
+
+    if (emitter == null) {
+      log.warn("관리자 SseEmitter가 존재하지 않습니다.");
+      return;
+    }
+    try {
+      emitter.send(SseEmitter.event()
+          .name("open")
+          .data("{\"orderId\" : \"" + orderId + "\"}", APPLICATION_JSON)
       );
     } catch (Exception e) {
       log.warn("관리자 SSEEmitter 메시지 전송 실패 {}", e.getMessage());
