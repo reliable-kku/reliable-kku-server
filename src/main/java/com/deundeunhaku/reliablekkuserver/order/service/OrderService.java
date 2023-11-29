@@ -272,15 +272,15 @@ public class OrderService {
     LocalDate firstDate = LocalDate.of(year, month, 1);
     LocalDate lastDate = firstDate.plusMonths(1L).minusDays(1L);
 
-    List<Order> orders = orderRepository.findOrderListByMemberAndCreatedDateBetween(member,
+    List<Order> orders = orderRepository.findOrderListByMemberAndCreatedDateBetweenAndOrderStatusNotContains(member,
         firstDate,
-        lastDate);
+        lastDate,
+        OrderStatus.CANCELED);
 
     List<OrderCalendarResponse> responseList = new ArrayList<>(orders.stream()
         .map(order -> {
               Integer orderDay = order.getCreatedDate().getDayOfMonth();
-              boolean isOrdered = !order.getOrderStatus().equals(OrderStatus.CANCELED);
-              return OrderCalendarResponse.of(orderDay, isOrdered);
+              return OrderCalendarResponse.of(orderDay, true);
             }
         ).toList());
 

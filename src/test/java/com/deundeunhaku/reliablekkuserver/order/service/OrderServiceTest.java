@@ -31,14 +31,14 @@ class OrderServiceTest extends BaseServiceTest {
     void 회원의_마이페이지_캘린더_리스트를_가져오는지_검증한다(){
         //given
         Order order1 = Order.builder().createdDate(LocalDate.of(2023, 10, 24)).orderStatus(OrderStatus.FINISH).build();
-        Order order2 = Order.builder().createdDate(LocalDate.of(2023, 10, 23)).orderStatus(OrderStatus.CANCELED).build();
+        Order order2 = Order.builder().createdDate(LocalDate.of(2023, 10, 23)).orderStatus(OrderStatus.FINISH).build();
         Order order3 = Order.builder().createdDate(LocalDate.of(2023, 10, 21)).orderStatus(OrderStatus.FINISH).build();
         List<Order> orderList = List.of(order1, order2, order3);
         Integer year = 2023;
         Integer month = 10;
         LocalDate firstDate = LocalDate.of(year, month, 1);
         LocalDate lastDate = firstDate.plusMonths(1L).minusDays(1L);
-        when(orderRepository.findOrderListByMemberAndCreatedDateBetween(any(), eq(firstDate), eq(lastDate))).thenReturn(orderList);
+        when(orderRepository.findOrderListByMemberAndCreatedDateBetweenAndOrderStatusNotContains(any(), eq(firstDate), eq(lastDate), eq(OrderStatus.CANCELED))).thenReturn(orderList);
 
         //when
         List<OrderCalendarResponse> calendarList = orderService.getOrderListByMemberAndYearAndMonth(Member.builder().build(), year, month);
@@ -53,7 +53,7 @@ class OrderServiceTest extends BaseServiceTest {
         assertThat(calendarList.get(20).getOrderedDay()).isEqualTo(21);
         assertThat(calendarList.get(20).getIsOrdered()).isTrue();
         assertThat(calendarList.get(22).getOrderedDay()).isEqualTo(23);
-        assertThat(calendarList.get(22).getIsOrdered()).isFalse();
+        assertThat(calendarList.get(22).getIsOrdered()).isTrue();
 
     }
 
