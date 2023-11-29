@@ -28,10 +28,7 @@ import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Month;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -272,10 +269,10 @@ public class OrderService {
     LocalDate firstDate = LocalDate.of(year, month, 1);
     LocalDate lastDate = firstDate.plusMonths(1L).minusDays(1L);
 
-    List<Order> orders = orderRepository.findOrderListByMemberAndCreatedDateBetweenAndOrderStatusNotContains(member,
+    List<Order> orders = orderRepository.findOrderListByMemberAndCreatedDateBetweenAndOrderStatusNotIn(member,
         firstDate,
         lastDate,
-        OrderStatus.CANCELED);
+        Set.of(OrderStatus.CANCELED));
 
     List<OrderCalendarResponse> responseList = new ArrayList<>(orders.stream()
         .map(order -> {

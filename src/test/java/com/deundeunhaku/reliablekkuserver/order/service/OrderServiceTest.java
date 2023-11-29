@@ -13,6 +13,7 @@ import org.mockito.Mock;
 import java.time.LocalDate;
 import java.time.MonthDay;
 import java.util.List;
+import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -38,7 +39,7 @@ class OrderServiceTest extends BaseServiceTest {
         Integer month = 10;
         LocalDate firstDate = LocalDate.of(year, month, 1);
         LocalDate lastDate = firstDate.plusMonths(1L).minusDays(1L);
-        when(orderRepository.findOrderListByMemberAndCreatedDateBetweenAndOrderStatusNotContains(any(), eq(firstDate), eq(lastDate), eq(OrderStatus.CANCELED))).thenReturn(orderList);
+        when(orderRepository.findOrderListByMemberAndCreatedDateBetweenAndOrderStatusNotIn(any(), eq(firstDate), eq(lastDate), eq(Set.of(OrderStatus.CANCELED)))).thenReturn(orderList);
 
         //when
         List<OrderCalendarResponse> calendarList = orderService.getOrderListByMemberAndYearAndMonth(Member.builder().build(), year, month);

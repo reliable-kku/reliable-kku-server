@@ -6,6 +6,8 @@ import com.deundeunhaku.reliablekkuserver.order.domain.Order;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface OrderRepository extends JpaRepository<Order, Long> , OrderRepositoryCustom{
@@ -16,7 +18,7 @@ public interface OrderRepository extends JpaRepository<Order, Long> , OrderRepos
 
   List<Order> findByOrderStatusInOrderByOrderDatetimeAsc(List<OrderStatus> orderStatus);
 
-  List<Order> findOrderListByMemberAndCreatedDateBetweenAndOrderStatusNotContains(Member member, LocalDate firstDate, LocalDate lastDate, OrderStatus orderStatus);
+  List<Order> findOrderListByMemberAndCreatedDateBetweenAndOrderStatusNotIn(Member member, LocalDate firstDate, LocalDate lastDate, Set<OrderStatus> orderStatus);
 
   Optional<Order> findFirstByCreatedDateAndOrderStatusNotInOrderByCreatedDateDesc(LocalDate createdAt, List<OrderStatus> orderStatus);
 
