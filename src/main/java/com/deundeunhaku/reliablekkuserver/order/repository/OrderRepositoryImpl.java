@@ -24,7 +24,7 @@ public class OrderRepositoryImpl implements OrderRepositoryCustom {
   @Override
   public List<Order> findOrderListOrderByCreatedAtDescByMember(Member member) {
     return queryFactory.selectFrom(order)
-        .where(order.member.eq(member))
+        .where(order.member.eq(member).and(order.orderStatus.ne(OrderStatus.CANCELED)))
         .orderBy(order.createdAt.desc())
         .fetch();
   }

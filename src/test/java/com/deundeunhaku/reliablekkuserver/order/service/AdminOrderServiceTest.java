@@ -8,6 +8,7 @@ import static org.mockito.Mockito.when;
 
 import com.deundeunhaku.reliablekkuserver.BaseServiceTest;
 import com.deundeunhaku.reliablekkuserver.fcm.service.FcmService;
+import com.deundeunhaku.reliablekkuserver.member.domain.Member;
 import com.deundeunhaku.reliablekkuserver.order.constant.OrderStatus;
 import com.deundeunhaku.reliablekkuserver.order.domain.Order;
 import com.deundeunhaku.reliablekkuserver.order.dto.AdminSalesCalendarResponse;

@@ -279,7 +279,8 @@ public class OrderService {
     List<OrderCalendarResponse> responseList = new ArrayList<>(orders.stream()
         .map(order -> {
               Integer orderDay = order.getCreatedDate().getDayOfMonth();
-              return OrderCalendarResponse.of(orderDay, true);
+              boolean isOrdered = order.getOrderStatus().equals(OrderStatus.CANCELED);
+              return OrderCalendarResponse.of(orderDay, !isOrdered);
             }
         ).toList());
 

@@ -397,8 +397,8 @@ public class AdminOrderService {
   private void isOnlineOrderSetLevelToMember(Order order) {
     if (!order.getIsOfflineOrder()) {
       Member member = order.getMember();
-      List<Order> orderListByMember = orderRepository.findOrderByMember(member);
-      member.setLevel(orderListByMember.size() / 5 + 1);
+      List<Order> memberDistinctOrderList = orderRepository.findDistinctByMemberOrderByCreatedDate(member);
+      member.setLevel(memberDistinctOrderList.size() / 5 + 1);
     }
   }
 
