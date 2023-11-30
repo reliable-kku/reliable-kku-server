@@ -1,6 +1,7 @@
 package com.deundeunhaku.reliablekkuserver.order.dto;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 import lombok.AccessLevel;
@@ -26,6 +27,19 @@ public class PastOrderResponse {
         orderedDate.getDayOfMonth(),
         orderedDate.getDayOfWeek().toString(),
         orderedTime,
+        totalPrice,
+        orderMenuList.stream().mapToInt(OrderEachMenuResponse::count).sum(),
+        orderMenuList
+    );
+  }
+
+  public static PastOrderResponse of(LocalDateTime orderedDatetime,
+      Integer totalPrice,
+      List<OrderEachMenuResponse> orderMenuList) {
+    return new PastOrderResponse(
+        orderedDatetime.getDayOfMonth(),
+        orderedDatetime.getDayOfWeek().toString(),
+        LocalTime.of(orderedDatetime.getHour(), orderedDatetime.getMinute()),
         totalPrice,
         orderMenuList.stream().mapToInt(OrderEachMenuResponse::count).sum(),
         orderMenuList
