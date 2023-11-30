@@ -304,7 +304,7 @@ public class OrderService {
         .map(order -> {
           List<OrderEachMenuResponse> eachMenuList = menuOrderRepository.findByOrderToOrderEachMenuResponse(
               order);
-          log.info("orderId : {}, :{} ", order.getId(), eachMenuList);
+          log.info("order.getOrderDateTime().toLocalTime() : {}", order.getOrderDatetime().toLocalTime());
           return PastOrderResponse.of(order.getCreatedAt().toLocalDate(),
               order.getOrderDatetime().toLocalTime(),
               order.getOrderPrice(),
