@@ -1,8 +1,8 @@
 package com.deundeunhaku.reliablekkuserver.order.dto;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.ZonedDateTime;
 import java.util.List;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -33,7 +33,7 @@ public class PastOrderResponse {
     );
   }
 
-  public static PastOrderResponse of(LocalDateTime orderedDatetime,
+  public static PastOrderResponse of(ZonedDateTime orderedDatetime,
       Integer totalPrice,
       List<OrderEachMenuResponse> orderMenuList) {
     return new PastOrderResponse(
