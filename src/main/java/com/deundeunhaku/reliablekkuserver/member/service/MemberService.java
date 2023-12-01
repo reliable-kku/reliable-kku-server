@@ -1,6 +1,8 @@
 package com.deundeunhaku.reliablekkuserver.member.service;
 
 import com.deundeunhaku.reliablekkuserver.common.exception.LoginFailedException;
+import com.deundeunhaku.reliablekkuserver.jwt.domain.RefreshToken;
+import com.deundeunhaku.reliablekkuserver.jwt.repository.RefreshTokenRepository;
 import com.deundeunhaku.reliablekkuserver.member.constant.Role;
 import com.deundeunhaku.reliablekkuserver.member.domain.CertificationNumber;
 import com.deundeunhaku.reliablekkuserver.member.domain.Member;
@@ -35,6 +37,8 @@ public class MemberService {
   private final CertificationNumberRepository certificationNumberRepository;
   private final CoolSmsService smsService;
   private final AuthenticationManager authenticationManager;
+
+  private final RefreshTokenRepository refreshTokenRepository;
 
   private final EntityManager entityManager;
 
@@ -196,5 +200,24 @@ public class MemberService {
     Member member = memberRepository.findById(findMember.getId())
         .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저입니다."));
     member.setFirebaseToken(token);
+  }
+
+  @Transactional
+  public void saveRefreshToken(String phoneNumber, String refreshToken) {
+
+    Member member = memberRepository.findByPhoneNumber(phoneNumber)
+        .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저입니다."));
+
+    Optional<RefreshToken> optionalRefreshToken = refreshTokenRepository.findByMember(member);
+
+    if (optionalRefreshToken.isPresent()) {
+      optionalRefreshToken.get().setRefreshToken(refreshToken);
+    } else {
+      RefreshToken newRefreshToken = RefreshToken.builder()
+          .member(member)
+          .refreshToken(refreshToken)
+          .build();
+      refreshTokenRepository.save(newRefreshToken);
+    }
   }
 }
