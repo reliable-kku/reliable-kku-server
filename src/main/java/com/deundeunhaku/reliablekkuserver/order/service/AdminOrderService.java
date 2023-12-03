@@ -60,17 +60,17 @@ public class AdminOrderService {
 
     switch (orderStatus) {
       case WAIT -> {
-        orderList = orderRepository.findByOrderStatusInOrderByOrderDatetimeAsc(
+        orderList = orderRepository.findByOrderStatusInOrderByOrderDatetimeDesc(
             List.of(OrderStatus.WAIT));
       }
 
       case COOKING -> {
-        orderList = orderRepository.findByOrderStatusInOrderByOrderDatetimeAsc(
+        orderList = orderRepository.findByOrderStatusInOrderByOrderDatetimeDesc(
             List.of(OrderStatus.COOKING, OrderStatus.PICKUP));
       }
 
       case FINISH -> {
-        orderList = orderRepository.findByOrderStatusInOrderByOrderDatetimeAsc(
+        orderList = orderRepository.findByOrderStatusInOrderByOrderDatetimeDesc(
             List.of(OrderStatus.FINISH, OrderStatus.CANCELED, OrderStatus.NOT_TAKE));
       }
     }
