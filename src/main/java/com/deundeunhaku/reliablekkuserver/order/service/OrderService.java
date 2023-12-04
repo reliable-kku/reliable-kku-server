@@ -109,9 +109,7 @@ public class OrderService {
     );
     sseService.sendDataToAdmin(adminOrderResponse);
 
-    memberRepository.findById(1L).ifPresent(
-        admin -> fcmService.sendNotificationToAdmin(admin.getFirebaseToken(), "주문이 들어왔습니다",
-            "빠르게 구워주세요! :)"));
+    fcmService.sendNotificationToAdmin("주문이 들어왔습니다", "빠르게 구워주세요! :)");
 
     return OrderIdResponse.of(savedOrder.getId());
   }
@@ -151,49 +149,49 @@ public class OrderService {
       sseService.getEmitter(orderId).complete();
       sseService.removeEmitter(orderId);
     }
-      SseEmitter sseEmitter = new SseEmitter();
-      log.info("SseEmitter 생성 {}", sseEmitter);
+    SseEmitter sseEmitter = new SseEmitter();
+    log.info("SseEmitter 생성 {}", sseEmitter);
 
-      sseService.saveEmitter(orderId, sseEmitter);
+    sseService.saveEmitter(orderId, sseEmitter);
 
-      sseEmitter.onError(e -> {
-        log.warn("SseEmitter 에러 발생", e);
-        try {
-          sseEmitter.send(SseEmitter.event()
-              .name("error")
-              .data("에러가 발생하였습니다."));
-        } catch (IOException ex) {
-          log.warn("SseEmitter 에러 발생, 메시지 전송 실패 : orderId : {}", orderId);
-          sseEmitter.complete();
-        }finally {
+    sseEmitter.onError(e -> {
+      log.warn("SseEmitter 에러 발생", e);
+      try {
+        sseEmitter.send(SseEmitter.event()
+            .name("error")
+            .data("에러가 발생하였습니다."));
+      } catch (IOException ex) {
+        log.warn("SseEmitter 에러 발생, 메시지 전송 실패 : orderId : {}", orderId);
+        sseEmitter.complete();
+      } finally {
         sseService.removeEmitter(orderId);
-        }
-      });
-      sseEmitter.onCompletion(() -> {
-        try {
-          sseEmitter.send(SseEmitter.event()
-              .name("timeout")
-              .data("연결이 종료되었습니다."));
-        } catch (IOException e) {
-          log.warn("SseEmitter 연결 종료 실패 orderId : {}", orderId);
-          sseEmitter.complete();
-        } finally {
-          sseService.removeEmitter(orderId);
-        }
-      });
-      sseEmitter.onTimeout(() -> {
-        try {
-          sseEmitter.send(SseEmitter.event()
-              .name("timeout")
-              .data("연결이 종료되었습니다."));
-        } catch (IOException e) {
-          log.warn("SseEmitter 연결 종료 실패 : orderId : {}", orderId);
-          sseEmitter.complete();
+      }
+    });
+    sseEmitter.onCompletion(() -> {
+      try {
+        sseEmitter.send(SseEmitter.event()
+            .name("timeout")
+            .data("연결이 종료되었습니다."));
+      } catch (IOException e) {
+        log.warn("SseEmitter 연결 종료 실패 orderId : {}", orderId);
+        sseEmitter.complete();
+      } finally {
+        sseService.removeEmitter(orderId);
+      }
+    });
+    sseEmitter.onTimeout(() -> {
+      try {
+        sseEmitter.send(SseEmitter.event()
+            .name("timeout")
+            .data("연결이 종료되었습니다."));
+      } catch (IOException e) {
+        log.warn("SseEmitter 연결 종료 실패 : orderId : {}", orderId);
+        sseEmitter.complete();
 
-        } finally {
-          sseService.removeEmitter(orderId);
-        }
-      });
+      } finally {
+        sseService.removeEmitter(orderId);
+      }
+    });
 
     try {
       sseEmitter.send(SseEmitter.event()
@@ -207,11 +205,11 @@ public class OrderService {
 
     sseService.sendCookingDataToUser(order);
 
-      return sseEmitter;
+    return sseEmitter;
   }
 
 
-  public OrderResponse getOrderMenuList(Long orderId , Member member) {
+  public OrderResponse getOrderMenuList(Long orderId, Member member) {
     Order order = orderRepository.findById(orderId)
         .orElseThrow(() -> new IllegalArgumentException("잘못된 요청입니다."));
 
@@ -279,7 +277,8 @@ public class OrderService {
     LocalDate firstDate = LocalDate.of(year, month, 1);
     LocalDate lastDate = firstDate.plusMonths(1L).minusDays(1L);
 
-    List<Order> orders = orderRepository.findOrderListByMemberAndCreatedDateBetweenAndOrderStatusNotIn(member,
+    List<Order> orders = orderRepository.findOrderListByMemberAndCreatedDateBetweenAndOrderStatusNotIn(
+        member,
         firstDate,
         lastDate,
         Set.of(OrderStatus.CANCELED));
@@ -346,7 +345,7 @@ public class OrderService {
         .orElse(Order.builder().expectedWaitDatetime(nowDateTime).build());
 
     Duration between = Duration.between(nowDateTime, todayLastOrder.getExpectedWaitDatetime());
-  log.info("between : {}", between.toMinutes());
+    log.info("between : {}", between.toMinutes());
 //   현재 날짜가 주문 마감 시간보다 늦거나 같으면 0분으로 반환
     if (nowDateTime.isBefore(todayLastOrder.getExpectedWaitDatetime())) {
       return LeftTimeResponse.of(between.toMinutes() + 10L);

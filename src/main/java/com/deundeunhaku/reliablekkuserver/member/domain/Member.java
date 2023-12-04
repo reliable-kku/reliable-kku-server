@@ -1,10 +1,19 @@
 package com.deundeunhaku.reliablekkuserver.member.domain;
 
 import com.deundeunhaku.reliablekkuserver.common.domain.BaseEntity;
+import com.deundeunhaku.reliablekkuserver.fcm.domain.FcmToken;
 import com.deundeunhaku.reliablekkuserver.member.constant.Role;
 import com.deundeunhaku.reliablekkuserver.member.dto.MemberMyPageResponse;
 import com.google.firebase.database.annotations.NotNull;
-import jakarta.persistence.*;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import java.util.Collection;
 import java.util.List;
 import lombok.AccessLevel;
@@ -22,93 +31,100 @@ import org.springframework.security.core.userdetails.UserDetails;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @Entity
-public class Member extends BaseEntity implements UserDetails{
+public class Member extends BaseEntity implements UserDetails {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
 
-    @NotNull
-    @Column(unique = true)
-    private String phoneNumber;
+  @NotNull
+  @Column(unique = true)
+  private String phoneNumber;
 
-    @NotNull
-    private String password;
+  @NotNull
+  private String password;
 
-    @NotNull
-    private String realName;
+  @NotNull
+  private String realName;
 
-    @Setter
-    @ColumnDefault("1")
-    private Integer level;
+  @Setter
+  @ColumnDefault("1")
+  private Integer level;
 
-    @Setter
-    private String firebaseToken;
+  @Setter
+  private String firebaseToken;
 
-    @Enumerated(EnumType.STRING)
-    private Role role;
+  @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+  private List<FcmToken> fcmTokens;
 
-    @ColumnDefault("false")
-    private boolean isWithdraw;
+  @Enumerated(EnumType.STRING)
+  private Role role;
 
-    public void changePassword(String password) {
-        this.password = password;
+  @ColumnDefault("false")
+  private boolean isWithdraw;
+
+  public void changePassword(String password) {
+    this.password = password;
+  }
+
+  @Builder
+  public Member(Long id, String phoneNumber, String password, String realName, Integer level,
+      String firebaseToken, Role role, boolean isWithdraw) {
+    this.id = id;
+    this.phoneNumber = phoneNumber;
+    this.password = password;
+    this.realName = realName;
+    this.level = level;
+    this.firebaseToken = firebaseToken;
+    this.role = role;
+    this.isWithdraw = isWithdraw;
+  }
+
+  public void withdraw() {
+    if (!this.isWithdraw) {
+      this.isWithdraw = true;
     }
+  }
 
-    @Builder
-    public Member(Long id, String phoneNumber, String password, String realName, Integer level, String firebaseToken, Role role, boolean isWithdraw) {
-        this.id = id;
-        this.phoneNumber = phoneNumber;
-        this.password = password;
-        this.realName = realName;
-        this.level = level;
-        this.firebaseToken = firebaseToken;
-        this.role = role;
-        this.isWithdraw = isWithdraw;
-    }
+  @Override
+  public Collection<? extends GrantedAuthority> getAuthorities() {
+    return List.of(new SimpleGrantedAuthority(role.name()));
+  }
 
-    public void withdraw() {
-        if (!this.isWithdraw) {
-            this.isWithdraw = true;
-        }
-    }
+  public MemberMyPageResponse toMemberMyPageResponse() {
+    return MemberMyPageResponse.of(realName, level);
+  }
 
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority(role.name()));
-    }
+  @Override
+  public String getUsername() {
+    return phoneNumber;
+  }
 
-    public MemberMyPageResponse toMemberMyPageResponse() {
-        return MemberMyPageResponse.of(realName, level);
-    }
+  @Override
+  public boolean isAccountNonExpired() {
+    return true;
+  }
 
-    @Override
-    public String getUsername() {
-        return phoneNumber;
-    }
+  @Override
+  public boolean isAccountNonLocked() {
+    return true;
+  }
 
-    @Override
-    public boolean isAccountNonExpired() {
-        return true;
-    }
+  @Override
+  public boolean isCredentialsNonExpired() {
+    return true;
+  }
 
-    @Override
-    public boolean isAccountNonLocked() {
-        return true;
-    }
+  @Override
+  public boolean isEnabled() {
+    return true;
+  }
 
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return true;
-    }
+  public boolean isAdmin() {
+    return role.name().equals(Role.ADMIN.name());
+  }
 
-    @Override
-    public boolean isEnabled() {
-        return true;
-    }
-
-    public boolean isAdmin() {
-        return role.name().equals(Role.ADMIN.name());
-    }
-
+  public void addFcmToken(String token) {
+    fcmTokens.add(FcmToken.builder().token(token).member(this).build());
+  }
 }

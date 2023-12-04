@@ -1,6 +1,8 @@
 package com.deundeunhaku.reliablekkuserver.member.service;
 
 import com.deundeunhaku.reliablekkuserver.common.exception.LoginFailedException;
+import com.deundeunhaku.reliablekkuserver.fcm.FcmTokenRepository;
+import com.deundeunhaku.reliablekkuserver.fcm.domain.FcmToken;
 import com.deundeunhaku.reliablekkuserver.jwt.domain.RefreshToken;
 import com.deundeunhaku.reliablekkuserver.jwt.repository.RefreshTokenRepository;
 import com.deundeunhaku.reliablekkuserver.member.constant.Role;
@@ -39,7 +41,7 @@ public class MemberService {
   private final AuthenticationManager authenticationManager;
 
   private final RefreshTokenRepository refreshTokenRepository;
-
+  private final FcmTokenRepository fcmTokenRepository;
   private final EntityManager entityManager;
 
   public Member findMemberById(Long id) {
@@ -199,7 +201,18 @@ public class MemberService {
 
     Member member = memberRepository.findById(findMember.getId())
         .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저입니다."));
-    member.setFirebaseToken(token);
+
+    Optional<FcmToken> optionalFcmToken = fcmTokenRepository.findByTokenAndMember(token, member);
+
+    if (optionalFcmToken.isEmpty()) {
+        fcmTokenRepository.save(
+            FcmToken.builder()
+                .token(token)
+                .member(member)
+                .build()
+        );
+    }
+//    member.setFirebaseToken(token);
   }
 
   @Transactional
