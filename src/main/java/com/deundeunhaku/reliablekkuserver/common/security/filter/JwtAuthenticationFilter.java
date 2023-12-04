@@ -5,6 +5,7 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import com.deundeunhaku.reliablekkuserver.common.exception.NotAuthorizedException;
 import com.deundeunhaku.reliablekkuserver.jwt.util.JwtTokenUtils;
 import com.deundeunhaku.reliablekkuserver.member.service.MemberDetailsService;
+import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -13,6 +14,7 @@ import java.io.IOException;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContext;
@@ -66,34 +68,58 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     String accessToken = parseBearerToken(request);
 
-    String phoneNumber = jwtTokenUtils.getPhoneNumber(accessToken);
+    try {
+      String phoneNumber = jwtTokenUtils.getPhoneNumber(accessToken);
 
-    Boolean isTokenValid = jwtTokenUtils.validate(accessToken, phoneNumber);
+      Boolean isTokenValid = jwtTokenUtils.validate(accessToken, phoneNumber);
 
-    if (!isTokenValid) {
-      throw new NotAuthorizedException("유효하지 않은 토큰입니다.");
+      if (!isTokenValid) {
+        throw new NotAuthorizedException("유효하지 않은 토큰입니다.");
+      }
+
+      Boolean isTokenExpired = jwtTokenUtils.isTokenExpired(accessToken);
+      if (isTokenExpired) {
+        throw new NotAuthorizedException("만료된 토큰입니다.");
+      }
+
+      UserDetails member = memberDetailsService.loadUserByUsername(phoneNumber);
+
+      AbstractAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
+          member,
+          null,
+          member.getAuthorities()
+      );
+
+      authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+      SecurityContext securityContext = SecurityContextHolder.createEmptyContext();
+      securityContext.setAuthentication(authentication);
+
+      SecurityContextHolder.setContext(securityContext);
+
+      filterChain.doFilter(request, response);
     }
+    catch (ExpiredJwtException e) {
+      log.warn("토큰 만료, {}", jwtTokenUtils.getPhoneNumber(e.getClaims().getSubject()));
+      response.setStatus(HttpStatus.UNAUTHORIZED.value());
+      response.setCharacterEncoding("UTF-8");
+      try {
+        response.getWriter().write("만료된 토큰입니다.");
+      } catch (Exception ex) {
+        log.error(ex.getMessage());
+      }
 
-    Boolean isTokenExpired = jwtTokenUtils.isTokenExpired(accessToken);
-    if (isTokenExpired) {
-      throw new NotAuthorizedException("만료된 토큰입니다.");
     }
+    catch (Exception e) {
+      log.warn("알 수 없는 인증 에러, {}", e.getMessage());
 
-    UserDetails member = memberDetailsService.loadUserByUsername(phoneNumber);
-
-    AbstractAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
-        member,
-        null,
-        member.getAuthorities()
-    );
-
-    authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-    SecurityContext securityContext = SecurityContextHolder.createEmptyContext();
-    securityContext.setAuthentication(authentication);
-
-    SecurityContextHolder.setContext(securityContext);
-
-    filterChain.doFilter(request, response);
+      response.setStatus(HttpStatus.UNAUTHORIZED.value());
+      response.setCharacterEncoding("UTF-8");
+      try {
+        response.getWriter().write("알 수 없는 인증 에러");
+      } catch (Exception ex) {
+        log.warn(ex.getMessage());
+      }
+    }
   }
 
   private String parseBearerToken(HttpServletRequest request) {
