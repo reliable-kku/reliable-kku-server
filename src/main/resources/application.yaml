@@ -22,7 +22,6 @@ spring:
   datasource:
     hikari:
       maximum-pool-size: 150
-      leak-detection-threshold: 60000
       max-lifetime: 58000
 
 
