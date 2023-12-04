@@ -242,8 +242,10 @@ public class AdminOrderService {
 
     if (order.getOfflineMember() == null) {
       sseService.sendDataToUser(order.getId(), OrderStatus.FINISH, 0L);
-      sseService.getEmitter(order.getId()).complete();
-      sseService.removeEmitter(order.getId());
+      if (sseService.getEmitter(order.getId()) != null) {
+        sseService.getEmitter(order.getId()).complete();
+        sseService.removeEmitter(order.getId());
+      }
     }
 
     order.updateOrderStatus(OrderStatus.FINISH);
@@ -397,7 +399,8 @@ public class AdminOrderService {
   private void isOnlineOrderSetLevelToMember(Order order) {
     if (!order.getIsOfflineOrder()) {
       Member member = order.getMember();
-      List<Order> memberDistinctOrderList = orderRepository.findDistinctByMemberOrderByCreatedDate(member);
+      List<Order> memberDistinctOrderList = orderRepository.findDistinctByMemberOrderByCreatedDate(
+          member);
       member.setLevel(memberDistinctOrderList.size() / 5 + 1);
     }
   }
