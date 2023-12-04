@@ -1,5 +1,6 @@
 package com.deundeunhaku.reliablekkuserver.common.exception;
 
+import io.jsonwebtoken.ExpiredJwtException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.tomcat.util.http.fileupload.impl.FileSizeLimitExceededException;
 import org.springframework.http.HttpStatus;
@@ -50,6 +51,11 @@ public class ControllerExceptionAdvice {
     @ExceptionHandler(NotAuthorizedException.class)
     public ResponseEntity<ErrorResponse> notAuthorizedException(NotAuthorizedException e) {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ErrorResponse.of(e.getMessage()));
+    }
+
+    @ExceptionHandler(ExpiredJwtException.class)
+    public ResponseEntity<ErrorResponse> expiredJwtException(ExpiredJwtException e) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ErrorResponse.of("토큰이 만료되었습니다."));
     }
 
     @ExceptionHandler(Exception.class)
