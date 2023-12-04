@@ -50,4 +50,23 @@ public class FcmService {
     }
   }
 
+  public void sendNotificationToAdmin(String adminFcmToken, String title, String body) {
+    Notification notification = Notification.builder()
+        .setTitle(title)
+        .setBody(body)
+        .build();
+
+    Message message = Message.builder()
+        .setToken(adminFcmToken)
+        .setNotification(notification)
+        .build();
+
+    try {
+      firebaseMessaging.send(message);
+    } catch (FirebaseMessagingException e) {
+      log.warn("알림 보내기를 실패하였습니다. adminFcmToken={}", adminFcmToken);
+
+    }
+  }
+
 }

@@ -1,7 +1,9 @@
 package com.deundeunhaku.reliablekkuserver.order.service;
 
+import com.deundeunhaku.reliablekkuserver.fcm.service.FcmService;
 import com.deundeunhaku.reliablekkuserver.member.domain.Member;
 import com.deundeunhaku.reliablekkuserver.member.domain.OfflineMember;
+import com.deundeunhaku.reliablekkuserver.member.repository.MemberRepository;
 import com.deundeunhaku.reliablekkuserver.member.repository.OfflineMemberRepository;
 import com.deundeunhaku.reliablekkuserver.menu.domain.Menu;
 import com.deundeunhaku.reliablekkuserver.menu.repository.MenuRepository;
@@ -47,8 +49,10 @@ public class OrderService {
   private final PaymentRepository paymentRepository;
   private final MenuOrderRepository menuOrderRepository;
   private final MenuRepository menuRepository;
+  private final MemberRepository memberRepository;
   private final OfflineMemberRepository offlineMemberRepository;
   private final SseService sseService;
+  private final FcmService fcmService;
 
   @Transactional
   public OrderIdResponse registerOrder(OrderRegisterRequest request, Member member) {
@@ -104,6 +108,10 @@ public class OrderService {
         menuOrderRepository.findByOrderToOrderEachMenuResponse(savedOrder)
     );
     sseService.sendDataToAdmin(adminOrderResponse);
+
+    memberRepository.findById(1L).ifPresent(
+        admin -> fcmService.sendNotificationToAdmin(admin.getFirebaseToken(), "주문이 들어왔습니다",
+            "빠르게 구워주세요! :)"));
 
     return OrderIdResponse.of(savedOrder.getId());
   }
