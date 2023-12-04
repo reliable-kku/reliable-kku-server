@@ -241,10 +241,11 @@ public class AdminOrderService {
     Order order = findByOrderId(orderId);
 
     if (order.getOfflineMember() == null) {
-      sseService.sendDataToUser(order.getId(), OrderStatus.FINISH, 0L);
       if (sseService.getEmitter(order.getId()) != null) {
         sseService.getEmitter(order.getId()).complete();
         sseService.removeEmitter(order.getId());
+      }else {
+        sseService.sendDataToUser(order.getId(), OrderStatus.FINISH, 0L);
       }
     }
 
