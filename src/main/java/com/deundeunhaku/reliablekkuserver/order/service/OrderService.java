@@ -340,9 +340,13 @@ public class OrderService {
   public LeftTimeResponse getLeftTime() {
     LocalDateTime nowDateTime = LocalDateTime.now();
 
+    log.info("nowDateTime : {}", nowDateTime);
+
     Order todayLastOrder = orderRepository.findFirstByCreatedDateAndOrderStatusNotInOrderByCreatedAtDesc(
             nowDateTime.toLocalDate(), List.of(OrderStatus.CANCELED, OrderStatus.PICKUP))
         .orElse(Order.builder().expectedWaitDatetime(nowDateTime).build());
+
+    log.info("todayLastOrder.getExpectedWaitDatetime() : {}", todayLastOrder.getExpectedWaitDatetime());
 
     Duration between = Duration.between(nowDateTime, todayLastOrder.getExpectedWaitDatetime());
     log.info("between : {}", between.toMinutes());
